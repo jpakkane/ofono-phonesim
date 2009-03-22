@@ -1,0 +1,6 @@
+*.o
+*.a
+moc_*.*
+ui_*.*
+Makefile
+phonesim
