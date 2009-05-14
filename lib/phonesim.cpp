@@ -1222,8 +1222,14 @@ QString expandEscapes( const QString& data, bool eol )
     const char *buf = buffer.data();
     int ch;
     int prevch = 0;
+
+    res += ( '\r' );
+    res += ( '\n' );
+
     while ( ( ch = *buf++ ) != '\0' ) {
         if ( ch == '\n' ) {
+            res += ( '\r' );
+            res += ( '\n' );
             res += ( '\r' );
             res += ( '\n' );
         } else if ( ch == '\\' ) {
@@ -1232,6 +1238,8 @@ QString expandEscapes( const QString& data, bool eol )
                 res += ( '\\' );
                 break;
             } else if ( ch == 'n' ) {
+                res += ( '\r' );
+                res += ( '\n' );
                 res += ( '\r' );
                 res += ( '\n' );
                 ch = '\n';
