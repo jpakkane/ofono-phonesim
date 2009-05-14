@@ -2,14 +2,7 @@ TARGET=phonesim
 CONFIG+=no_tr no_singleexec static
 DEFINES+=PHONESIM
 
-VPATH+=$$QTOPIA_DEPOT_PATH/src/libraries/qtopiaphone
-VPATH+=$$QTOPIA_DEPOT_PATH/src/libraries/qtopiacomm
-VPATH+=$$QTOPIA_DEPOT_PATH/src/libraries/qtopiabase
-
-INCLUDEPATH+=$$QPEDIR/include/qtopiacomm
-INCLUDEPATH+=$$QPEDIR/include/qtopiaphone
-INCLUDEPATH+=$$QPEDIR/include/qtopiabase
-INCLUDEPATH+=$$QPEDIR/include/qtopia
+INCLUDES=.
 
 PREFIX=PHONESIM
 PHONESIM_HEADERS= phonesim.h server.h hardwaremanipulator.h \

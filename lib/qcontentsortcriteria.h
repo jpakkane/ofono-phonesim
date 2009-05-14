@@ -20,7 +20,7 @@
 #ifndef QCONTENTSORTCRITERIA_H
 #define QCONTENTSORTCRITERIA_H
 
-#include <QContentFilter>
+#include <qcontentfilter.h>
 #include <QtGlobal>
 
 class QContentSortCriteriaPrivate;

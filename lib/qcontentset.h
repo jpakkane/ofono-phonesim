@@ -25,7 +25,7 @@
 #include <qcontentfilter.h>
 
 #include <QAbstractListModel>
-#include <QContentSortCriteria>
+#include <qcontentsortcriteria.h>
 
 class DirectoryScanner;
 class QContentSetModel;

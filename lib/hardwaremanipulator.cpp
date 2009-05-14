@@ -22,10 +22,10 @@
 #include <qdebug.h>
 #include <qbuffer.h>
 #include <qtimer.h>
-#include <QSMSMessage>
-#include "../../../libraries/qtopiaphone/qcbsmessage.h"
-#include "../../../libraries/qtopiacomm/serial/qgsmcodec.h"
-#include "../../../libraries/qtopiaphone/wap/qwsppdu.h"
+#include <qsmsmessage.h>
+#include <qcbsmessage.h>
+#include <qgsmcodec.h>
+#include <qwsppdu.h>
 
 #define NIBBLE_MAX 15
 #define TWO_BYTE_MAX 65535

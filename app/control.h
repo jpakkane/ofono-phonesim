@@ -20,7 +20,7 @@
 #ifndef CONTROL_H
 #define CONTROL_H
 
-#include <HardwareManipulator>
+#include <hardwaremanipulator.h>
 
 class ControlWidget;
 

@@ -17,7 +17,7 @@
 **
 ****************************************************************************/
 
-#include <phonesim/server.h>
+#include <server.h>
 #ifndef PHONESIM_TARGET
     #include "control.h"
     #include <qapplication.h>
