@@ -1,21 +1,19 @@
 /****************************************************************************
 **
-** Copyright (C) 2000-2007 TROLLTECH ASA. All rights reserved.
+** This file is part of the Qt Extended Opensource Package.
 **
-** This file is part of the Opensource Edition of the Qtopia Toolkit.
+** Copyright (C) 2009 Trolltech ASA.
 **
-** This software is licensed under the terms of the GNU General Public
-** License (GPL) version 2.
+** Contact: Qt Extended Information (info@qtextended.org)
 **
-** See http://www.trolltech.com/gpl/ for GPL licensing information.
+** This file may be used under the terms of the GNU General Public License
+** version 2.0 as published by the Free Software Foundation and appearing
+** in the file LICENSE.GPL included in the packaging of this file.
 **
-** Contact info@trolltech.com if any conditions of this licensing are
-** not clear to you.
+** Please review the following information to ensure GNU General Public
+** Licensing requirements will be met:
+**     http://www.fsf.org/licensing/licenses/info/GPLv2.html.
 **
-**
-**
-** This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-** WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 **
 ****************************************************************************/
 
@@ -26,7 +24,8 @@
 
 /*!
     \class QAtUtils
-    \mainclass
+    \inpublicgroup QtBaseModule
+
     \brief The QAtUtils class provides several utility functions that assist with interfacing to AT-based modems.
     \ingroup telephony::serial
 */
@@ -1124,4 +1123,41 @@ bool QAtUtils::octalEscapes()
 void QAtUtils::setOctalEscapes( bool value )
 {
     octalEscapesFlag = value;
+}
+
+enum QSMSDataCodingScheme {
+    QSMS_Compressed      = 0x0020,
+    QSMS_MessageClass    = 0x0010,
+    QSMS_DefaultAlphabet = 0x0000,
+    QSMS_8BitAlphabet    = 0x0004,
+    QSMS_UCS2Alphabet    = 0x0008,
+    QSMS_ReservedAlphabet= 0x000C
+};
+
+/*!
+    Decodes \a value according to the cell broadcast data coding scheme \a dcs.
+    The \a value is assumed to have been parsed by nextString() and be
+    compliant with section 5 of 3GPP TS 23.038.
+
+    \sa nextString()
+    \since 4.3.3
+*/
+QString QAtUtils::decodeString( const QString& value, uint dcs )
+{
+    // Extract just the alphabet bits.
+    QSMSDataCodingScheme scheme;
+    if ((dcs & 0xC0) == 0)
+        scheme = QSMS_DefaultAlphabet;  // Other bits indicate 7-bit GSM language.
+    else
+        scheme = (QSMSDataCodingScheme)(dcs & 0x0C);
+    if ( scheme == QSMS_UCS2Alphabet ) {
+        // The string is hex-encoded UCS-2.
+        return codec("ucs2")->toUnicode( value.toLatin1() );
+    } else if ( scheme == QSMS_8BitAlphabet ) {
+        // The string is 8-bit encoded in the current locale.
+        return QTextCodec::codecForLocale()->toUnicode( value.toLatin1() );
+    } else {
+        // Assume that everything else is in the default GSM alphabet.
+        return codec("gsm")->toUnicode( value.toLatin1() );
+    }
 }

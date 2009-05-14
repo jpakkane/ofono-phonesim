@@ -1,21 +1,19 @@
 /****************************************************************************
 **
-** Copyright (C) 2000-2007 TROLLTECH ASA. All rights reserved.
+** This file is part of the Qt Extended Opensource Package.
 **
-** This file is part of the Opensource Edition of the Qtopia Toolkit.
+** Copyright (C) 2009 Trolltech ASA.
 **
-** This software is licensed under the terms of the GNU General Public
-** License (GPL) version 2.
+** Contact: Qt Extended Information (info@qtextended.org)
 **
-** See http://www.trolltech.com/gpl/ for GPL licensing information.
+** This file may be used under the terms of the GNU General Public License
+** version 2.0 as published by the Free Software Foundation and appearing
+** in the file LICENSE.GPL included in the packaging of this file.
 **
-** Contact info@trolltech.com if any conditions of this licensing are
-** not clear to you.
+** Please review the following information to ensure GNU General Public
+** Licensing requirements will be met:
+**     http://www.fsf.org/licensing/licenses/info/GPLv2.html.
 **
-**
-**
-** This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-** WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 **
 ****************************************************************************/
 
@@ -33,8 +31,6 @@
 #include <qbytearray.h>
 #include <qregexp.h>
 #include <qdebug.h>
-
-//#define AT_CHAT_DEBUG 1
 
 SimXmlNode::SimXmlNode( const QString& _tag )
 {
@@ -125,15 +121,15 @@ SimXmlHandler::~SimXmlHandler()
 }
 
 
-bool SimXmlHandler::startElement( const QString&, const QString& localName, const QString&, const QXmlAttributes& atts )
+bool SimXmlHandler::startElement( const QString& name, const QXmlStreamAttributes& atts )
 {
-    SimXmlNode *node = new SimXmlNode( localName );
+    SimXmlNode *node = new SimXmlNode( name );
     SimXmlNode *attr;
     int index;
     current->addChild( node );
-    for ( index = 0; index < atts.length(); ++index ) {
-        attr = new SimXmlNode( atts.localName( index ) );
-        attr->contents = atts.value( index );
+    for ( index = 0; index < atts.size(); ++index ) {
+        attr = new SimXmlNode( atts[index].name().toString() );
+        attr->contents = atts[index].value().toString();
         node->addAttribute( attr );
     }
     current = node;
@@ -141,7 +137,7 @@ bool SimXmlHandler::startElement( const QString&, const QString& localName, cons
 }
 
 
-bool SimXmlHandler::endElement( const QString&, const QString& , const QString&)
+bool SimXmlHandler::endElement()
 {
     current = current->parent;
     return true;
@@ -149,13 +145,6 @@ bool SimXmlHandler::endElement( const QString&, const QString& , const QString&)
 
 
 bool SimXmlHandler::characters( const QString& ch )
-{
-    current->contents += ch;
-    return true;
-}
-
-
-bool SimXmlHandler::ignorableWhitespace( const QString& ch )
 {
     current->contents += ch;
     return true;
@@ -241,8 +230,6 @@ SimChat::SimChat( SimState *state, SimXmlNode& e )
     responseDelay = 0;
     wildcard = false;
     eol = true;
-    peerConnect = false;
-    peerHangup = false;
 
     listSMS = false;
     deleteSMS = false;
@@ -273,19 +260,8 @@ SimChat::SimChat( SimState *state, SimXmlNode& e )
         } else if ( n->tag == "switch" ) {
             switchTo = n->getAttribute( "name" );
         } else if ( n->tag == "set" ) {
-            if ( variable.length() == 0 ) {
-                variable = n->getAttribute( "name" );
-                value = n->getAttribute( "value" );
-            } else {
-                variable2 = n->getAttribute( "name" );
-                value2 = n->getAttribute( "value" );
-            }
-        } else if ( n->tag == "peer" ) {
-            peer = n->contents;
-            QString hangupstr = n->getAttribute( "hangup" );
-            peerHangup = (hangupstr == "true");
-        } else if ( n->tag == "peerconnect" ) {
-            peerConnect = true;
+	    variables += n->getAttribute( "name" );
+	    values += n->getAttribute( "value" );
         } else if ( n->tag == "newcall" ) {
             newCallVar = n->getAttribute( "name" );
         } else if ( n->tag == "forgetcall" ) {
@@ -342,7 +318,9 @@ bool SimChat::command( const QString& cmd )
     state()->rules()->respond( response, responseDelay, eol );
 
     // Set the variables.
-    if ( variable != QString() ) {
+    for ( int varNum = 0; varNum < variables.size(); ++varNum ) {
+    	QString variable = variables[varNum];
+	QString value = values[varNum];
         if ( value != "*" ) {
             int index = value.indexOf( "${*}" );
             if ( index == -1 ) {
@@ -360,49 +338,10 @@ bool SimChat::command( const QString& cmd )
             state()->rules()->setVariable( variable, wild );
         }
     }
-    if ( variable2 != QString() ) {
-        if ( value2 != "*" ) {
-            int index = value2.indexOf( "${*}" );
-            if ( index == -1 ) {
-                state()->rules()->setVariable( variable2, value2 );
-            } else {
-                if ( wild.length() > 0 && wild[wild.length() - 1] == 0x1A ) {
-                    // Strip the terminating ^Z from SMS PDU's.
-                    wild = wild.left( wild.length() - 1 );
-                }
-                state()->rules()->setVariable
-                    ( variable2, value2.left( index ) + wild +
-                    value2.mid( index + 4 ) );
-            }
-        } else {
-            state()->rules()->setVariable( variable2, wild );
-        }
-    }
 
     // Switch to the new state.
     if ( switchTo != QString() ) {
         state()->rules()->switchTo( switchTo );
-    }
-
-    // Send a command to the peer.
-    if ( peer.length() > 0 ) {
-        state()->rules()->peerCommand( peer );
-    }
-
-    // Attempt to connect to a peer if this was a peer dial command.
-    if ( peerConnect ) {
-        QString number = cmd.mid( 3 );
-        if ( number.length() > 0 && number[number.length() - 1] == ';' )
-            number = number.left( number.length() - 1 );
-        if ( state()->rules()->peerConnect( number ) ) {
-            // Disable the automatic "move to connected state" indication.
-            state()->rules()->switchTo( "dialing-peer" );
-        }
-    }
-
-    // Hangup the peer connection if necessary.
-    if ( peerHangup ) {
-        state()->rules()->peerHangup();
     }
 
     // Allocate a new call identifier or forget this call identifier.
@@ -503,37 +442,38 @@ void SimUnsolicited::leave()
 
 void SimUnsolicited::timeout()
 {
-    state()->rules()->unsolicited( response );
+    if (state() && state()->rules()) {
+        state()->rules()->unsolicited( response );
 
-    if ( switchTo != QString() ) {
-        state()->rules()->switchTo( switchTo );
+        if ( switchTo != QString() ) {
+            state()->rules()->switchTo( switchTo );
+        }
     }
 
     done = true;
 }
 
-class ErrorHandler : public QXmlErrorHandler {
-public:
-    ErrorHandler() { }
-    bool warning( const QXmlParseException& exception )
-    {
-        return error("Fatal",exception);
-    }
-    bool error( const QXmlParseException& exception )
-    {
-        return error("Fatal",exception);
-    }
-    bool fatalError( const QXmlParseException& exception )
-    {
-        return error("Fatal",exception);
-    }
-    bool error( const char* t, const QXmlParseException& exception )
-    {
-        qWarning("%s: %d,%d: %s",t,exception.lineNumber(),exception.columnNumber(),(const char *)exception.message().toLatin1());
+static bool readXmlFile( SimXmlHandler *handler, const QString& filename )
+{
+    QFile f( filename );
+    if ( !f.open( QIODevice::ReadOnly ) )
         return false;
+    QXmlStreamReader reader( &f );
+    while ( !reader.atEnd() ) {
+        reader.readNext();
+        if ( reader.hasError() )
+            break;
+        if ( reader.isStartElement() ) {
+            handler->startElement( reader.name().toString(), reader.attributes() );
+        } else if ( reader.isEndElement() ) {
+            handler->endElement();
+        } else if ( reader.isCharacters() ) {
+            handler->characters( reader.text().toString() );
+        }
     }
-    QString errorString() const { return "??"; }
-};
+    f.close();
+    return !reader.hasError();
+}
 
 SimRules::SimRules( int fd, QObject *p,  const QString& filename, HardwareManipulatorFactory *hmf )
     : QTcpSocket(p)
@@ -548,9 +488,6 @@ SimRules::SimRules( int fd, QObject *p,  const QString& filename, HardwareManipu
         machine = hmf->create(0);
 
     if (machine) {
-        machine->setWindowTitle("none");
-        if (machine->shouldShow()) machine->show();
-
         connect(machine, SIGNAL(unsolicitedCommand(QString)),
                 this, SLOT(unsolicited(QString)));
         connect(machine, SIGNAL(command(QString)),
@@ -599,16 +536,10 @@ SimRules::SimRules( int fd, QObject *p,  const QString& filename, HardwareManipu
 
     // Load the simulator rules into memory as a DOM-like tree.
     SimXmlHandler *handler = new SimXmlHandler();
-    QXmlSimpleReader *reader = new QXmlSimpleReader();
-    reader->setErrorHandler( new ErrorHandler );
-    reader->setContentHandler( handler );
-    QFile f( filename );
-    QXmlInputSource inputSource(&f);
-    if ( !reader->parse( inputSource ) ) {
+    if ( !readXmlFile( handler, filename ) ) {
         qWarning() << filename << ": could not parse simulator rule file";
         return;
     }
-    f.close();
 
     // Load the default state and set it as current.
     defState = new SimState( this, *(handler->documentElement()) );
@@ -640,15 +571,6 @@ SimRules::SimRules( int fd, QObject *p,  const QString& filename, HardwareManipu
                 setVariable(name, value);
             }
 
-        } else if ( n->tag == "peerinfo" ) {
-
-            // Add a phone simulator peer entry.
-            QString number = n->getAttribute( "number" );
-            QString host = n->getAttribute( "host" );
-            if ( number != QString() && host != QString() ) {
-                peers[number] = host;
-            }
-
         } else if ( n->tag == "filesystem" ) {
 
             // Load the SIM filesystem.
@@ -664,13 +586,13 @@ SimRules::SimRules( int fd, QObject *p,  const QString& filename, HardwareManipu
     }
 
     // Clean up the XML reader objects.
-    delete reader;
     delete handler;
 
     // Set the start state appropriately.
     currentState = state( start );
     if ( !currentState )
         currentState = defState;
+    currentState->enter();
 }
 
 
@@ -843,19 +765,6 @@ void SimRules::tryReadCommand()
                                  lineUsed - lasteol );
                         lineUsed -= lasteol;
                     }
-                } else if ( type == ( 0x3F & 0xEF ) ) {
-                    // Channel open request.
-#ifdef AT_CHAT_DEBUG
-                    if ( channel == 0 )
-                        qDebug() << "GSM 07.10 control channel opened";
-                    else
-                        qDebug() << "GSM 07.10 channel " << channel << " opened";
-#endif
-                } else if ( type == ( 0x53 & 0xEF ) ) {
-                    // Channel close request.
-#ifdef AT_CHAT_DEBUG
-                    qDebug() << "GSM 07.10 channel " << channel << " closed";
-#endif
                 }
                 posn += len + 5;
 
@@ -912,12 +821,8 @@ void SimRules::tryReadCommand()
 
 void SimRules::destruct()
 {
-#ifdef AT_CHAT_DEBUG
-    qDebug() << "connectionclosed";
-#endif
-
 #ifndef PHONESIM_TARGET
-    if (machine) machine->close();
+    if (machine) machine->deleteLater();
 #endif
     deleteLater();
 }
@@ -927,7 +832,7 @@ void SimRules::setPhoneNumber(const QString &s)
     mPhoneNumber = s;
 
 #ifndef PHONESIM_TARGET
-    if (machine) machine->setWindowTitle("Phonesim - Number: " + s);
+    if (machine) machine->setPhoneNumber(s);
 #endif
 }
 
@@ -944,42 +849,6 @@ void SimRules::setSimApplication( SimApplication *app )
     toolkitApp->setSimRules( this );
     toolkitApp->start();
 }
-
-void SimRules::loadPeers( const QString& filename )
-{
-    // Load the peer rules into memory as a DOM-like tree.
-    SimXmlHandler *handler = new SimXmlHandler();
-    QXmlSimpleReader *reader = new QXmlSimpleReader();
-    reader->setContentHandler( handler );
-    QFile f( filename );
-    QXmlInputSource inputSource(&f);
-    if ( !reader->parse( inputSource ) ) {
-        qWarning() << filename << ": could not parse peer rule file";
-        return;
-    }
-    f.close();
-
-    // Load the "peerinfo" tags.
-    SimXmlNode *n = handler->documentElement()->children;
-    while ( n != 0 ) {
-        if ( n->tag == "peerinfo" ) {
-
-            // Add a phone simulator peer entry.
-            QString number = n->getAttribute( "number" );
-            QString host = n->getAttribute( "host" );
-            if ( number != QString() && host != QString() ) {
-                peers[number] = host;
-            }
-
-        }
-        n = n->next;
-    }
-
-    // Clean up the XML reader objects.
-    delete reader;
-    delete handler;
-}
-
 
 void SimRules::switchTo(const QString& name)
 {
@@ -1011,19 +880,53 @@ SimState *SimRules::state( const QString& name ) const
 }
 
 
+bool SimRules::simCommand( const QString& cmd )
+{
+    // If not AT+CSIM, then this is not a SIM toolkit command.
+    if ( !cmd.startsWith( "AT+CSIM=" ) )
+        return false;
+
+    // Extract the binary payload of the AT+CSIM command.
+    int comma = cmd.indexOf( QChar(',') );
+    if ( comma < 0 )
+        return false;
+    QByteArray param = QAtUtils::fromHex( cmd.mid(comma + 1) );
+    if ( param.length() < 5 || param[0] != (char)0xA0 )
+        return false;
+
+    // Determine what kind of command we are dealing with.
+    if ( param[1] == (char)0x2C && param[4] == (char)0x10 && param.size() >= 21 ) {
+        // UNBLOCK CHV command, for resetting a PIN using a PUK.
+        QString pinName = "PINVALUE";
+        QString pukName = "PUKVALUE";
+        if ( param[3] == (char)0x02 ) {
+            pinName = "PIN2VALUE";
+            pukName = "PUK2VALUE";
+        }
+        QByteArray pukValue = param.mid(5, 8);
+        QByteArray pinValue = param.mid(13, 8);
+        while ( pukValue.size() > 0 && pukValue[pukValue.size() - 1] == (char)0xFF )
+            pukValue = pukValue.left( pukValue.size() - 1 );
+        while ( pinValue.size() > 0 && pinValue[pinValue.size() - 1] == (char)0xFF )
+            pinValue = pinValue.left( pinValue.size() - 1 );
+        if ( QString::fromUtf8( pukValue ) != variable( pukName ) ) {
+            respond( "+CSIM: 4,9804\nOK" );
+        } else {
+            setVariable( pinName, QString::fromUtf8( pinValue ) );
+            respond( "+CSIM: 4,9000\nOK" );
+        }
+        return true;
+    }
+
+    // Don't know this SIM command.
+    return false;
+}
+
 void SimRules::command( const QString& cmd )
 {
-
 #ifndef PHONESIM_TARGET
     if(getMachine())
         getMachine()->handleToData(cmd);
-#endif
-
-#ifdef AT_CHAT_DEBUG
-    if ( useGsm0710 )
-        qDebug() << "CMD[" << currentChannel << "]> " << cmd;
-    else
-        qDebug() << "CMD> " << cmd;
 #endif
 
     // Process call-related commands with the call manager.
@@ -1032,6 +935,10 @@ void SimRules::command( const QString& cmd )
 
     // Process SIM toolkit related commands with the current SIM application.
     if ( toolkitApp && toolkitApp->execute( cmd ) )
+        return;
+
+    // Process other SIM commands sent via AT+CSIM.
+    if ( simCommand( cmd ) )
         return;
 
     if ( ! currentState->command( cmd ) ) {
@@ -1051,10 +958,12 @@ void SimRules::command( const QString& cmd )
 
             // Request to turn on GSM 07.10 multiplexing.
             respond( "OK" );
-#ifdef AT_CHAT_DEBUG
-            qDebug() << "GSM 07.10 multiplexing enabled";
-#endif
             useGsm0710 = true;
+
+        } else if ( cmd.startsWith( "AT+CPWD=\"SC\",\"" ) ) {
+
+            // Change SIM PIN value.
+            changePin( cmd );
 
         } else if ( cmd.startsWith( "AT" ) ) {
 
@@ -1230,12 +1139,39 @@ void SimRules::phoneBook( const QString& cmd )
             uint type = QAtUtils::parseNumber( cmd, posn );
             QString name = QAtUtils::nextString( cmd, posn );
             number = QAtUtils::decodeNumber( number, type );
+            // 32 & 16 are the limits from AT+CPBR=? above
+            if (name.length() > 16 || number.length() > 32) {
+                respond( "ERROR" );
+                return;
+            }
+
             pb->setDetails( index, number, name );
         }
         respond( "OK" );
     } else {
         respond( "ERROR" );
     }
+}
+
+void SimRules::changePin( const QString& cmd )
+{
+    QStringList parts = cmd.split(QChar('"'));
+    if (parts.size() < 6) {
+        respond( "ERROR" );
+        return;
+    }
+    QString oldPin = parts[3];
+    QString newPin = parts[5];
+    if ( variable( "PINVALUE" ) != oldPin ) {
+        respond( "ERROR" );
+        return;
+    }
+    if ( newPin.size() < 4 || newPin.size() > 8 ) {
+        respond( "ERROR" );
+        return;
+    }
+    setVariable( "PINVALUE", newPin );
+    respond( "OK" );
 }
 
 SimPhoneBook *SimRules::currentPB() const
@@ -1331,13 +1267,6 @@ void SimRules::respond( const QString& resp, int delay, bool eol )
     }
 
 
-#ifdef AT_CHAT_DEBUG
-    if ( useGsm0710 )
-        qDebug() << "RSP[" << currentChannel << "]> " << r;
-    else
-        qDebug() << "RSP> " << r;
-#endif
-
     QByteArray escaped = expandEscapes( r, eol ).toUtf8();
     if ( !delay ) {
         writeChatData(escaped.data(), escaped.length());
@@ -1363,7 +1292,7 @@ void SimRules::delayTimeout()
     writeChatData(timer->response.toLatin1().data(), timer->response.length());
     flush();
     currentChannel = save;
-    delete timer;
+    timer->deleteLater();
 }
 
 
@@ -1395,13 +1324,6 @@ void SimRules::dialCheck( const QString& number, bool& ok )
 void SimRules::unsolicited( const QString& resp )
 {
     QString r = expand( resp );
-
-#ifdef AT_CHAT_DEBUG
-    if ( useGsm0710 )
-        qDebug() << "UNS[" << currentChannel << "]> " << r;
-    else
-        qDebug() << "UNS> " << r;
-#endif
 
     QByteArray escaped = expandEscapes( r, true ).toUtf8();
     writeChatData( escaped , escaped.length() );
@@ -1508,46 +1430,3 @@ QString SimRules::variable( const QString& name )
     return variables[name];
 
 }
-
-void SimRules::peerCommand( const QString& )
-{
-}
-
-
-bool SimRules::peerConnect( const QString& )
-{
-    return false;
-}
-
-
-void SimRules::peerHangup()
-{
-}
-
-
-QString SimRules::phoneNumber()
-{
-    char hostname[1024];
-    ::gethostname( hostname, sizeof(hostname) );
-
-    QMap<QString,QString>::Iterator iter;
-    for ( iter = peers.begin(); iter != peers.end(); ++iter ) {
-        if ( iter.value().startsWith( hostname ) ) {
-            return iter.key();
-        }
-    }
-
-    return QString();
-}
-
-
-void SimRules::printPeerNumber()
-{
-#ifdef AT_CHAT_DEBUG
-    QString number = phoneNumber();
-    if ( number != QString() ) {
-        qDebug() << "Your phone number is " << number;
-    }
-#endif
-}
-

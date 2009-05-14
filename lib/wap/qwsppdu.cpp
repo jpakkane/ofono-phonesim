@@ -1,21 +1,19 @@
 /****************************************************************************
 **
-** Copyright (C) 2000-2007 TROLLTECH ASA. All rights reserved.
+** This file is part of the Qt Extended Opensource Package.
 **
-** This file is part of the Opensource Edition of the Qtopia Toolkit.
+** Copyright (C) 2009 Trolltech ASA.
 **
-** This software is licensed under the terms of the GNU General Public
-** License (GPL) version 2.
+** Contact: Qt Extended Information (info@qtextended.org)
 **
-** See http://www.trolltech.com/gpl/ for GPL licensing information.
+** This file may be used under the terms of the GNU General Public License
+** version 2.0 as published by the Free Software Foundation and appearing
+** in the file LICENSE.GPL included in the packaging of this file.
 **
-** Contact info@trolltech.com if any conditions of this licensing are
-** not clear to you.
+** Please review the following information to ensure GNU General Public
+** Licensing requirements will be met:
+**     http://www.fsf.org/licensing/licenses/info/GPLv2.html.
 **
-**
-**
-** This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-** WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 **
 ****************************************************************************/
 
@@ -24,12 +22,10 @@
 #include <qtextcodec.h>
 #include <qdatetime.h>
 #include <qiodevice.h>
+#include <qtimezone.h>
 #include <qbuffer.h>
 #include <netinet/in.h>
 #include <stdlib.h>
-
-// Uncomment to turn on expanded WSP debugging.
-//#define WSP_DEBUG   1
 
 // Reference: WAP-230-WSP
 //            Wireless Application Protocol
@@ -120,7 +116,7 @@ static const char * const contentTypeAssignments[] = {
 
 struct CharsetAssignment {
     quint32 number;
-    char *charset;
+    const char *charset;
 };
 
 static const CharsetAssignment charsetAssignments[] = {
@@ -179,7 +175,7 @@ private:
 struct WAPHeaderField {
     quint8 number;
     int version;
-    char *name;
+    const char *name;
     QWspDefaultCodec::Type type;
 };
 
@@ -277,7 +273,12 @@ static int timeZoneDiff()
 {
     if ( utcTimeZoneDiff == -1 ) {
         QDateTime gmt, current = QDateTime::currentDateTime();
-        QString tz = getenv("TZ");
+        QString tz =
+#ifndef PHONESIM
+         QTimeZone::current().id();
+#else
+         getenv("TZ");
+#endif
         if ( !tz.isEmpty() && (setenv("TZ", "GMT", true) == 0) ) {
             gmt = QDateTime::currentDateTime();
         } else return 0;
@@ -322,7 +323,8 @@ static int UTCToSecs(QString utc)
 
 /*!
   \class QWspDateTime
-  \mainclass
+    \inpublicgroup QtTelephonyModule
+
   \brief The QWspDateTime class provides functions for converting between the WSP date time formats and standard date time formats.
   \ingroup time
   \ingroup telephony
@@ -468,7 +470,8 @@ quint32 QWspDateTime::toGmtTime_t(const QDateTime &dt)
 
 /*!
   \class QWspField
-  \mainclass
+    \inpublicgroup QtTelephonyModule
+
   \brief The QWspField class provides an encapsulation of a field name and value.
   \ingroup telephony
 
@@ -514,7 +517,8 @@ QWspField& QWspField::operator=( const QWspField& field )
 
 /*!
   \class QWspPduDecoder
-  \mainclass
+    \inpublicgroup QtTelephonyModule
+
   \brief The QWspPduDecoder class provides facilities for parsing WSP PDU's.
   \ingroup telephony
 
@@ -717,18 +721,6 @@ QString QWspPduDecoder::decodeTextBlock(int length)
     return result;
 }
 
-int QWspPduDecoder::decodeMIBEnum(quint32& num)
-{
-    num = 0;
-    //length
-    quint32 len = decodeOctet();
-    if(len == 1)
-        num = decodeOctet();
-    else if(len == 2)
-        num = decodeUInt16();
-    return len;
-}
-
 /*!
     Decode an encoded string from the input data stream.
 */
@@ -742,8 +734,8 @@ QString QWspPduDecoder::decodeEncodedString()
     QString encText;
     if(len)
     {
-        quint32 mib = 0;
-        quint32 miblen = decodeMIBEnum(mib);
+        quint32 mib = decodeInteger();
+        quint32 miblen = mib > 127 ? 2 : 1;
         int textlen = len-miblen-1;
         if(peekOctet() == '\"') //ignore quote
         {
@@ -751,6 +743,7 @@ QString QWspPduDecoder::decodeEncodedString()
             --textlen;
         }
         QString encText = decodeTextBlock(textlen);
+        decodeOctet(); //ignore null terminator
         return decodeCharset(encText, mib);
     }
     return encText;
@@ -798,15 +791,9 @@ QString QWspPduDecoder::decodeContentType()
     // Media-type = (Well-known-media | Extension-Media) *(Parameter)
     // Well-known-media = Integer-value
     quint8 o = peekOctet();
-#ifdef WSP_DEBUG
-    qDebug("decodeContentType: %d", o);
-#endif
     if (o <= 31) {
         // Content-general-form
         quint32 len = decodeLength();
-#ifdef WSP_DEBUG
-        qDebug("Content type len: %d", len);
-#endif
         int endByte = (int)(dev->pos()+len);
         // decode media type
         o = peekOctet();
@@ -829,9 +816,6 @@ QString QWspPduDecoder::decodeContentType()
         }
         while (endByte > ((int)(dev->pos())) && !dev->atEnd()) {
             // read parameters
-#ifdef WSP_DEBUG
-            qDebug("Decode parameter");
-#endif
             QString p = decodeParameter();
             if (!p.isEmpty())
                 type += "; " + p;
@@ -881,9 +865,6 @@ QWspField QWspPduDecoder::decodeField()
     if (octet & 0x80) {
         // Well-known-header
         fld = headerCodec->decode(*this);
-#ifdef WSP_DEBUG
-        qDebug("decoded well-known-header: %s=%s", fld.name.toLatin1().constData(), fld.value.toLatin1().constData());
-#endif
     } else {
         // Application-header
         fld.name = decodeTokenText();
@@ -1015,10 +996,6 @@ QString QWspPduDecoder::decodeParameter()
         }
     }
 
-#ifdef WSP_DEBUG
-    qDebug("Parameter: %s", p.toLatin1().constData());
-#endif
-
     return p;
 }
 
@@ -1029,9 +1006,6 @@ QWspMultipart QWspPduDecoder::decodeMultipart()
 {
     QWspMultipart mp;
     quint32 count = decodeUIntVar();
-#ifdef WSP_DEBUG
-    qDebug("%d parts", count);
-#endif
     for (unsigned int i = 0; i < count; i++) {
         mp.addPart(decodePart());
     }
@@ -1052,23 +1026,14 @@ void QWspPduDecoder::decodeContentTypeAndHeaders(QWspPart& part, quint32 hdrLen)
     int afterHeader = curByte + (int)hdrLen;
     QWspField field;
     field.name = "Content-Type";
-#ifdef WSP_DEBUG
-    qDebug("header len: %d", hdrLen);
-#endif
     field.value = decodeContentType();
     part.addHeader(field);
-#ifdef WSP_DEBUG
-    qDebug("ContentType: %s", field.value.toLatin1().constData());
-#endif
     hdrLen -= ((int)(dev->pos())) - curByte;
 
     int dataByte = ((int)(dev->pos())) + hdrLen;
     while (((int)(dev->pos())) < dataByte && !dev->atEnd()) {
         field = decodeField();
         part.addHeader(field);
-#ifdef WSP_DEBUG
-        qDebug(" Read field: %s = %s", field.name.toLatin1().constData(), field.value.toLatin1().constData());
-#endif
     }
 
     dev->seek(afterHeader);
@@ -1083,18 +1048,8 @@ QWspPart QWspPduDecoder::decodePart()
     quint32 dataLen = decodeUIntVar();
 
     QWspPart part;
-
     decodeContentTypeAndHeaders(part, hdrLen);
-
-#ifdef WSP_DEBUG
-    qDebug("data len: %d", dataLen);
-#endif
     part.readData(dev, dataLen);
-
-    QString d(part.data());
-#ifdef WSP_DEBUG
-    qDebug("data: %s", d.toLatin1().constData());
-#endif
 
     return part;
 }
@@ -1197,7 +1152,8 @@ QString QWspPduDecoder::decodeCharset( const QString &encoded, quint32 mib)
 
 /*!
   \class QWspPduEncoder
-  \mainclass
+    \inpublicgroup QtTelephonyModule
+
   \brief The QWspPduEncoder class provides facilities for writing WSP PDU's.
   \ingroup telephony
 
@@ -1377,9 +1333,6 @@ void QWspPduEncoder::encodeVersion(const QString &value)
     } else {
         major = value.toInt();
     }
-#ifdef WSP_DEBUG
-    qDebug("Major: %d  Minor: %d", major, minor);
-#endif
     if (major >= 1 && major <= 7 && minor <= 14){
         quint8 encVal;
         if (dot)
@@ -1397,9 +1350,6 @@ void QWspPduEncoder::encodeVersion(const QString &value)
 */
 void QWspPduEncoder::encodeField(const QWspField &field)
 {
-#ifdef WSP_DEBUG
-    qDebug("Encode field: %s=%s", field.name.toLatin1().constData(), field.value.toLatin1().constData());
-#endif
     if (!headerCodec->encode(*this, field)) {
         encodeTokenText(field.name);
         encodeTextString(field.value);
@@ -1416,9 +1366,6 @@ void QWspPduEncoder::encodeParameter(const QString &p)
         param = param.mid(1);
     while (param.length() && param[param.length()-1].isSpace())
         param.truncate(param.length()-1);
-#ifdef WSP_DEBUG
-    qDebug("Encoding parameter: %s", param.toLatin1().constData());
-#endif
     if (param.indexOf("q=") == 0) {
         QString value = param.mid(2);
         int dot = value.indexOf(QChar('.'));
@@ -1462,9 +1409,6 @@ void QWspPduEncoder::encodeParameter(const QString &p)
         } else {
             major = value.toInt();
         }
-#ifdef WSP_DEBUG
-        qDebug("Major: %d  Minor: %d", major, minor);
-#endif
         if (major >= 1 && major <= 7 && minor <= 14){
             quint8 encVal;
             if (dot)
@@ -1482,9 +1426,6 @@ void QWspPduEncoder::encodeParameter(const QString &p)
             encodeInteger(0x03);
             encodeInteger(d);
         } else {
-#ifdef WSP_DEBUG
-            qDebug("handling type param");
-#endif
             encodeInteger(0x09);
             QString value = unquoteString(param.mid(5));
             int idx = 0;
@@ -1604,9 +1545,6 @@ void QWspPduEncoder::encodeContentType(const QString &str)
         // copy encBuf to dev.
         buffer.close();
         encodeLength(buffer.buffer().size());
-#ifdef WSP_DEBUG
-        qDebug("content type length = %d", buffer.buffer().size());
-#endif
         dev->write(buffer.buffer());
     }
 }
@@ -1617,9 +1555,6 @@ void QWspPduEncoder::encodeContentType(const QString &str)
 void QWspPduEncoder::encodeMultipart(const QWspMultipart &mp)
 {
     encodeUIntVar(mp.count());
-#ifdef WSP_DEBUG
-    qDebug("%d parts", mp.count());
-#endif
     for (int i = 0; i < mp.count(); i++) {
         encodePart(mp.part(i));
     }
@@ -1757,7 +1692,8 @@ int QWspPduEncoder::integerLength(quint32 d)
 
 /*!
   \class QWspPart
-  \mainclass
+    \inpublicgroup QtTelephonyModule
+
   \brief The QWspPart class represents a single part within a WSP message.
   \ingroup telephony
 
@@ -1863,10 +1799,6 @@ void QWspPart::readData(QIODevice *d, int l)
     if ( l >= 0 && ( (d->isSequential() && l < 2097152) || (!d->isSequential() && l <= d->size() - d->pos()) ) ) {
         ba.resize(l);
         d->read(ba.data(), l);
-    } else {
-#ifdef WSP_DEBUG
-        qDebug("QWspPart::readData: bad attempt to read data of length %d", l);
-#endif
     }
 }
 
@@ -1880,7 +1812,8 @@ void QWspPart::writeData(QIODevice *d) const
 
 /*!
   \class QWspMultipart
-  \mainclass
+    \inpublicgroup QtTelephonyModule
+
   \brief The QWspMultipart class represents a collection of parts from a WSP message.
   \ingroup telephony
 
@@ -1942,7 +1875,8 @@ void QWspMultipart::addPart(const QWspPart &p)
 
 /*!
   \class QWspPush
-  \mainclass
+    \inpublicgroup QtTelephonyModule
+
   \brief The QWspPush class represents the contents of a WSP Push PDU.
   \ingroup telephony
 

@@ -1,21 +1,19 @@
 /****************************************************************************
 **
-** Copyright (C) 2000-2007 TROLLTECH ASA. All rights reserved.
+** This file is part of the Qt Extended Opensource Package.
 **
-** This file is part of the Opensource Edition of the Qtopia Toolkit.
+** Copyright (C) 2009 Trolltech ASA.
 **
-** This software is licensed under the terms of the GNU General Public
-** License (GPL) version 2.
+** Contact: Qt Extended Information (info@qtextended.org)
 **
-** See http://www.trolltech.com/gpl/ for GPL licensing information.
+** This file may be used under the terms of the GNU General Public License
+** version 2.0 as published by the Free Software Foundation and appearing
+** in the file LICENSE.GPL included in the packaging of this file.
 **
-** Contact info@trolltech.com if any conditions of this licensing are
-** not clear to you.
+** Please review the following information to ensure GNU General Public
+** Licensing requirements will be met:
+**     http://www.fsf.org/licensing/licenses/info/GPLv2.html.
 **
-**
-**
-** This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-** WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 **
 ****************************************************************************/
 
@@ -48,37 +46,21 @@ public:
     inline InheritedSharedDataPointer(const InheritedSharedDataPointer<T> &o) : d(o.d) { if (d) d->ref.ref(); }
     inline InheritedSharedDataPointer<T> & operator=(const InheritedSharedDataPointer<T> &o) {
         if (o.d != d) {
-#if QT_VERSION < 0x040400
-            T *x = o.d;
-            if (x) x->ref.ref();
-            x = qAtomicSetPtr(&d, x);
-            if (x && !x->ref.deref())
-                delete x;
-#else
             if (o.d)
                 o.d->ref.ref();
             if (d && !d->ref.deref())
                 delete d;
             d = o.d;
-#endif
         }
         return *this;
     }
     inline InheritedSharedDataPointer &operator=(T *o) {
         if (o != d) {
-#if QT_VERSION < 0x040400
-            T *x = o;
-            if (x) x->ref.ref();
-            x = qAtomicSetPtr(&d, x);
-            if (x && !x->ref.deref())
-                delete x;
-#else
             if (o)
                 o->ref.ref();
             if (d && !d->ref.deref())
                 delete d;
             d = o;
-#endif
         }
         return *this;
     }
@@ -100,15 +82,9 @@ Q_OUTOFLINE_TEMPLATE void InheritedSharedDataPointer<T>::detach_helper()
 {
     T *x = d->createCopy();
     x->ref.ref();
-#if QT_VERSION < 0x040400
-    x = qAtomicSetPtr(&d, x);
-    if (!x->ref.deref())
-        delete x;
-#else
     if (!d->ref.deref())
         delete d;
     d = x;
-#endif
 }
 
 #endif

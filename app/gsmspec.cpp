@@ -1,21 +1,19 @@
 /****************************************************************************
 **
-** Copyright (C) 2000-2007 TROLLTECH ASA. All rights reserved.
+** This file is part of the Qt Extended Opensource Package.
 **
-** This file is part of the Opensource Edition of the Qtopia Toolkit.
+** Copyright (C) 2009 Trolltech ASA.
 **
-** This software is licensed under the terms of the GNU General Public
-** License (GPL) version 2.
+** Contact: Qt Extended Information (info@qtextended.org)
 **
-** See http://www.trolltech.com/gpl/ for GPL licensing information.
+** This file may be used under the terms of the GNU General Public License
+** version 2.0 as published by the Free Software Foundation and appearing
+** in the file LICENSE.GPL included in the packaging of this file.
 **
-** Contact info@trolltech.com if any conditions of this licensing are
-** not clear to you.
+** Please review the following information to ensure GNU General Public
+** Licensing requirements will be met:
+**     http://www.fsf.org/licensing/licenses/info/GPLv2.html.
 **
-**
-**
-** This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-** WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 **
 ****************************************************************************/
 
@@ -101,26 +99,40 @@ void GSMSpec::resetDictionary(const QString& filePath)
     }
 }
 
+static bool readGsmFile( GsmXmlHandler *handler, const QString& filename )
+{
+    QFile f( filename );
+    if ( !f.open( QIODevice::ReadOnly ) )
+        return false;
+    QXmlStreamReader reader( &f );
+    while ( !reader.atEnd() ) {
+        reader.readNext();
+        if ( reader.hasError() )
+            break;
+        if ( reader.isStartElement() ) {
+            handler->startElement( reader.name().toString(), reader.attributes() );
+        } else if ( reader.isEndElement() ) {
+            handler->endElement();
+        } else if ( reader.isCharacters() ) {
+            handler->characters( reader.text().toString() );
+        }
+    }
+    f.close();
+    return !reader.hasError();
+}
+
 void GSMSpec::setupDictionary(const QString& filePath)
 {
 
     commandMap.clear();
-    QFile file(filePath);
     QString line;
     QStringList okList = QStringList("OK");
 
     GsmXmlHandler *handler = new GsmXmlHandler();
-    QXmlSimpleReader *xmlReader = new QXmlSimpleReader();
-    xmlReader->setContentHandler( handler );
-
-    QXmlInputSource source( &file );
-
-    if( !xmlReader->parse(source) ){
+    if( !readGsmFile(handler, filePath) ){
         qWarning() << "Failed to parse GSM xml file" ;
-        file.close();
         return;
     }
-    file.close();
 
     GsmXmlNode *specNode = handler->documentElement()->children;
     QString command, profile, format, response, description;
@@ -148,13 +160,11 @@ void GSMSpec::setupDictionary(const QString& filePath)
                 specData = specData->next;
 
             }
-            // Add a phone simulator peer entry.
             commandMap.insert( command, GSMItem(command, profile, format.split(";"), response.split(";"), description) );
         }
         specNode = specNode->next;
     }
     // Clean up the XML reader objects.
-    delete xmlReader;
     delete handler;
 
 }
@@ -248,15 +258,15 @@ GsmXmlHandler::~GsmXmlHandler()
 }
 
 
-bool GsmXmlHandler::startElement( const QString&, const QString& localName, const QString&, const QXmlAttributes& atts )
+bool GsmXmlHandler::startElement( const QString& name, const QXmlStreamAttributes& atts )
 {
-    GsmXmlNode *node = new GsmXmlNode( localName );
+    GsmXmlNode *node = new GsmXmlNode( name );
     GsmXmlNode *attr;
     int index;
     current->addChild( node );
-    for ( index = 0; index < atts.length(); ++index ) {
-        attr = new GsmXmlNode( atts.localName( index ) );
-        attr->contents = atts.value( index );
+    for ( index = 0; index < atts.size(); ++index ) {
+        attr = new GsmXmlNode( atts[index].name().toString() );
+        attr->contents = atts[index].value().toString();
         node->addAttribute( attr );
     }
     current = node;
@@ -264,7 +274,7 @@ bool GsmXmlHandler::startElement( const QString&, const QString& localName, cons
 }
 
 
-bool GsmXmlHandler::endElement( const QString&, const QString& , const QString&)
+bool GsmXmlHandler::endElement()
 {
     current = current->parent;
     return true;
@@ -272,13 +282,6 @@ bool GsmXmlHandler::endElement( const QString&, const QString& , const QString&)
 
 
 bool GsmXmlHandler::characters( const QString& ch )
-{
-    current->contents += ch;
-    return true;
-}
-
-
-bool GsmXmlHandler::ignorableWhitespace( const QString& ch )
 {
     current->contents += ch;
     return true;

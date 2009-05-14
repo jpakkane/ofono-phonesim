@@ -1,21 +1,19 @@
 /****************************************************************************
 **
-** Copyright (C) 2000-2007 TROLLTECH ASA. All rights reserved.
+** This file is part of the Qt Extended Opensource Package.
 **
-** This file is part of the Opensource Edition of the Qtopia Toolkit.
+** Copyright (C) 2009 Trolltech ASA.
 **
-** This software is licensed under the terms of the GNU General Public
-** License (GPL) version 2.
+** Contact: Qt Extended Information (info@qtextended.org)
 **
-** See http://www.trolltech.com/gpl/ for GPL licensing information.
+** This file may be used under the terms of the GNU General Public License
+** version 2.0 as published by the Free Software Foundation and appearing
+** in the file LICENSE.GPL included in the packaging of this file.
 **
-** Contact info@trolltech.com if any conditions of this licensing are
-** not clear to you.
+** Please review the following information to ensure GNU General Public
+** Licensing requirements will be met:
+**     http://www.fsf.org/licensing/licenses/info/GPLv2.html.
 **
-**
-**
-** This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-** WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 **
 ****************************************************************************/
 #ifndef QSIMCOMMAND_H
@@ -42,6 +40,11 @@ public:
 
     QString label() const;
     void setLabel( const QString& value );
+
+    QByteArray labelAttribute() const;
+    void setLabelAttribute( const QByteArray& value );
+
+    QString labelHtml() const;
 
     bool hasHelp() const;
     void setHasHelp( bool value );
@@ -106,6 +109,14 @@ public:
         ReceiveData                 = 0x42,
         SendData                    = 0x43,
         GetChannelStatus            = 0x44,
+        ServiceSearch               = 0x45,
+        GetServiceInformation       = 0x46,
+        DeclareService              = 0x47,
+        SetFrames                   = 0x50,
+        GetFramesStatus             = 0x51,
+        RetrieveMultimediaMessage   = 0x60,
+        SubmitMultimediaMessage     = 0x61,
+        DisplayMultimediaMessage    = 0x62,
         EndSession                  = 0x81,
 
         SetupMainMenu               = SetupMenu,
@@ -152,7 +163,9 @@ public:
         FileChange              = 1,
         InitAndFileChange       = 2,
         Initialization          = 3,
-        Reset                   = 4
+        Reset                   = 4,
+        NaaApplicationReset     = 5,
+        NaaSessionReset         = 6
     };
 
     // Event types.
@@ -225,11 +238,21 @@ public:
     QString text() const;
     void setText( const QString& value );
 
+    QByteArray textAttribute() const;
+    void setTextAttribute( const QByteArray& value );
+
+    QString textHtml() const;
+
     bool suppressUserFeedback() const;
     void setSuppressUserFeedback( bool value );
 
     QString otherText() const;
     void setOtherText( const QString& value );
+
+    QByteArray otherTextAttribute() const;
+    void setOtherTextAttribute( const QByteArray& value );
+
+    QString otherTextHtml() const;
 
     QString defaultText() const;
     void setDefaultText( const QString& value );
@@ -297,6 +320,11 @@ public:
     QString title() const;
     void setTitle( const QString& value );
 
+    QByteArray titleAttribute() const;
+    void setTitleAttribute( const QByteArray& value );
+
+    QString titleHtml() const;
+
     uint defaultItem() const;
     void setDefaultItem( uint value );
 
@@ -361,9 +389,8 @@ private:
     QSimCommandPrivate *dwrite();
 };
 
-
 Q_DECLARE_USER_METATYPE(QSimMenuItem)
 Q_DECLARE_USER_METATYPE_ENUM(QSimCommand::Type)
 Q_DECLARE_USER_METATYPE(QSimCommand)
 
-#endif // QSIMCOMMAND_H
+#endif

@@ -1,25 +1,24 @@
 /****************************************************************************
 **
-** Copyright (C) 2000-2007 TROLLTECH ASA. All rights reserved.
+** This file is part of the Qt Extended Opensource Package.
 **
-** This file is part of the Opensource Edition of the Qtopia Toolkit.
+** Copyright (C) 2009 Trolltech ASA.
 **
-** This software is licensed under the terms of the GNU General Public
-** License (GPL) version 2.
+** Contact: Qt Extended Information (info@qtextended.org)
 **
-** See http://www.trolltech.com/gpl/ for GPL licensing information.
+** This file may be used under the terms of the GNU General Public License
+** version 2.0 as published by the Free Software Foundation and appearing
+** in the file LICENSE.GPL included in the packaging of this file.
 **
-** Contact info@trolltech.com if any conditions of this licensing are
-** not clear to you.
+** Please review the following information to ensure GNU General Public
+** Licensing requirements will be met:
+**     http://www.fsf.org/licensing/licenses/info/GPLv2.html.
 **
-**
-**
-** This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-** WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 **
 ****************************************************************************/
-#ifndef QPE_GLOBAL_H
-#define QPE_GLOBAL_H
+
+#ifndef QTOPIAGLOBAL_H
+#define QTOPIAGLOBAL_H
 
 #include <qglobal.h>
 #include <qplugin.h>
@@ -51,6 +50,9 @@
 #ifndef QTOPIACOMM_EXPORT
 #   define QTOPIACOMM_EXPORT QTOPIA_VISIBILITY
 #endif
+#ifndef QTOPIAWHEREABOUTS_EXPORT
+#   define QTOPIAWHEREABOUTS_EXPORT QTOPIA_VISIBILITY
+#endif
 #ifndef QTOPIAPHONE_EXPORT
 #   define QTOPIAPHONE_EXPORT QTOPIA_VISIBILITY
 #endif
@@ -65,6 +67,9 @@
 #endif
 #ifndef QTOPIAAUDIO_EXPORT
 #   define QTOPIAAUDIO_EXPORT QTOPIA_VISIBILITY
+#endif
+#ifndef QTOPIAVIDEO_EXPORT
+#   define QTOPIAVIDEO_EXPORT QTOPIA_VISIBILITY
 #endif
 #ifndef QTOPIAMEDIA_EXPORT
 #   define QTOPIAMEDIA_EXPORT QTOPIA_VISIBILITY
@@ -81,9 +86,16 @@
 #ifndef QTOPIAPRINTING_EXPORT
 #   define QTOPIAPRINTING_EXPORT QTOPIA_VISIBILITY
 #endif
-#ifndef QTOPIATEST_EXPORT
-#   define QTOPIATEST_EXPORT QTOPIA_VISIBILITY
+#ifndef QTOPIATHEMING_EXPORT
+#   define QTOPIATHEMING_EXPORT QTOPIA_VISIBILITY
 #endif
+#ifndef QTUITEST_EXPORT
+#   define QTUITEST_EXPORT QTOPIA_VISIBILITY
+#endif
+#ifndef QTOPIACOLLECTIVE_EXPORT
+#   define QTOPIACOLLECTIVE_EXPORT QTOPIA_VISIBILITY
+#endif
+
 
 // This macro exports symbols only when building a test-enabled build.
 // Use this to make private classes available for test.

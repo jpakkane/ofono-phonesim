@@ -1,25 +1,23 @@
 /****************************************************************************
 **
-** Copyright (C) 2000-2007 TROLLTECH ASA. All rights reserved.
+** This file is part of the Qt Extended Opensource Package.
 **
-** This file is part of the Opensource Edition of the Qtopia Toolkit.
+** Copyright (C) 2009 Trolltech ASA.
 **
-** This software is licensed under the terms of the GNU General Public
-** License (GPL) version 2.
+** Contact: Qt Extended Information (info@qtextended.org)
 **
-** See http://www.trolltech.com/gpl/ for GPL licensing information.
+** This file may be used under the terms of the GNU General Public License
+** version 2.0 as published by the Free Software Foundation and appearing
+** in the file LICENSE.GPL included in the packaging of this file.
 **
-** Contact info@trolltech.com if any conditions of this licensing are
-** not clear to you.
+** Please review the following information to ensure GNU General Public
+** Licensing requirements will be met:
+**     http://www.fsf.org/licensing/licenses/info/GPLv2.html.
 **
-**
-**
-** This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-** WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 **
 ****************************************************************************/
 
-#include <lib/server.h>
+#include <phonesim/server.h>
 #ifndef PHONESIM_TARGET
     #include "control.h"
     #include <qapplication.h>
@@ -30,9 +28,11 @@
 #include <qdebug.h>
 #include <stdlib.h>
 
-static void usage( const QString& progname )
+static void usage()
 {
-    qWarning() << "Usage: "<< progname << " [-p port] [-gui] filename";
+    qWarning() << "Usage:"
+               << QFileInfo(QCoreApplication::instance()->applicationFilePath()).fileName().toLocal8Bit().constData()
+               << "[-p port] [-gui] filename";
     exit(-1);
 }
 
@@ -54,7 +54,8 @@ int main(int argc, char **argv)
         if (strcmp(argv[index],"-p") == 0) {
             index++;
             if (index >= argc) {
-                usage( app.applicationName() );
+                qWarning() << "ERROR: Got -p but missing port number";
+                usage();
             } else {
                 port = atoi(argv[index]);
             }
@@ -63,11 +64,12 @@ int main(int argc, char **argv)
             with_gui = true;
         } else if ( strcmp(argv[index],"-h") == 0
                 || strcmp(argv[index],"-help") == 0 ) {
-            usage( argv[0] );
+            usage();
         } else {
             // must be filename.  SHOULD be last argument.
             if (index != argc-1) {
-                usage( app.applicationName() );
+                qWarning() << "ERROR: filename must be the last argument";
+                usage();
             }
             filename = argv[index];
         }

@@ -1,21 +1,19 @@
 /****************************************************************************
 **
-** Copyright (C) 2000-2007 TROLLTECH ASA. All rights reserved.
+** This file is part of the Qt Extended Opensource Package.
 **
-** This file is part of the Opensource Edition of the Qtopia Toolkit.
+** Copyright (C) 2009 Trolltech ASA.
 **
-** This software is licensed under the terms of the GNU General Public
-** License (GPL) version 2.
+** Contact: Qt Extended Information (info@qtextended.org)
 **
-** See http://www.trolltech.com/gpl/ for GPL licensing information.
+** This file may be used under the terms of the GNU General Public License
+** version 2.0 as published by the Free Software Foundation and appearing
+** in the file LICENSE.GPL included in the packaging of this file.
 **
-** Contact info@trolltech.com if any conditions of this licensing are
-** not clear to you.
+** Please review the following information to ensure GNU General Public
+** Licensing requirements will be met:
+**     http://www.fsf.org/licensing/licenses/info/GPLv2.html.
 **
-**
-**
-** This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-** WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 **
 ****************************************************************************/
 
@@ -23,8 +21,9 @@
 #include <qatutils.h>
 #include <qsmsmessage.h>
 #include <qgsmcodec.h>
-#include <qtopialog.h>
+#include <qvarlengtharray.h>
 
+static QString textToHtml(const QString& text, const QByteArray& attrs);
 
 class QSimMenuItemPrivate
 {
@@ -40,6 +39,7 @@ public:
 
     uint identifier;
     QString label;
+    QByteArray labelAttribute;
     uint iconId;
     bool hasHelp;
     bool iconSelfExplanatory;
@@ -52,11 +52,7 @@ class QSimCommandPrivate
 public:
     QSimCommandPrivate()
     {
-#if QT_VERSION < 0x040400
-        ref.init(1);
-#else
         ref = 1;
-#endif
         commandNumber = 1;
         type = QSimCommand::NoCommand;
         sourceDevice = QSimCommand::SIM;
@@ -75,18 +71,16 @@ public:
     }
     QSimCommandPrivate( QSimCommandPrivate *other )
     {
-#if QT_VERSION < 0x040400
-        ref.init(1);
-#else
         ref = 1;
-#endif
         commandNumber = other->commandNumber;
         type = other->type;
         sourceDevice = other->sourceDevice;
         destinationDevice = other->destinationDevice;
         flags = other->flags;
         text = other->text;
+        textAttribute = other->textAttribute;
         otherText = other->otherText;
+        otherTextAttribute = other->otherTextAttribute;
         defaultText = other->defaultText;
         minimumLength = other->minimumLength;
         maximumLength = other->maximumLength;
@@ -96,6 +90,7 @@ public:
         tone = other->tone;
         duration = other->duration;
         title = other->title;
+        titleAttribute = other->titleAttribute;
         defaultItem = other->defaultItem;
         menuItems = other->menuItems;
         url = other->url;
@@ -121,7 +116,9 @@ public:
         destinationDevice = (QSimCommand::Device)readInt( stream );
         flags = readInt( stream );
         stream >> text;
+        stream >> textAttribute;
         stream >> otherText;
+        stream >> otherTextAttribute;
         stream >> defaultText;
         stream >> minimumLength;
         stream >> maximumLength;
@@ -131,6 +128,7 @@ public:
         tone = (QSimCommand::Tone)readInt( stream );
         stream >> duration;
         stream >> title;
+        stream >> titleAttribute;
         stream >> defaultItem;
         stream >> menuItems;
         stream >> url;
@@ -149,7 +147,9 @@ public:
         stream << (int)destinationDevice;
         stream << flags;
         stream << text;
+        stream << textAttribute;
         stream << otherText;
+        stream << otherTextAttribute;
         stream << defaultText;
         stream << minimumLength;
         stream << maximumLength;
@@ -159,6 +159,7 @@ public:
         stream << (int)tone;
         stream << duration;
         stream << title;
+        stream << titleAttribute;
         stream << defaultItem;
         stream << menuItems;
         stream << url;
@@ -200,18 +201,16 @@ public:
     #define SC_IconSelfExplanatory2 (1<<2)
     #define SC_SuppressUserFeedback (1<<3)
 
-#if QT_VERSION < 0x040400
-    QBasicAtomic ref;
-#else
     QAtomicInt ref;
-#endif
     int commandNumber;
     QSimCommand::Type type;
     QSimCommand::Device sourceDevice;
     QSimCommand::Device destinationDevice;
     int flags;
     QString text;
+    QByteArray textAttribute;
     QString otherText;
+    QByteArray otherTextAttribute;
     QString defaultText;
     uint minimumLength;
     uint maximumLength;
@@ -221,6 +220,7 @@ public:
     QSimCommand::Tone tone;
     uint duration;
     QString title;
+    QByteArray titleAttribute;
     uint defaultItem;
     QList<QSimMenuItem> menuItems;
     QString url;
@@ -235,7 +235,8 @@ public:
 
 /*!
     \class QSimMenuItem
-    \mainclass
+    \inpublicgroup QtTelephonyModule
+
     \brief The QSimMenuItem class provides information about a menu item within a SIM toolkit application
 
     \ingroup telephony
@@ -259,6 +260,7 @@ QSimMenuItem::QSimMenuItem( const QSimMenuItem& value )
     d = new QSimMenuItemPrivate();
     d->identifier = value.d->identifier;
     d->label = value.d->label;
+    d->labelAttribute = value.d->labelAttribute;
     d->iconId = value.d->iconId;
     d->hasHelp = value.d->hasHelp;
     d->iconSelfExplanatory = value.d->iconSelfExplanatory;
@@ -316,6 +318,46 @@ QString QSimMenuItem::label() const
 void QSimMenuItem::setLabel( const QString& value )
 {
     d->label = value;
+}
+
+
+/*!
+    Returns the menu item's text attributes for formatting label().
+    Returns an empty QByteArray if the label() is not formatted.
+
+    \sa setLabelAttribute(), label(), labelHtml()
+    \since 4.4
+*/
+QByteArray QSimMenuItem::labelAttribute() const
+{
+    return d->labelAttribute;
+}
+
+
+/*!
+    Sets the menu item's text attributes for formatting label() to \a value.
+    If \a value is an empty QByteArray, then label() is not formatted.
+
+    \sa labelAttribute(), label(), labelHtml()
+    \since 4.4
+*/
+void QSimMenuItem::setLabelAttribute( const QByteArray& value )
+{
+    d->labelAttribute = value;
+}
+
+
+/*!
+    Returns the menu item's label() as a HTML string.  If the menu
+    item has labelAttribute(), then they will be used to format
+    the label() appropriately.
+
+    \sa label(), labelAttribute()
+    \since 4.4
+*/
+QString QSimMenuItem::labelHtml() const
+{
+    return textToHtml( d->label, d->labelAttribute );
 }
 
 
@@ -423,6 +465,7 @@ QSimMenuItem& QSimMenuItem::operator=( const QSimMenuItem & value )
 {
     d->identifier = value.d->identifier;
     d->label = value.d->label;
+    d->labelAttribute = value.d->labelAttribute;
     d->iconId = value.d->iconId;
     d->hasHelp = value.d->hasHelp;
     d->iconSelfExplanatory = value.d->iconSelfExplanatory;
@@ -444,6 +487,7 @@ template <typename Stream> void QSimMenuItem::deserialize(Stream &stream)
 {
     stream >> d->identifier;
     stream >> d->label;
+    stream >> d->labelAttribute;
     stream >> d->iconId;
     int value;
     stream >> value;
@@ -466,6 +510,7 @@ template <typename Stream> void QSimMenuItem::serialize(Stream &stream) const
 {
     stream << d->identifier;
     stream << d->label;
+    stream << d->labelAttribute;
     stream << d->iconId;
     stream << (int)(d->hasHelp);
     stream << (int)(d->iconSelfExplanatory);
@@ -474,7 +519,8 @@ template <typename Stream> void QSimMenuItem::serialize(Stream &stream) const
 
 /*!
     \class QSimCommand
-    \mainclass
+    \inpublicgroup QtTelephonyModule
+
     \brief The QSimCommand class specifies the details of a SIM toolkit command message.
 
     Applications that run within a SIM send commands to the host program
@@ -559,6 +605,24 @@ template <typename Stream> void QSimMenuItem::serialize(Stream &stream) const
     \value ReceiveData Receive data on a data channel.
     \value SendData Send data on a data channel.
     \value GetChannelStatus Get the current status of a data channel.
+    \value ServiceSearch Search for the availability of a service in the
+           environment of the terminal.  Since Qtopia 4.4.  Compliant
+           with ETSI TS 102 223.
+    \value GetServiceInformation Get the complete service record related
+           to a service.  Since Qtopia 4.4.  Compliant with ETSI TS 102 223.
+    \value DeclareService Declare a service that is provided by the SIM.
+           Since Qtopia 4.4.  Compliant with ETSI TS 102 223.
+    \value SetFrames Divide the screen into multiple, scrollable rectangular
+           regions in order to present multiple information at once.
+           Since Qtopia 4.4.  Compliant with ETSI TS 102 223.
+    \value GetFramesStatus Get the status on the frames supported by the SIM.
+           Since Qtopia 4.4.  Compliant with ETSI TS 102 223.
+    \value RetrieveMultimediaMessage Retrieve a multimedia message from
+           the network.  Since Qtopia 4.4.  Compliant with ETSI TS 102 223.
+    \value SubmitMultimediaMessage Submit a multimedia message to the network.
+           Since Qtopia 4.4.  Compliant with ETSI TS 102 223.
+    \value DisplayMultimediaMessage Display a multimedia message.
+           Since Qtopia 4.4.  Compliant with ETSI TS 102 223.
     \value EndSession Indicate that the SIM toolkit session has ended
     \value SetupMainMenu Alias for SetupMenu, provided for backwards compatiblity.
     \value SetupSubMenu Alias for SelectItem, provided for backwards compatiblity.
@@ -613,6 +677,10 @@ template <typename Stream> void QSimMenuItem::serialize(Stream &stream) const
     \value InitAndFileChange SIM initialization and file change notification.
     \value Initialization SIM initialization.
     \value Reset SIM reset.
+    \value NaaApplicationReset NAA application reset.  This is only applicable
+           for a 3G platform.  Since Qtopia 4.4.  Compliant with ETSI TS 102 223.
+    \value NaaSessionReset NAA session reset.  This is only applicable
+           for a 3G platform.  Since Qtopia 4.4.  Compliant with ETSI TS 102 223.
 */
 
 /*!
@@ -859,7 +927,8 @@ void QSimCommand::setHasHelp( bool value )
     Returns the text to be displayed as either a message, a prompt, or an SMS.
 
     Applies to: \c DisplayText, \c GetInkey, \c GetInput, \c SendSS, \c SendSMS,
-    \c SendUSSD, \c PlayTone, \c LanguageNotification.
+    \c SendUSSD, \c PlayTone, \c ServiceSearch, \c GetServiceInformation,
+    \c RetrieveMultimediaMessage, \c SubmitMultimediaMessage.
 
     \sa setText()
 */
@@ -873,13 +942,63 @@ QString QSimCommand::text() const
     Sets the text to be displayed by this command to \a value.
 
     Applies to: \c DisplayText, \c GetInkey, \c GetInput, \c SendSS, \c SendSMS,
-    \c SendUSSD, \c PlayTone.
+    \c SendUSSD, \c PlayTone, \c ServiceSearch, \c GetServiceInformation,
+    \c RetrieveMultimediaMessage, \c SubmitMultimediaMessage.
 
     \sa text()
 */
 void QSimCommand::setText( const QString& value )
 {
     dwrite()->text = value;
+}
+
+
+/*!
+    Returns the text attributes to be applied to text() for formatting.
+
+    Applies to: \c DisplayText, \c GetInkey, \c GetInput, \c SendSS, \c SendSMS,
+    \c SendUSSD, \c PlayTone, \c ServiceSearch, \c GetServiceInformation,
+    \c RetrieveMultimediaMessage, \c SubmitMultimediaMessage.
+
+    \sa setTextAttribute(), text()
+    \since 4.4
+*/
+QByteArray QSimCommand::textAttribute() const
+{
+    return d->textAttribute;
+}
+
+
+/*!
+    Sets the text attributes to be applied to text() for formatting to \a value.
+
+    Applies to: \c DisplayText, \c GetInkey, \c GetInput, \c SendSS, \c SendSMS,
+    \c SendUSSD, \c PlayTone, \c ServiceSearch, \c GetServiceInformation,
+    \c RetrieveMultimediaMessage, \c SubmitMultimediaMessage.
+
+    \sa textAttribute(), text(), textHtml()
+    \since 4.4
+*/
+void QSimCommand::setTextAttribute( const QByteArray& value )
+{
+    dwrite()->textAttribute = value;
+}
+
+
+/*!
+    Returns text() formatted as HTML according to the attributes
+    in textAttribute().
+
+    Applies to: \c DisplayText, \c GetInkey, \c GetInput, \c SendSS, \c SendSMS,
+    \c SendUSSD, \c PlayTone, \c ServiceSearch, \c GetServiceInformation,
+    \c RetrieveMultimediaMessage, \c SubmitMultimediaMessage.
+
+    \sa text(), textAttribute()
+    \since 4.4
+*/
+QString QSimCommand::textHtml() const
+{
+    return textToHtml( d->text, d->textAttribute );
 }
 
 
@@ -953,6 +1072,49 @@ void QSimCommand::setOtherText( const QString& value )
 
 
 /*!
+    Returns the text attributes to use to format otherText().
+
+    Applies to: \c SetupCall
+
+    \sa setOtherTextAttribute(), otherText(), otherTextHtml()
+    \since 4.4
+*/
+QByteArray QSimCommand::otherTextAttribute() const
+{
+    return d->otherTextAttribute;
+}
+
+
+/*!
+    Sets the text attributes to use to format otherText() to \a value.
+
+    Applies to: \c SetupCall
+
+    \sa otherTextAttribute(), otherText(), otherTextHtml()
+    \since 4.4
+*/
+void QSimCommand::setOtherTextAttribute( const QByteArray& value )
+{
+    dwrite()->otherTextAttribute = value;
+}
+
+
+/*!
+    Returns otherText() formatted as HTML according to the attributes
+    in otherTextAttribute().
+
+    Applies to: \c SetupCall
+
+    \sa otherText(), otherTextAttribute()
+    \since 4.4
+*/
+QString QSimCommand::otherTextHtml() const
+{
+    return textToHtml( d->otherText, d->otherTextAttribute );
+}
+
+
+/*!
     Returns the default text for \c GetInput commands.
 
     Applies to: \c GetInput
@@ -983,13 +1145,14 @@ void QSimCommand::setDefaultText( const QString& value )
     the text as high priority (true) or normal priority (false).
     The default value is false.
 
-    Applies to: \c DisplayText.
+    Applies to: \c DisplayText, \c DisplayMultimediaMessage.
 
     \sa setHighPriority()
 */
 bool QSimCommand::highPriority() const
 {
-    if ( d->type == QSimCommand::DisplayText )
+    if ( d->type == QSimCommand::DisplayText ||
+         d->type == QSimCommand::DisplayMultimediaMessage)
         return d->qualifierBit( 0x01 );
     else
         return false;
@@ -997,16 +1160,17 @@ bool QSimCommand::highPriority() const
 
 
 /*!
-    Sets the high priority text display flag to \a value.  If type() is not DisplayText,
-    then the request is ignored.
+    Sets the high priority text display flag to \a value.  If type() is not \c DisplayText
+    or \c DisplayMultimediaMessage, then the request is ignored.
 
-    Applies to: \c DisplayText.
+    Applies to: \c DisplayText, \c DisplayMultimediaMessage.
 
     \sa highPriority()
 */
 void QSimCommand::setHighPriority( bool value )
 {
-    if ( d->type == QSimCommand::DisplayText )
+    if ( d->type == QSimCommand::DisplayText ||
+         d->type == QSimCommand::DisplayMultimediaMessage)
         dwrite()->setQualifierBit( 0x01, value );
 }
 
@@ -1017,7 +1181,7 @@ void QSimCommand::setHighPriority( bool value )
     the client must call QSimToolkit::clearText() to move on to
     the next SIM application state.  The default value is true.
 
-    Applies to: \c DisplayText.
+    Applies to: \c DisplayText, \c DisplayMultimediaMessage.
 
     Note: in Qtopia 4.3 and newer, the default value is true.  If Qtopia 4.2 and older,
     the default value was false.  The change was due to the introduction of the
@@ -1027,7 +1191,8 @@ void QSimCommand::setHighPriority( bool value )
 */
 bool QSimCommand::clearAfterDelay() const
 {
-    if ( d->type == QSimCommand::DisplayText )
+    if ( d->type == QSimCommand::DisplayText ||
+         d->type == QSimCommand::DisplayMultimediaMessage)
         return !d->qualifierBit( 0x80 );
     else
         return true;
@@ -1036,26 +1201,28 @@ bool QSimCommand::clearAfterDelay() const
 
 /*!
     Sets the clear after delay flag for text display to \a value.  If type() is not
-    DisplayText, the request is ignored.
+    \c DisplayText or \c DisplayMultimediaMessage, the request is ignored.
 
-    Applies to: \c DisplayText.
+    Applies to: \c DisplayText, \c DisplayMultimediaMessage.
 
     \sa clearAfterDelay()
 */
 void QSimCommand::setClearAfterDelay( bool value )
 {
-    if ( d->type == QSimCommand::DisplayText )
+    if ( d->type == QSimCommand::DisplayText ||
+         d->type == QSimCommand::DisplayMultimediaMessage)
         dwrite()->setQualifierBit( 0x80, !value );
 }
 
 
 /*!
-    Returns true if a \c DisplayText command should result in an immediate response
-    to the SIM without asking the user to confirm the text first; or false if the
-    user should confirm, or the response should be sent after the usual delay if
-    clearAfterDelay() is set.  The default value is false.
+    Returns true if a \c DisplayText or \c DisplayMultimediaMessage command
+    should result in an immediate response to the SIM without asking the
+    user to confirm the text first; or false if the user should confirm,
+    or the response should be sent after the usual delay if clearAfterDelay()
+    is set.  The default value is false.
 
-    Applies to: \c DisplayText
+    Applies to: \c DisplayText, \c DisplayMultimediaMessage
 
     \sa setImmediateResponse(), clearAfterDelay()
 */
@@ -1067,12 +1234,12 @@ bool QSimCommand::immediateResponse() const
 
 /*!
     Sets the immediate response flag to \a value.  If \a value is true, then the
-    \c DisplayText command should result in an immediate response to the SIM without
-    asking the user to confirm the text first.  If \a value is false, the user
-    should confirm, or the response should be sent after the usual delay if
-    clearAfterDelay() is set.
+    \c DisplayText or \c DisplayMultimediaMessage command should result in an
+    immediate response to the SIM without asking the user to confirm the text first.
+    If \a value is false, the user should confirm, or the response should be sent
+    after the usual delay if clearAfterDelay() is set.
 
-    Applies to: \c DisplayText
+    Applies to: \c DisplayText, \c DisplayMultimediaMessage
 
     \sa immediateResponse(), clearAfterDelay()
 */
@@ -1656,6 +1823,49 @@ void QSimCommand::setTitle( const QString& value )
 
 
 /*!
+    Returns the text attribute to use to format title().
+
+    Applies to: \c SetupMenu, \c SelectItem.
+
+    \sa setTitleAttribute(), title(), titleHtml()
+    \since 4.4
+*/
+QByteArray QSimCommand::titleAttribute() const
+{
+    return d->titleAttribute;
+}
+
+
+/*!
+    Sets the text attribute to use to format title() to \a value.
+
+    Applies to: \c SetupMenu, \c SelectItem.
+
+    \sa titleAttribute(), title(), titleHtml()
+    \since 4.4
+*/
+void QSimCommand::setTitleAttribute( const QByteArray& value )
+{
+    dwrite()->titleAttribute = value;
+}
+
+
+/*!
+    Returns title() formatted as HTML according to the attributes
+    in titleAttribute().
+
+    Applies to: \c SetupMenu, \c SelectItem.
+
+    \sa title(), titleAttribute()
+    \since 4.4
+*/
+QString QSimCommand::titleHtml() const
+{
+    return textToHtml( d->title, d->titleAttribute );
+}
+
+
+/*!
     Returns the index of the default item in the menu, or zero if no default.
 
     Applies to: \c SelectItem.
@@ -1886,7 +2096,8 @@ void QSimCommand::setUrl( const QString& value )
 
     Applies to: \c DisplayText, \c GetInkey, \c GetInput, \c PlayTone, \c SelectItem,
     \c SendSMS, \c SendSS, \c SetupCall, \c SetupMenu, \c LaunchBrowser,
-    \c SetupIdleModeText
+    \c SetupIdleModeText, \c ServiceSearch, \c GetServiceInformation,
+    \c RetrieveMultimediaMessage, \c SubmitMultimediaMessage
 
     \sa setIconId()
 */
@@ -1900,7 +2111,8 @@ uint QSimCommand::iconId() const
 
     Applies to: \c DisplayText, \c GetInkey, \c GetInput, \c PlayTone, \c SelectItem,
     \c SendSMS, \c SendSS, \c SetupCall, \c SetupMenu, \c LaunchBrowser,
-    \c SetupIdleModeText
+    \c SetupIdleModeText, \c ServiceSearch, \c GetServiceInformation,
+    \c RetrieveMultimediaMessage, \c SubmitMultimediaMessage
 
     \sa iconId()
 */
@@ -1917,7 +2129,8 @@ void QSimCommand::setIconId( uint value )
 
     Applies to: \c DisplayText, \c GetInkey, \c GetInput, \c PlayTone, \c SelectItem,
     \c SendSMS, \c SendSS, \c SetupCall, \c SetupMenu, \c LaunchBrowser,
-    \c SetupIdleModeText
+    \c SetupIdleModeText, \c ServiceSearch, \c GetServiceInformation,
+    \c RetrieveMultimediaMessage, \c SubmitMultimediaMessage
 
     \sa setIconSelfExplanatory()
 */
@@ -1931,7 +2144,8 @@ bool QSimCommand::iconSelfExplanatory() const
 
     Applies to: \c DisplayText, \c GetInkey, \c GetInput, \c PlayTone, \c SelectItem,
     \c SendSMS, \c SendSS, \c SetupCall, \c SetupMenu, \c LaunchBrowser,
-    \c SetupIdleModeText
+    \c SetupIdleModeText, \c ServiceSearch, \c GetServiceInformation,
+    \c RetrieveMultimediaMessage, \c SubmitMultimediaMessage
 
     \sa iconSelfExplanatory()
 */
@@ -2311,6 +2525,7 @@ QSimCommand QSimCommand::fromPdu( const QByteArray& pdu )
     uint tag, length;
     QList<QSimMenuItem> items;
     bool seenText = false;
+    bool seenTextAttribute = false;
     bool seenIcon = false;
 
     // Read the first BER blob, which should be the command details.
@@ -2558,6 +2773,33 @@ QSimCommand QSimCommand::fromPdu( const QByteArray& pdu )
             }
             break;
 
+            case 0x50:
+            {
+                // Text attribute, ETSI TS 102 223, section 8.72.
+                if ( sc.type() == SetupMenu || sc.type() == SelectItem ) {
+                    sc.setTitleAttribute( pdu.mid( posn, length ) );
+                } else if ( seenTextAttribute ) {
+                    sc.setOtherTextAttribute( pdu.mid( posn, length ) );
+                } else {
+                    sc.setTextAttribute( pdu.mid( posn, length ) );
+                    seenTextAttribute = true;
+                }
+            }
+            break;
+
+            case 0x51:
+            {
+                // Item text attribute list, ETSI TS 102 223, section 8.73.
+                int index = 0;
+                while ( length >= 4 && index < items.size() ) {
+                    items[index].setLabelAttribute( pdu.mid( posn, 4 ) );
+                    length -= 4;
+                    posn += 4;
+                    ++index;
+                }
+            }
+            break;
+
             default:
             {
                 // Don't know what this is, so add it as an extension field.
@@ -2794,6 +3036,16 @@ bool _qtopiaphone_extractAndWriteExtField( QByteArray& data, QByteArray& extData
 }
 #define extractAndWriteExtField _qtopiaphone_extractAndWriteExtField
 
+// Write a text attribute field.
+static void writeTextAttribute( QByteArray& data, const QByteArray& attr )
+{
+    if ( !attr.isEmpty() ) {
+        data += (char)0xD0;
+        writeBerLength( data, attr.length() );
+        data += attr;
+    }
+}
+
 /*!
     \enum QSimCommand::ToPduOptions
     This enum defines additional options to use when encoding SIM commands with QSimCommand::toPdu().
@@ -2857,6 +3109,7 @@ QByteArray QSimCommand::toPdu( QSimCommand::ToPduOptions options ) const
                 data += (char)0xAB;
                 data += (char)0x00;
             }
+            writeTextAttribute( data, textAttribute() );
         }
         break;
 
@@ -2864,6 +3117,7 @@ QByteArray QSimCommand::toPdu( QSimCommand::ToPduOptions options ) const
         {
             writeTextString( data, text(), options );
             writeIcon( data, iconId(), iconSelfExplanatory(), false );
+            writeTextAttribute( data, textAttribute() );
         }
         break;
 
@@ -2880,6 +3134,7 @@ QByteArray QSimCommand::toPdu( QSimCommand::ToPduOptions options ) const
                 writeTextString( data, defaultText(), QSimCommand::NoPduOptions, 0x17 );
             }
             writeIcon( data, iconId(), iconSelfExplanatory(), false );
+            writeTextAttribute( data, textAttribute() );
         }
         break;
 
@@ -2894,6 +3149,7 @@ QByteArray QSimCommand::toPdu( QSimCommand::ToPduOptions options ) const
             }
             writeDuration( data, duration() );
             writeIcon( data, iconId(), iconSelfExplanatory(), false );
+            writeTextAttribute( data, textAttribute() );
         }
         break;
 
@@ -2909,6 +3165,7 @@ QByteArray QSimCommand::toPdu( QSimCommand::ToPduOptions options ) const
             if ( type() == SetupMenu || !title().isEmpty() )
                 writeEFADN( data, title(), options );
             bool hasIcons = false;
+            int attrLen = 0;
             bool hasNextActions = false;
             bool selfExplanatory = false;
             if ( menuItems().size() == 0 ) {
@@ -2928,6 +3185,7 @@ QByteArray QSimCommand::toPdu( QSimCommand::ToPduOptions options ) const
                     hasNextActions = true;
                 if ( item.iconSelfExplanatory() )
                     selfExplanatory = true;
+                attrLen += item.labelAttribute().size();
             }
             if ( hasNextActions ) {
                 data += (char)0x18;
@@ -2948,6 +3206,14 @@ QByteArray QSimCommand::toPdu( QSimCommand::ToPduOptions options ) const
                 foreach ( QSimMenuItem item, menuItems() )
                     data += (char)item.iconId();
             }
+            writeTextAttribute( data, titleAttribute() );
+            if ( attrLen != 0 ) {
+                data += (char)0xD1;
+                writeBerLength( data, attrLen );
+                foreach ( QSimMenuItem item, menuItems() ) {
+                    data += item.labelAttribute();
+                }
+            }
         }
         break;
 
@@ -2959,6 +3225,7 @@ QByteArray QSimCommand::toPdu( QSimCommand::ToPduOptions options ) const
                 writeEFADNNumber( data, number() );
             extractAndWriteExtField( data, extData, 0x8B );
             writeIcon( data, iconId(), iconSelfExplanatory(), iconSelfExplanatory() );
+            writeTextAttribute( data, textAttribute() );
         }
         break;
 
@@ -2968,6 +3235,7 @@ QByteArray QSimCommand::toPdu( QSimCommand::ToPduOptions options ) const
                 writeEFADN( data, text(), options );
             writeEFADNNumber( data, number(), 0x89, 255 );
             writeIcon( data, iconId(), iconSelfExplanatory(), true );
+            writeTextAttribute( data, textAttribute() );
         }
         break;
 
@@ -2980,6 +3248,7 @@ QByteArray QSimCommand::toPdu( QSimCommand::ToPduOptions options ) const
             else
                 writeTextString( data, number(), options, 0x408A );
             writeIcon( data, iconId(), iconSelfExplanatory(), true );
+            writeTextAttribute( data, textAttribute() );
         }
         break;
 
@@ -2996,6 +3265,8 @@ QByteArray QSimCommand::toPdu( QSimCommand::ToPduOptions options ) const
             if ( !otherText().isEmpty() )
                 writeEFADN( data, otherText(), QSimCommand::NoPduOptions );
             writeIcon( data, otherIconId(), otherIconSelfExplanatory(), true );
+            writeTextAttribute( data, textAttribute() );
+            writeTextAttribute( data, otherTextAttribute() );
         }
         break;
 
@@ -3003,6 +3274,7 @@ QByteArray QSimCommand::toPdu( QSimCommand::ToPduOptions options ) const
         {
             writeTextString( data, text(), options );
             writeIcon( data, iconId(), iconSelfExplanatory(), true );
+            writeTextAttribute( data, textAttribute() );
         }
         break;
 
@@ -3012,6 +3284,7 @@ QByteArray QSimCommand::toPdu( QSimCommand::ToPduOptions options ) const
                 writeEFADN( data, text(), QSimCommand::NoPduOptions );
             extractAndWriteExtField( data, extData, 0xA8 );
             writeIcon( data, iconId(), iconSelfExplanatory(), true );
+            writeTextAttribute( data, textAttribute() );
         }
         break;
 
@@ -3021,6 +3294,7 @@ QByteArray QSimCommand::toPdu( QSimCommand::ToPduOptions options ) const
                 writeEFADN( data, text(), options );
             writeEFADNNumber( data, number(), 0xAC );
             writeIcon( data, iconId(), iconSelfExplanatory(), true );
+            writeTextAttribute( data, textAttribute() );
         }
         break;
 
@@ -3033,6 +3307,7 @@ QByteArray QSimCommand::toPdu( QSimCommand::ToPduOptions options ) const
             if ( !text().isEmpty() || ( options & QSimCommand::EncodeEmptyStrings ) != 0 )
                 writeEFADN( data, text(), options, 0x05 );
             writeIcon( data, iconId(), iconSelfExplanatory(), false );
+            writeTextAttribute( data, textAttribute() );
         }
         break;
 
@@ -3045,6 +3320,7 @@ QByteArray QSimCommand::toPdu( QSimCommand::ToPduOptions options ) const
                 writeEFADNNumber( data, number() );
             if ( !subAddress().isEmpty() )
                 writeSubAddress( data, subAddress() );
+            writeTextAttribute( data, textAttribute() );
         }
         break;
 
@@ -3055,6 +3331,63 @@ QByteArray QSimCommand::toPdu( QSimCommand::ToPduOptions options ) const
             if ( !text().isEmpty() || ( options & QSimCommand::EncodeEmptyStrings ) != 0 )
                 writeEFADN( data, text(), options, 0x05 );
             writeIcon( data, iconId(), iconSelfExplanatory(), true );
+            writeTextAttribute( data, textAttribute() );
+        }
+        break;
+
+        case ServiceSearch:
+        {
+            if ( !text().isEmpty() || ( options & QSimCommand::EncodeEmptyStrings ) != 0 )
+                writeEFADN( data, text(), options, 0x05 );
+            writeIcon( data, iconId(), iconSelfExplanatory(), true );
+            extractAndWriteExtField( data, extData, 0xC3 ); // Service search
+            extractAndWriteExtField( data, extData, 0xC2 ); // Device filter
+            writeTextAttribute( data, textAttribute() );
+        }
+        break;
+
+        case GetServiceInformation:
+        {
+            if ( !text().isEmpty() || ( options & QSimCommand::EncodeEmptyStrings ) != 0 )
+                writeEFADN( data, text(), options, 0x05 );
+            writeIcon( data, iconId(), iconSelfExplanatory(), true );
+            extractAndWriteExtField( data, extData, 0xC4 ); // Attribute information
+            writeTextAttribute( data, textAttribute() );
+        }
+        break;
+
+        case RetrieveMultimediaMessage:
+        {
+            if ( !text().isEmpty() || ( options & QSimCommand::EncodeEmptyStrings ) != 0 )
+                writeEFADN( data, text(), options, 0x05 );
+            writeIcon( data, iconId(), iconSelfExplanatory(), true );
+            extractAndWriteExtField( data, extData, 0xEA ); // Multimedia message reference
+            extractAndWriteExtField( data, extData, 0x92 ); // MMS reception file
+            extractAndWriteExtField( data, extData, 0xEE ); // Content identifier
+            extractAndWriteExtField( data, extData, 0xEB ); // Message identifier
+            writeTextAttribute( data, textAttribute() );
+        }
+        break;
+
+        case SubmitMultimediaMessage:
+        {
+            if ( !text().isEmpty() || ( options & QSimCommand::EncodeEmptyStrings ) != 0 )
+                writeEFADN( data, text(), options, 0x05 );
+            writeIcon( data, iconId(), iconSelfExplanatory(), true );
+            extractAndWriteExtField( data, extData, 0x92 ); // MMS submission file
+            extractAndWriteExtField( data, extData, 0xEB ); // Message identifier
+            writeTextAttribute( data, textAttribute() );
+        }
+        break;
+
+        case DisplayMultimediaMessage:
+        {
+            extractAndWriteExtField( data, extData, 0x92 ); // MMS submission file
+            extractAndWriteExtField( data, extData, 0xEB ); // Message identifier
+            if ( immediateResponse() ) {
+                data += (char)0xAB;
+                data += (char)0x00;
+            }
         }
         break;
 
@@ -3229,6 +3562,192 @@ QSimCommandPrivate *QSimCommand::dwrite()
         delete d;
     d = newd;
     return newd;
+}
+
+#define EMS_ALIGNMENT       0x03
+#define EMS_LEFT            0x00
+#define EMS_CENTER          0x01
+#define EMS_RIGHT           0x02
+#define EMS_NO_ALIGN        0x03
+#define EMS_FONT_SIZE       0x0C
+#define EMS_FONT_LARGE      0x04
+#define EMS_FONT_SMALL      0x08
+#define EMS_BOLD            0x10
+#define EMS_ITALIC          0x20
+#define EMS_UNDERLINE       0x40
+#define EMS_STRIKE          0x80
+#define EMS_NO_FORMAT       ((-1 << 8) | EMS_NO_ALIGN)
+
+// Map an EMS color code into a HTML color value.
+static QString mapEmsColor(int color)
+{
+    static const char * const colors[16] = {
+        "#000000",      // Black
+        "#808080",      // Dark Grey
+        "#800000",      // Dark Red
+        "#808000",      // Dark Yellow
+        "#008000",      // Dark Green
+        "#008080",      // Dark Cyan
+        "#000080",      // Dark Blue
+        "#800080",      // Dark Magenta
+        "#C0C0C0",      // Grey
+        "#FFFFFF",      // White
+        "#FF0000",      // Bright Red
+        "#FFFF00",      // Bright Yellow
+        "#00FF00",      // Bright Green
+        "#00FFFF",      // Bright Cyan
+        "#0000FF",      // Bright Blue
+        "#FF00FF"       // Bright Magenta
+    };
+    return QString::fromLatin1(colors[color & 0x0F]);
+}
+
+// Convert a text string into HTML, using the specified EMS attributes.
+static QString textToHtml(const QString& text, const QByteArray& attrs)
+{
+    if (text.isEmpty())
+        return text;
+
+    // Scan the attribute array and build up the formatting
+    // flags for every character in the text string.
+    int len = text.length();
+    QVarLengthArray<int> formats(len);
+    for (int posn = 0; posn < len; ++posn) {
+        formats[posn] = EMS_NO_FORMAT;
+    }
+    int bgcolor = -1;
+    for (int index = 0; (index + 3) <= attrs.size(); index += 4) {
+        // Extract the next formatting block.
+        int start = attrs[index] & 0xFF;
+        int end;
+        if (attrs[index + 1])
+            end = start + (attrs[index + 1] & 0xFF);
+        else
+            end = len;
+        int format = attrs[index + 2] & 0xFF;
+        int colors;
+        if ((index + 4) <= attrs.size()) {    // This byte is optional.
+            colors = attrs[index + 3] & 0xFF;
+            if (bgcolor == -1)
+                bgcolor = ((colors >> 4) & 0x0F);
+        } else {
+            colors = -1;
+        }
+
+        // Apply the formatting to all of the positions that need it.
+        while (start < end && start < len) {
+            formats[start] = (colors << 8) | format;
+            ++start;
+        }
+    }
+
+    // Convert the text string according to the instructions.
+    QString result;
+    int posn = 0;
+    int format = EMS_NO_FORMAT;
+    int newFormat;
+    if (bgcolor != -1) {
+        // Set the overall background color for the entire page based
+        // on the background color for the first attribute block.
+        // If there are no attribute blocks, or only one attribute block
+        // with three bytes, then leave the background color as the
+        // system default.
+        result += QLatin1String("<body bgcolor=\"");
+        result += mapEmsColor(bgcolor);
+        result += QLatin1String("\">");
+    }
+    while (posn < len) {
+        // Copy characters that have the same format as the previous one.
+        while (posn < len && formats[posn] == format) {
+            QChar ch = text[posn];
+            if (ch.unicode() == '\n') {
+                result += QLatin1String("<br>");
+            } else if (ch.unicode() == '\r') {
+                result += QLatin1String("<br>");
+                if ((posn + 1) < len && text[posn + 1] == QChar('\n'))
+                    ++posn;
+            } else if (ch.unicode() == '<') {
+                result += QLatin1String("&lt;");
+            } else if (ch.unicode() == '>') {
+                result += QLatin1String("&gt;");
+            } else if (ch.unicode() == '&') {
+                result += QLatin1String("&amp;");
+            } else {
+                result += ch;
+            }
+            ++posn;
+        }
+
+        // Adjust the format to match the new requirements.
+        if (posn < len)
+            newFormat = formats[posn];
+        else
+            newFormat = EMS_NO_FORMAT;
+        int oldColor = (format >> 8);
+        int newColor = (newFormat >> 8);
+        if ((format & EMS_STRIKE) != 0)
+            result += QLatin1String("</s>");
+        if ((format & EMS_UNDERLINE) != 0)
+            result += QLatin1String("</u>");
+        if ((format & EMS_ITALIC) != 0)
+            result += QLatin1String("</i>");
+        if ((format & EMS_BOLD) != 0)
+            result += QLatin1String("</b>");
+        if ((format & EMS_FONT_SIZE) == EMS_FONT_SMALL)
+            result += QLatin1String("</small>");
+        else if ((format & EMS_FONT_SIZE) == EMS_FONT_LARGE)
+            result += QLatin1String("</big>");
+        if (oldColor != -1)
+            result += QLatin1String("</font>");
+        if ((format & EMS_ALIGNMENT) != (newFormat & EMS_ALIGNMENT)) {
+            if ((format & EMS_ALIGNMENT) == EMS_LEFT)
+                result += QLatin1String("</div>");
+            else if ((format & EMS_ALIGNMENT) == EMS_RIGHT)
+                result += QLatin1String("</div>");
+            else if ((format & EMS_ALIGNMENT) == EMS_CENTER)
+                result += QLatin1String("</center>");
+            if ((newFormat & EMS_ALIGNMENT) == EMS_LEFT)
+                result += QLatin1String("<div align=\"left\">");
+            else if ((newFormat & EMS_ALIGNMENT) == EMS_RIGHT)
+                result += QLatin1String("<div align=\"right\">");
+            else if ((newFormat & EMS_ALIGNMENT) == EMS_CENTER)
+                result += QLatin1String("<center>");
+        }
+        if (newColor != -1) {
+            result += QLatin1String("<font");
+            int back = ((newColor >> 4) & 0x0F);
+            int fore = (newColor & 0x0F);
+            if (back != bgcolor) {
+                result += QLatin1String(" style=\"background-color: ");
+                result += mapEmsColor(back);
+                result += QLatin1String("\"");
+            }
+            result += QLatin1String(" color=\"");
+            result += mapEmsColor(fore);
+            result += QLatin1String("\">");
+        }
+        if ((newFormat & EMS_FONT_SIZE) == EMS_FONT_SMALL)
+            result += QLatin1String("<small>");
+        else if ((newFormat & EMS_FONT_SIZE) == EMS_FONT_LARGE)
+            result += QLatin1String("<big>");
+        if ((newFormat & EMS_BOLD) != 0)
+            result += QLatin1String("<b>");
+        if ((newFormat & EMS_ITALIC) != 0)
+            result += QLatin1String("<i>");
+        if ((newFormat & EMS_UNDERLINE) != 0)
+            result += QLatin1String("<u>");
+        if ((newFormat & EMS_STRIKE) != 0)
+            result += QLatin1String("<s>");
+
+        // Switch to the new format.
+        format = newFormat;
+    }
+    if (bgcolor != -1) {
+        // Terminate the outer background color declaration.
+        result += QLatin1String("</body>");
+    }
+
+    return result;
 }
 
 Q_IMPLEMENT_USER_METATYPE_ENUM(QSimCommand::Type)

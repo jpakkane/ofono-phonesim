@@ -1,35 +1,31 @@
 /****************************************************************************
 **
-** Copyright (C) 2000-2007 TROLLTECH ASA. All rights reserved.
+** This file is part of the Qt Extended Opensource Package.
 **
-** This file is part of the Opensource Edition of the Qtopia Toolkit.
+** Copyright (C) 2009 Trolltech ASA.
 **
-** This software is licensed under the terms of the GNU General Public
-** License (GPL) version 2.
+** Contact: Qt Extended Information (info@qtextended.org)
 **
-** See http://www.trolltech.com/gpl/ for GPL licensing information.
+** This file may be used under the terms of the GNU General Public License
+** version 2.0 as published by the Free Software Foundation and appearing
+** in the file LICENSE.GPL included in the packaging of this file.
 **
-** Contact info@trolltech.com if any conditions of this licensing are
-** not clear to you.
+** Please review the following information to ensure GNU General Public
+** Licensing requirements will be met:
+**     http://www.fsf.org/licensing/licenses/info/GPLv2.html.
 **
-**
-**
-** This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-** WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 **
 ****************************************************************************/
 
 #include "hardwaremanipulator.h"
-#include <QtGui/qmessagebox.h>
 #include <Qt>
 #include <qdebug.h>
 #include <qbuffer.h>
 #include <qtimer.h>
-#include <qevent.h>
-#include "qsmsmessage.h"
-#include "qcbsmessage.h"
-#include "serial/qgsmcodec.h"
-#include "wap/qwsppdu.h"
+#include <QSMSMessage>
+#include "../../../libraries/qtopiaphone/qcbsmessage.h"
+#include "../../../libraries/qtopiacomm/serial/qgsmcodec.h"
+#include "../../../libraries/qtopiaphone/wap/qwsppdu.h"
 
 #define NIBBLE_MAX 15
 #define TWO_BYTE_MAX 65535
@@ -40,8 +36,8 @@
 #define ONE_CHAR 1
 #define HEX_BASE 16
 
-HardwareManipulator::HardwareManipulator(QWidget *parent)
-        : QWidget(parent)
+HardwareManipulator::HardwareManipulator(QObject *parent)
+        : QObject(parent)
 {
 }
 
@@ -51,27 +47,16 @@ QSMSMessageList & HardwareManipulator::getSMSList()
     return SMSList;
 }
 
-bool HardwareManipulator::shouldShow() const
+void HardwareManipulator::warning( const QString &title, const QString &message)
 {
-    return false;
+    qWarning() << title << ":" << message;
 }
 
-void HardwareManipulator::closeEvent(QCloseEvent *e)
+void HardwareManipulator::setPhoneNumber( const QString& )
 {
-    e->ignore();
-    this->hide();
 }
 
 QString PS_toHex( const QByteArray& binary );
-
-#define WARNING(A, B) \
-do {\
-    if (shouldShow()) {\
-        QMessageBox::warning(this, A, B);\
-    } else {\
-        qWarning() << (A) << ":" << (B);\
-    }\
-} while(0)
 
 QString HardwareManipulator::constructCBMessage(const QString &messageCode, int geographicalScope, const QString &updateNumber,
     const QString &channel, const QString &/*scheme*/, int language, const QString &numPages, const QString &page, const QString &content)
@@ -80,7 +65,7 @@ QString HardwareManipulator::constructCBMessage(const QString &messageCode, int 
     bool ok;
     uint mc = convertString(messageCode,1023,3,HEX_BASE, &ok);
     if ( !ok ) {
-        WARNING(tr("Invalid Message Code"),
+        warning(tr("Invalid Message Code"),
                 tr("Message code 3 hex digits long and no larger than 3FF"));
         return "";
     }
@@ -90,7 +75,7 @@ QString HardwareManipulator::constructCBMessage(const QString &messageCode, int 
 
     uint un = convertString(updateNumber,NIBBLE_MAX,ONE_CHAR,HEX_BASE,&ok);
     if ( !ok ) {
-        WARNING(tr("Invalid Update Number"),
+        warning(tr("Invalid Update Number"),
                 tr("Update number must be 1 hex digit long"
                    "and no larger than F"));
         return "";
@@ -99,7 +84,7 @@ QString HardwareManipulator::constructCBMessage(const QString &messageCode, int 
 
     uint ch = convertString(channel, TWO_BYTE_MAX,FOUR_CHAR,HEX_BASE,&ok);
     if ( !ok ) {
-        WARNING(tr("Invalid Channel,"),
+        warning(tr("Invalid Channel,"),
                 tr("Channel  must be 4 hex digits long "
                    "and no larger than FFFF"));
         return "";
@@ -114,7 +99,7 @@ QString HardwareManipulator::constructCBMessage(const QString &messageCode, int 
 
     uint npag = convertString(numPages, NIBBLE_MAX,ONE_CHAR,HEX_BASE,&ok);
     if ( !ok ) {
-        WARNING(tr("Invalid number of pages,"),
+        warning(tr("Invalid number of pages,"),
                 tr("Number of pages  must be 1 hex digit long "
                    "and no larger than F"));
         return "";
@@ -122,7 +107,7 @@ QString HardwareManipulator::constructCBMessage(const QString &messageCode, int 
 
     uint pag = convertString(page, NIBBLE_MAX,ONE_CHAR,HEX_BASE,&ok);
     if ( !ok ) {
-        WARNING(tr("Invalid page number,"),
+        warning(tr("Invalid page number,"),
                 tr("Page number  must be 1 hex digit long "
                    "and no larger than F"));
         return "";
@@ -141,29 +126,33 @@ QString HardwareManipulator::constructCBMessage(const QString &messageCode, int 
     return PS_toHex( m.toPdu() );
 }
 
-void HardwareManipulator::constructSMSMessage( const QString &sender, const QString &serviceCenter, const QString &text )
+void HardwareManipulator::constructSMSMessage( const int type, const QString &sender, const QString &serviceCenter, const QString &text )
 {
     QSMSMessage m;
-    if ( sender.contains(QRegExp("\\D")) ) {
-        WARNING(tr("Invalid Sender"),
-                tr("Sender must not be empty and contain "
-                   "only digits"));
-        return;
-    }
+    m.setMessageClass(type);
     m.setSender(sender);
-
-    if ( serviceCenter.contains(QRegExp("\\D")) ) {
-        WARNING(tr("Invalid Service Center"),
-                tr("Service Center must not be empty and contain "
-                   "only digits"));
-        return;
-    }
     m.setServiceCenter(serviceCenter);
-
     m.setText(text);
     m.setTimestamp(QDateTime::currentDateTime());
+    sendSMS(m);
 
-    SMSList.appendSMS( m.toPdu() );
+}
+
+void HardwareManipulator::sendSMS( const QSMSMessage &m )
+{
+    int originalCount = getSMSList().count();
+    if( m.shouldSplit() ) {
+        QList<QSMSMessage> list = m.split();
+
+        for( int i =0; i < list.count(); i++ ) {
+            SMSList.appendSMS( list[i].toPdu() );
+        }
+    } else {
+        SMSList.appendSMS( m.toPdu() );
+    }
+
+    if ( getSMSList().count() > originalCount )
+        emit unsolicitedCommand("+CMTI: \"SM\","+QString::number( getSMSList().count()));
 }
 
 void HardwareManipulator::constructSMSDatagram(int port, const QString &sender, const QByteArray &data,
@@ -193,15 +182,7 @@ void HardwareManipulator::constructSMSDatagram(int port, const QString &sender, 
     m.setSender(sender);
     m.setApplicationData(appData);
 
-    if( m.shouldSplit() ) {
-        QList<QSMSMessage> list = m.split();
-
-        for( int i =0; i < list.count(); i++ ) {
-           SMSList.appendSMS( list[i].toPdu() );
-        }
-    } else {
-        SMSList.appendSMS( m.toPdu() );
-    }
+    sendSMS(m);
 }
 
 int HardwareManipulator::convertString(const QString &number, int maxValue, int numChar, int base, bool *ok)
@@ -216,10 +197,10 @@ int HardwareManipulator::convertString(const QString &number, int maxValue, int 
     return num;
 }
 
-void HardwareManipulator::handleFromData( const QString& cmd )
+void HardwareManipulator::handleFromData( const QString& /*cmd*/ )
 {
 }
 
-void HardwareManipulator::handleToData( const QString& cmd )
+void HardwareManipulator::handleToData( const QString& /*cmd*/ )
 {
 }

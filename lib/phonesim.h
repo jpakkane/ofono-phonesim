@@ -1,21 +1,19 @@
 /****************************************************************************
 **
-** Copyright (C) 2000-2007 TROLLTECH ASA. All rights reserved.
+** This file is part of the Qt Extended Opensource Package.
 **
-** This file is part of the Opensource Edition of the Qtopia Toolkit.
+** Copyright (C) 2009 Trolltech ASA.
 **
-** This software is licensed under the terms of the GNU General Public
-** License (GPL) version 2.
+** Contact: Qt Extended Information (info@qtextended.org)
 **
-** See http://www.trolltech.com/gpl/ for GPL licensing information.
+** This file may be used under the terms of the GNU General Public License
+** version 2.0 as published by the Free Software Foundation and appearing
+** in the file LICENSE.GPL included in the packaging of this file.
 **
-** Contact info@trolltech.com if any conditions of this licensing are
-** not clear to you.
+** Please review the following information to ensure GNU General Public
+** Licensing requirements will be met:
+**     http://www.fsf.org/licensing/licenses/info/GPLv2.html.
 **
-**
-**
-** This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-** WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 **
 ****************************************************************************/
 
@@ -23,14 +21,16 @@
 #define PHONESIM_H
 
 #include <qstring.h>
+#include <qstringlist.h>
 #include <qlist.h>
 #include <qfile.h>
 #include <qfileinfo.h>
-#include <qxml.h>
+#include <qxmlstream.h>
 #include <qtcpsocket.h>
 #include <qapplication.h>
 #include <qmap.h>
 #include <qtimer.h>
+#include <qpointer.h>
 
 #include <string.h>
 #include <stdlib.h>
@@ -70,16 +70,15 @@ public:
 };
 
 
-class SimXmlHandler : public QXmlDefaultHandler
+class SimXmlHandler
 {
 public:
     SimXmlHandler();
     ~SimXmlHandler();
 
-    bool startElement( const QString& namespaceURI, const QString& localName, const QString& qName, const QXmlAttributes& atts );
-    bool endElement( const QString& namespaceURI, const QString& localName, const QString& qName );
+    bool startElement( const QString& name, const QXmlStreamAttributes& atts );
+    bool endElement();
     bool characters( const QString& ch );
-    bool ignorableWhitespace( const QString& ch );
 
     SimXmlNode *documentElement() const;
 
@@ -112,7 +111,7 @@ public:
     bool command( const QString& cmd );
 
 private:
-    SimRules *_rules;
+    QPointer<SimRules> _rules;
     QString _name;
     QList<SimItem *> items;
 
@@ -160,13 +159,8 @@ private:
     QString switchTo;
     bool wildcard;
     bool eol;
-    QString variable;
-    QString value;
-    QString variable2;
-    QString value2;
-    QString peer;
-    bool peerConnect;
-    bool peerHangup;
+    QStringList variables;
+    QStringList values;
     QString newCallVar;
     QString forgetCallId;
     bool listSMS;
@@ -232,9 +226,6 @@ public:
     // get the variable value for.
     QString variable(const QString &name);
 
-    // Load the peer information from a separate XML file.
-    void loadPeers( const QString& filename );
-
     // Get the current simulator state.
     SimState *current() const { return currentState; }
 
@@ -246,22 +237,6 @@ public:
 
     // Expand variable references in a string.
     QString expand( const QString& s );
-
-    // Send a command to the connected peer, if any.
-    void peerCommand( const QString& cmd );
-
-    // Connect to a phone simulator peer if the number is recognised as a peer.
-    // Returns false if not using a peer.
-    bool peerConnect( const QString& number );
-
-    // Hangup the connected peer, if any.
-    void peerHangup();
-
-    // Get the phone number for this peer.
-    QString phoneNumber();
-
-    // Print the phone number for this peer.
-    void printPeerNumber();
 
     // force the next returned reply to be 'error'
     void setReturnError( const QString &error, uint repeat = 0 );
@@ -322,7 +297,6 @@ private:
     SimState *defState;
     QList<SimState *> states;
     QMap<QString,QString> variables;
-    QMap<QString,QString> peers;
     int usedCallIds;
     bool useGsm0710;
     int currentChannel;
@@ -347,6 +321,8 @@ private:
 
     void initPhoneBooks();
     void phoneBook( const QString& cmd );
+    bool simCommand( const QString& cmd );
+    void changePin( const QString& cmd );
     SimPhoneBook *currentPB() const;
     void loadPhoneBook( SimXmlNode& node );
 
@@ -369,5 +345,4 @@ public:
     int channel;
 };
 
-
-#endif /* PHONESIM_H */
+#endif

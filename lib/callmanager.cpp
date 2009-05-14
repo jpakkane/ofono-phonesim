@@ -1,21 +1,19 @@
 /****************************************************************************
 **
-** Copyright (C) 2000-2007 TROLLTECH ASA. All rights reserved.
+** This file is part of the Qt Extended Opensource Package.
 **
-** This file is part of the Opensource Edition of the Qtopia Toolkit.
+** Copyright (C) 2009 Trolltech ASA.
 **
-** This software is licensed under the terms of the GNU General Public
-** License (GPL) version 2.
+** Contact: Qt Extended Information (info@qtextended.org)
 **
-** See http://www.trolltech.com/gpl/ for GPL licensing information.
+** This file may be used under the terms of the GNU General Public License
+** version 2.0 as published by the Free Software Foundation and appearing
+** in the file LICENSE.GPL included in the packaging of this file.
 **
-** Contact info@trolltech.com if any conditions of this licensing are
-** not clear to you.
+** Please review the following information to ensure GNU General Public
+** Licensing requirements will be met:
+**     http://www.fsf.org/licensing/licenses/info/GPLv2.html.
 **
-**
-**
-** This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-** WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 **
 ****************************************************************************/
 
@@ -65,7 +63,7 @@ bool CallManager::command( const QString& cmd )
 
         // Voice call setup.
         QString number = cmd.mid(3, cmd.length() - 4);
-        if ( number.endsWith( "g" ) || number.endsWith( "g" ) )
+        if ( number.endsWith( "g" ) || number.endsWith( "G" ) )
             number = number.left(number.length() - 1);  // Closed user group flag - skip.
         if ( number.endsWith( "i" ) || number.endsWith( "I" ) )
             number = number.left(number.length() - 1);  // Caller id suppress flag - skip.
@@ -155,10 +153,36 @@ bool CallManager::command( const QString& cmd )
         alertingTimer->start(2500);
         connectTimer->start(3000);
 
+    // Data call - phone number 696969
     } else if ( cmd.startsWith( "ATD" ) ) {
+        // Data call setup.
+        QString number = cmd.mid(3, cmd.length() - 4);
+        if ( number.endsWith( "g" ) || number.endsWith( "G" ) )
+            number = number.left(number.length() - 1);  // Closed user group flag - skip.
+        if ( number.endsWith( "i" ) || number.endsWith( "I" ) )
+            number = number.left(number.length() - 1);  // Caller id suppress flag - skip.
 
-        // Data call setup - not supported at present.
-        emit send( "NO CARRIER" );
+        if ( number == "696969" ) {
+                // Create a new call and add it to the list.
+                CallInfo info;
+                info.id = newId();
+                info.state = CallState_Dialing;
+                info.number = number;
+                info.incoming = false;
+                info.dialBack = false;
+                callList += info;
+
+                // Advertise the call state change and then return to command mode.
+                sendState( info );
+                send( "CONNECT 19200" );
+
+                // Start timers to transition the dialing call to alerting and connected.
+                alertingTimer->start(2500);
+                connectTimer->start(3000);
+                } else {
+                // If not a data line
+                emit send( "NO CARRIER" );
+                }
 
     } else if ( cmd == "AT+CLCC" ) {
 

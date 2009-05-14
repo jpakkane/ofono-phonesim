@@ -1,26 +1,24 @@
 /****************************************************************************
 **
-** Copyright (C) 2000-2007 TROLLTECH ASA. All rights reserved.
+** This file is part of the Qt Extended Opensource Package.
 **
-** This file is part of the Opensource Edition of the Qtopia Toolkit.
+** Copyright (C) 2009 Trolltech ASA.
 **
-** This software is licensed under the terms of the GNU General Public
-** License (GPL) version 2.
+** Contact: Qt Extended Information (info@qtextended.org)
 **
-** See http://www.trolltech.com/gpl/ for GPL licensing information.
+** This file may be used under the terms of the GNU General Public License
+** version 2.0 as published by the Free Software Foundation and appearing
+** in the file LICENSE.GPL included in the packaging of this file.
 **
-** Contact info@trolltech.com if any conditions of this licensing are
-** not clear to you.
+** Please review the following information to ensure GNU General Public
+** Licensing requirements will be met:
+**     http://www.fsf.org/licensing/licenses/info/GPLv2.html.
 **
-**
-**
-** This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-** WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 **
 ****************************************************************************/
 
-#ifndef QCONTENT_H__
-#define QCONTENT_H__
+#ifndef QCONTENT_H
+#define QCONTENT_H
 
 #include <qtopiaglobal.h>
 
@@ -150,6 +148,8 @@ public:
 
     bool isDocument() const;
 
+    QImage thumbnail( const QSize &size = QSize(), Qt::AspectRatioMode = Qt::KeepAspectRatio ) const;
+
     enum Property
     {
         Album,
@@ -165,7 +165,8 @@ public:
         PublisherUrl,
         RightsIssuerUrl,
         Track,
-        Version
+        Version,
+        Title
     };
 
     void setProperty(const QString& key, const QString& value, const QString &group=QString());
@@ -183,6 +184,7 @@ public:
     bool copyContent(const QContent &from);
     bool copyTo(const QString &newPath);
     bool moveTo(const QString &newPath);
+    bool rename(const QString &name);
 
     QDateTime lastUpdated() const;
 
@@ -217,7 +219,7 @@ private:
     friend class QtopiaApplication;
     friend class QDrmContent;
     friend class QContentStore;
-    friend QDebug &operator<<(QDebug &debug, const QContent &content);
+    friend QDebug operator<<(QDebug debug, const QContent &content);
 };
 
 template <> inline bool qIsDetached<QContent>(QContent &t) { return t.isDetached(); }

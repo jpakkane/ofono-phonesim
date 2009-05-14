@@ -1,25 +1,23 @@
 /****************************************************************************
 **
-** Copyright (C) 2000-2007 TROLLTECH ASA. All rights reserved.
+** This file is part of the Qt Extended Opensource Package.
 **
-** This file is part of the Opensource Edition of the Qtopia Toolkit.
+** Copyright (C) 2009 Trolltech ASA.
 **
-** This software is licensed under the terms of the GNU General Public
-** License (GPL) version 2.
+** Contact: Qt Extended Information (info@qtextended.org)
 **
-** See http://www.trolltech.com/gpl/ for GPL licensing information.
+** This file may be used under the terms of the GNU General Public License
+** version 2.0 as published by the Free Software Foundation and appearing
+** in the file LICENSE.GPL included in the packaging of this file.
 **
-** Contact info@trolltech.com if any conditions of this licensing are
-** not clear to you.
+** Please review the following information to ensure GNU General Public
+** Licensing requirements will be met:
+**     http://www.fsf.org/licensing/licenses/info/GPLv2.html.
 **
-**
-**
-** This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-** WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 **
 ****************************************************************************/
-#ifndef QCATEGORIZEDLOG_H
-#define QCATEGORIZEDLOG_H
+#ifndef QLOG_H
+#define QLOG_H
 
 #include <qdebug.h>
 #include <qtopiaglobal.h>
@@ -59,6 +57,12 @@ public:
         static inline bool enabled() { static char mem=0; return (mem ? mem : (mem=(expr)?3:2))&1; } \
     };
 
+# define QLOG_OPTION_SEMI_VOLATILE(dbgcat,expr,regfunc) \
+    class dbgcat##_QLog : public QLogBase { \
+    public: \
+        static inline bool enabled() { static char mem=0; if (!mem) { regfunc(&mem); mem=(expr)?3:2; } return mem&1; } \
+    };
+
 # define qLog(dbgcat) if(!dbgcat##_QLog::enabled()); else dbgcat##_QLog::log(#dbgcat)
 # define qLogEnabled(dbgcat) (dbgcat##_QLog::enabled())
 #else
@@ -66,6 +70,7 @@ public:
 # define QLOG_ENABLE(dbgcat)
 # define QLOG_OPTION(dbgcat,expr)
 # define QLOG_OPTION_VOLATILE(dbgcat,expr)
+# define QLOG_OPTION_SEMI_VOLATILE(dbgcat,expr,regfunc)
 # define qLog(dbgcat) if(1); else QNoDebug()
 # define qLogEnabled(dbgcat) false
 #endif

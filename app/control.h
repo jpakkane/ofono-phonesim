@@ -1,70 +1,54 @@
 /****************************************************************************
 **
-** Copyright (C) 2000-2007 TROLLTECH ASA. All rights reserved.
+** This file is part of the Qt Extended Opensource Package.
 **
-** This file is part of the Opensource Edition of the Qtopia Toolkit.
+** Copyright (C) 2009 Trolltech ASA.
 **
-** This software is licensed under the terms of the GNU General Public
-** License (GPL) version 2.
+** Contact: Qt Extended Information (info@qtextended.org)
 **
-** See http://www.trolltech.com/gpl/ for GPL licensing information.
+** This file may be used under the terms of the GNU General Public License
+** version 2.0 as published by the Free Software Foundation and appearing
+** in the file LICENSE.GPL included in the packaging of this file.
 **
-** Contact info@trolltech.com if any conditions of this licensing are
-** not clear to you.
+** Please review the following information to ensure GNU General Public
+** Licensing requirements will be met:
+**     http://www.fsf.org/licensing/licenses/info/GPLv2.html.
 **
-**
-**
-** This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-** WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 **
 ****************************************************************************/
 
 #ifndef CONTROL_H
 #define CONTROL_H
 
-#include <qobject.h>
-#include <qdialog.h>
+#include <HardwareManipulator>
 
-#include <lib/hardwaremanipulator.h>
-#include <attranslator.h>
-
-class Ui_ControlBase;
+class ControlWidget;
 
 class Control: public HardwareManipulator
 {
 Q_OBJECT
 
 public:
-    Control(const QString& ruleFile, QWidget *parent=0);
-    bool shouldShow() const;
+    Control(const QString& ruleFile, QObject *parent=0);
+    virtual ~Control();
 
 public slots:
     void handleFromData( const QString& );
     void handleToData( const QString& );
-    void resetTranslator();
+    void setPhoneNumber( const QString& );
 
-private slots:
-    void sendSQ();
-    void sendBC();
-    void sendOPS();
-    void sendREG();
-    void sendCBM();
-    void sendSMSMessage();
-    void sendMGD();
-    void selectFile();
-    void sendSMSDatagram();
-    void sendCall();
-    void atChanged();
+protected:
+    virtual void warning( const QString&, const QString& );
 
 private:
-    Ui_ControlBase *ui;
-    AtTranslator *translator;
+    ControlWidget *widget;
+    friend class ControlWidget;
 };
 
 class ControlFactory : public HardwareManipulatorFactory
 {
 public:
-    inline virtual HardwareManipulator *create(QWidget *parent)
+    inline virtual HardwareManipulator *create(QObject *parent)
         { return new Control(ruleFile(), parent); }
 };
 

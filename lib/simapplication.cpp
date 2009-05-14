@@ -1,21 +1,19 @@
 /****************************************************************************
 **
-** Copyright (C) 2000-2007 TROLLTECH ASA. All rights reserved.
+** This file is part of the Qt Extended Opensource Package.
 **
-** This file is part of the Opensource Edition of the Qtopia Toolkit.
+** Copyright (C) 2009 Trolltech ASA.
 **
-** This software is licensed under the terms of the GNU General Public
-** License (GPL) version 2.
+** Contact: Qt Extended Information (info@qtextended.org)
 **
-** See http://www.trolltech.com/gpl/ for GPL licensing information.
+** This file may be used under the terms of the GNU General Public License
+** version 2.0 as published by the Free Software Foundation and appearing
+** in the file LICENSE.GPL included in the packaging of this file.
 **
-** Contact info@trolltech.com if any conditions of this licensing are
-** not clear to you.
+** Please review the following information to ensure GNU General Public
+** Licensing requirements will be met:
+**     http://www.fsf.org/licensing/licenses/info/GPLv2.html.
 **
-**
-**
-** This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-** WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 **
 ****************************************************************************/
 
@@ -320,6 +318,8 @@ DemoSimApplication::~DemoSimApplication()
 #define MainMenu_Tones      5
 #define MainMenu_Icons      6
 #define MainMenu_IconsSE    7
+#define MainMenu_Finance    8
+#define MainMenu_Browser    9
 
 #define SportsMenu_Chess        1
 #define SportsMenu_Painting     2
@@ -362,9 +362,35 @@ void DemoSimApplication::mainMenu()
     item.setLabel( "Icons (self-explanatory)" );
     items += item;
 
+    item.setIdentifier( MainMenu_Finance );
+    item.setLabel( "Finance" );
+    items += item;
+
+    item.setIdentifier( MainMenu_Browser );
+    item.setLabel( "Web Browser" );
+    items += item;
+
     cmd.setMenuItems( items );
 
     command( cmd, 0, 0 );
+}
+
+void DemoSimApplication::sendDisplayText()
+{
+    // Display a text string and then go back to the main menu once the
+    // text is accepted by the user.
+    QSimCommand cmd;
+    cmd.setType( QSimCommand::DisplayText );
+    cmd.setDestinationDevice( QSimCommand::Display );
+    cmd.setClearAfterDelay(false);
+    cmd.setImmediateResponse(true);
+    cmd.setHighPriority(false);
+    immediateResponse = true;
+    cmd.setText( "Police today arrested a man on suspicion "
+            "of making phone calls while intoxicated.  Witnesses claimed "
+            "that they heard the man exclaim \"I washent dwinkn!\" as "
+            "officers escorted him away." );
+    command( cmd, this, SLOT(displayTextResponse(QSimTerminalResponse)) );
 }
 
 void DemoSimApplication::mainMenuSelection( int id )
@@ -375,15 +401,7 @@ void DemoSimApplication::mainMenuSelection( int id )
 
         case MainMenu_News:
         {
-            // Display a text string and then go back to the main menu once the
-            // text is accepted by the user.
-            cmd.setType( QSimCommand::DisplayText );
-            cmd.setDestinationDevice( QSimCommand::Display );
-            cmd.setText( "Police today arrested a man on suspicion "
-                         "of making phone calls while intoxicated.  Witnesses claimed "
-                         "that they heard the man exclaim \"I washent dwinkn!\" as "
-                         "officers escorted him away." );
-            command( cmd, this, SLOT(mainMenu()) );
+            QTimer::singleShot( 0, this, SLOT(sendDisplayText()) );
         }
         break;
 
@@ -423,6 +441,23 @@ void DemoSimApplication::mainMenuSelection( int id )
         case MainMenu_IconsSE:
         {
             sendIconSEMenu();
+        }
+        break;
+
+        case MainMenu_Finance:
+        {
+            cmd.setType( QSimCommand::GetInput );
+            cmd.setText( "Enter code" );
+            cmd.setWantDigits( true );
+            cmd.setMinimumLength( 3 );
+            cmd.setHasHelp( true );
+            command( cmd, this, SLOT(getInputLoop(QSimTerminalResponse)) );
+        }
+        break;
+
+        case MainMenu_Browser:
+        {
+            sendBrowserMenu();
         }
         break;
 
@@ -583,6 +618,20 @@ void DemoSimApplication::sticksGamePlayAgain( const QSimTerminalResponse& resp )
         mainMenu();
 }
 
+void DemoSimApplication::getInputLoop( const QSimTerminalResponse& resp )
+{
+    QSimCommand cmd;
+    if ( resp.result() == QSimTerminalResponse::HelpInformationRequested ) {
+        // Display help for the game.
+        cmd.setType( QSimCommand::DisplayText );
+        cmd.setDestinationDevice( QSimCommand::Display );
+        cmd.setText("Enter code of the company." );
+        command( cmd, this, SLOT(mainMenu()) );
+    } else {
+        mainMenu();
+    }
+}
+
 void DemoSimApplication::sendToneMenu()
 {
     QSimCommand cmd;
@@ -739,4 +788,124 @@ void DemoSimApplication::iconSEMenu( const QSimTerminalResponse& resp )
         sendIconSEMenu();
     else
         mainMenu();
+}
+
+void DemoSimApplication::displayTextResponse( const QSimTerminalResponse& resp )
+{
+    QSimCommand cmd;
+
+    if ( resp.result() == QSimTerminalResponse::Success ) {
+        if ( immediateResponse )
+            return;
+        mainMenu();
+    } else if ( resp.result() == QSimTerminalResponse::BackwardMove ) {
+        // Request to move backward.
+        mainMenu();
+    } else {
+        // Unknown response - just go back to the main menu.
+        mainMenu();
+    }
+}
+
+void DemoSimApplication::sendBrowserMenu()
+{
+    QSimCommand cmd;
+    QSimMenuItem item;
+    QList<QSimMenuItem> items;
+
+    cmd.setType( QSimCommand::SelectItem );
+    cmd.setTitle( "Web Browser" );
+
+    item.setIdentifier( 1 );
+    item.setLabel( "Qt Extended" );
+    items += item;
+
+    item.setIdentifier( 2 );
+    item.setLabel( "Google (normal)" );
+    items += item;
+
+    item.setIdentifier( 3 );
+    item.setLabel( "Google (if browser not in use)" );
+    items += item;
+
+    item.setIdentifier( 4 );
+    item.setLabel( "Google (clear history)" );
+    items += item;
+
+    item.setIdentifier( 5 );
+    item.setLabel( "Default Home Page" );
+    items += item;
+
+    cmd.setMenuItems( items );
+
+    command( cmd, this, SLOT(browserMenu(QSimTerminalResponse)) );
+}
+
+void DemoSimApplication::browserMenu( const QSimTerminalResponse& resp )
+{
+    QSimCommand cmd;
+
+    if ( resp.result() == QSimTerminalResponse::Success ) {
+        // Item selected.
+        switch ( resp.menuItem() ) {
+
+            case 1:
+            {
+                cmd.setType( QSimCommand::LaunchBrowser );
+                cmd.setText( "Qt Extended" );
+                cmd.setBrowserLaunchMode( QSimCommand::UseExisting );
+                cmd.setUrl( "http://www.qtextended.org/" );
+                command( cmd, this, SLOT(sendBrowserMenu()) );
+            }
+            break;
+
+            case 2:
+            {
+                cmd.setType( QSimCommand::LaunchBrowser );
+                cmd.setText( "Google" );
+                cmd.setBrowserLaunchMode( QSimCommand::UseExisting );
+                cmd.setUrl( "http://www.google.com/" );
+                command( cmd, this, SLOT(sendBrowserMenu()) );
+            }
+            break;
+
+            case 3:
+            {
+                cmd.setType( QSimCommand::LaunchBrowser );
+                cmd.setText( "Google" );
+                cmd.setBrowserLaunchMode( QSimCommand::IfNotAlreadyLaunched );
+                cmd.setUrl( "http://www.google.com/" );
+                command( cmd, this, SLOT(sendBrowserMenu()) );
+            }
+            break;
+
+            case 4:
+            {
+                cmd.setType( QSimCommand::LaunchBrowser );
+                cmd.setText( "Google" );
+                cmd.setBrowserLaunchMode( QSimCommand::CloseExistingAndLaunch );
+                cmd.setUrl( "http://www.google.com/" );
+                command( cmd, this, SLOT(sendBrowserMenu()) );
+            }
+            break;
+
+            case 5:
+            {
+                cmd.setType( QSimCommand::LaunchBrowser );
+                cmd.setText( "Default Home Page" );
+                cmd.setBrowserLaunchMode( QSimCommand::UseExisting );
+                cmd.setUrl( "" );
+                command( cmd, this, SLOT(sendBrowserMenu()) );
+            }
+            break;
+
+            default:    mainMenu(); break;
+        }
+    } else if ( resp.result() == QSimTerminalResponse::BackwardMove ) {
+        // Request to move backward.
+        mainMenu();
+    } else {
+        // Unknown response - just go back to the main menu.
+        mainMenu();
+    }
 }
