@@ -112,6 +112,10 @@ bool CallManager::command( const QString& cmd )
             return true;
         }
 
+        // Other special numbers
+        if ( number == "144" )
+            send( "+CCWV" );
+
         // Perform call control on certain numbers.
         if ( number == "12399" ) {
             QSimControlEvent event;
