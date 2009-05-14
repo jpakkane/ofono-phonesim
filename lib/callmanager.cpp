@@ -685,11 +685,13 @@ void CallManager::hangupTimeout()
 void CallManager::sendNextRing()
 {
     if ( idForIncoming() >= 0 ) {
-        if ( numRings++ >= 4 ) {
+        if ( numRings++ >= 10 ) {
             // Ringing for too long, so hang up the call.
             hangupCall( idForIncoming() );
         } else {
-            emit unsolicited( "RING" );
+            for ( int index = 0; index < callList.size(); ++index )
+                if ( callList[index].id == idForIncoming() && callList[index].state == CallState_Incoming )
+                    emit unsolicited( "RING" );
             ringTimer->start(2000);
         }
     }
