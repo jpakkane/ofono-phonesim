@@ -2313,6 +2313,25 @@
     <response>ERROR</response>
 </chat>
 
+<!-- Restricted SIM access -->
+<!-- EFspn file read -->
+<chat>
+    <!-- Query file's length -->
+    <command>AT+CRSM=176,28486,0,0,0</command>
+    <response>+CRSM: 103,17\nOK</response>
+</chat>
+<chat>
+    <!-- Query file contents -->
+    <command>AT+CRSM=176,28486,0,0,*</command>
+    <response>+CRSM: 144,0,036F466F6E6FFFFFFFFFFFFFFFFFFFFFFF\nOK</response>
+</chat>
+
+<chat>
+    <!-- (nothing else is supported yet) -->
+    <command>AT+CRSM*</command>
+    <response>ERROR</response>
+</chat>
+
 <!-- Band Selection -->
 
 <chat>
