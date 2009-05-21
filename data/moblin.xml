@@ -167,6 +167,19 @@
     <set name="CF1C2" value="0"/>
     <set name="CF1C4" value="0"/>
     <set name="CF1C8" value="0"/>
+    <set name="CF2C1" value="0"/>
+    <set name="CF2C2" value="0"/>
+    <set name="CF2C4" value="0"/>
+    <set name="CF2C8" value="0"/>
+    <set name="CF3C1" value="0"/>
+    <set name="CF3C2" value="0"/>
+    <set name="CF3C4" value="0"/>
+    <set name="CF3C8" value="0"/>
+    <set name="CF0C1T" value="129"/>
+    <set name="CF1C1T" value="129"/>
+    <set name="CF2C1T" value="129"/>
+    <set name="CF3C1T" value="129"/>
+    <set name="CF2C1O" value="20"/>
 
     <!-- Fixed Dialling presentation mode -->
     <set name="FD" value="0"/>
@@ -1498,55 +1511,47 @@
 <chat>
     <!-- Query supported call forwarding reasons -->
     <command>AT+CCFC=?</command>
-    <response>+CCFC: (0,1,4,5)\nOK</response>
-</chat>
-
-<chat>
-    <!-- Set call forwarding number international (voice, unconditional) -->
-    <command>AT+CCFC=0,3,*,145,1</command>
-    <response>OK</response>
-    <set name="CF0C1" value="1"/>
-    <set name="CF0C1N" value="*"/>
-</chat>
-
-<chat>
-  <!-- Set call forwarding number (voice, unconditional) -->
-  <command>AT+CCFC=0,3,*,129,1</command>
-  <response>OK</response>
-  <set name="CF0C1" value="1"/>
-  <set name="CF0C1N" value="*"/>
-</chat>
-
-<chat>
-    <!-- Set call forwarding number international (voice, when busy) -->
-    <command>AT+CCFC=1,3,*,145,1</command>
-    <response>OK</response>
-    <set name="CF1C1" value="1"/>
-    <set name="CF1C1N" value="*"/>
-</chat>
-
-<chat>
-  <!-- Set call forwarding number (voice, when busy) -->
-  <command>AT+CCFC=1,3,*,129,1</command>
-  <response>OK</response>
-  <set name="CF1C1" value="1"/>
-  <set name="CF1C1N" value="*"/>
+    <response>+CCFC: (0,1,2,3,4,5)\nOK</response>
 </chat>
 
 <chat>
   <!-- Set call forwarding number international (voice, no reply) -->
-  <command>AT+CCFC=2,3,*,145,1</command>
+  <command>AT+CCFC=2,3,*,145,1,,,20</command>
   <response>OK</response>
   <set name="CF2C1" value="1"/>
-  <set name="CF2C1N" value="*"/>
+  <set name="CF2C1N" value="${*}"/>
+  <set name="CF2C1T" value="145"/>
+  <set name="CF2C1O" value="20"/>
 </chat>
 
 <chat>
   <!-- Set call forwarding number (voice, no reply) -->
-  <command>AT+CCFC=2,3,*,129,1</command>
+  <command>AT+CCFC=2,3,*,129,1,,,20</command>
   <response>OK</response>
   <set name="CF2C1" value="1"/>
-  <set name="CF2C1N" value="*"/>
+  <set name="CF2C1N" value="${*}"/>
+  <set name="CF2C1T" value="129"/>
+  <set name="CF2C1O" value="20"/>
+</chat>
+
+<chat>
+  <!-- Set call forwarding number international (voice, no reply) -->
+  <command>AT+CCFC=2,3,*,145,1,,,30</command>
+  <response>OK</response>
+  <set name="CF2C1" value="1"/>
+  <set name="CF2C1N" value="${*}"/>
+  <set name="CF2C1T" value="145"/>
+  <set name="CF2C1O" value="30"/>
+</chat>
+
+<chat>
+  <!-- Set call forwarding number (voice, no reply) -->
+  <command>AT+CCFC=2,3,*,129,1,,,30</command>
+  <response>OK</response>
+  <set name="CF2C1" value="1"/>
+  <set name="CF2C1N" value="${*}"/>
+  <set name="CF2C1T" value="129"/>
+  <set name="CF2C1O" value="30"/>
 </chat>
 
 <chat>
@@ -1554,7 +1559,8 @@
   <command>AT+CCFC=3,3,*,145,1</command>
   <response>OK</response>
   <set name="CF3C1" value="1"/>
-  <set name="CF3C1N" value="*"/>
+  <set name="CF3C1N" value="${*}"/>
+  <set name="CF3C1T" value="145"/>
 </chat>
 
 <chat>
@@ -1562,60 +1568,49 @@
   <command>AT+CCFC=3,3,*,129,1</command>
   <response>OK</response>
   <set name="CF3C1" value="1"/>
-  <set name="CF3C1N" value="*"/>
+  <set name="CF3C1N" value="${*}"/>
+  <set name="CF3C1T" value="129"/>
 </chat>
 
 <chat>
-    <!-- Set call forwarding number (data, unconditional) -->
-    <command>AT+CCFC=0,3,*,,2</command>
-    <response>OK</response>
-    <set name="CF0C2" value="1"/>
-    <set name="CF0C2N" value="*"/>
+  <!-- Set call forwarding number international (voice, unconditional) -->
+  <command>AT+CCFC=0,3,*,145,1</command>
+  <response>OK</response>
+  <set name="CF0C1" value="1"/>
+  <set name="CF0C1N" value="${*}"/>
+  <set name="CF0C1T" value="145"/>
 </chat>
 
 <chat>
-    <!-- Set call forwarding number (data, when busy) -->
-    <command>AT+CCFC=1,3,*,,2</command>
-    <response>OK</response>
-    <set name="CF1C2" value="1"/>
-    <set name="CF1C2N" value="*"/>
+  <!-- Set call forwarding number (voice, unconditional) -->
+  <command>AT+CCFC=0,3,*,129,1</command>
+  <response>OK</response>
+  <set name="CF0C1" value="1"/>
+  <set name="CF0C1N" value="${*}"/>
+  <set name="CF0C1T" value="129"/>
 </chat>
 
 <chat>
-    <!-- Set call forwarding number (fax, unconditional) -->
-    <command>AT+CCFC=0,3,*,,4</command>
-    <response>OK</response>
-    <set name="CF0C4" value="1"/>
-    <set name="CF0C4N" value="*"/>
+  <!-- Set call forwarding number international (voice, when busy) -->
+  <command>AT+CCFC=1,3,*,145,1</command>
+  <response>OK</response>
+  <set name="CF1C1" value="1"/>
+  <set name="CF1C1N" value="${*}"/>
+  <set name="CF1C1T" value="145"/>
 </chat>
 
 <chat>
-    <!-- Set call forwarding number (fax, when busy) -->
-    <command>AT+CCFC=1,3,*,,4</command>
-    <response>OK</response>
-    <set name="CF1C4" value="1"/>
-    <set name="CF1C4N" value="*"/>
-</chat>
-
-<chat>
-    <!-- Set call forwarding number (sms, unconditional) -->
-    <command>AT+CCFC=0,3,*,,8</command>
-    <response>OK</response>
-    <set name="CF0C8" value="1"/>
-    <set name="CF0C8N" value="*"/>
-</chat>
-
-<chat>
-    <!-- Set call forwarding number (sms, when busy) -->
-    <command>AT+CCFC=1,3,*,,8</command>
-    <response>OK</response>
-    <set name="CF1C8" value="1"/>
-    <set name="CF1C8N" value="*"/>
+  <!-- Set call forwarding number (voice, when busy) -->
+  <command>AT+CCFC=1,3,*,129,1</command>
+  <response>OK</response>
+  <set name="CF1C1" value="1"/>
+  <set name="CF1C1N" value="${*}"/>
+  <set name="CF1C1T" value="129"/>
 </chat>
 
 <chat>
     <!-- Disable all call forwarding -->
-    <command>AT+CCFC=4,0</command>
+    <command>AT+CCFC=4,4</command>
     <response>OK</response>
     <set name="CF0C1" value="0"/>
     <set name="CF0C2" value="0"/>
@@ -1625,112 +1620,286 @@
     <set name="CF1C2" value="0"/>
     <set name="CF1C4" value="0"/>
     <set name="CF1C8" value="0"/>
+    <set name="CF2C1" value="0"/>
+    <set name="CF2C2" value="0"/>
+    <set name="CF2C4" value="0"/>
+    <set name="CF2C8" value="0"/>
+    <set name="CF3C1" value="0"/>
+    <set name="CF3C2" value="0"/>
+    <set name="CF3C4" value="0"/>
+    <set name="CF3C8" value="0"/>
+    <set name="CF0C1N" value=""/>
+    <set name="CF0C2N" value=""/>
+    <set name="CF0C4N" value=""/>
+    <set name="CF0C8N" value=""/>
+    <set name="CF1C1N" value=""/>
+    <set name="CF1C2N" value=""/>
+    <set name="CF1C4N" value=""/>
+    <set name="CF1C8N" value=""/>
+    <set name="CF2C1N" value=""/>
+    <set name="CF2C2N" value=""/>
+    <set name="CF2C4N" value=""/>
+    <set name="CF2C8N" value=""/>
+    <set name="CF3C1N" value=""/>
+    <set name="CF3C2N" value=""/>
+    <set name="CF3C4N" value=""/>
+    <set name="CF3C8N" value=""/>
+    <set name="CF0C1T" value="129"/>
+    <set name="CF1C1T" value="129"/>
+    <set name="CF2C1T" value="129"/>
+    <set name="CF2C1O" value="20"/>
+    <set name="CF3C1T" value="129"/>
 </chat>
 
 <chat>
     <!-- Disable all call forwarding (conditional) -->
-    <command>AT+CCFC=5,0</command>
+    <command>AT+CCFC=5,4</command>
     <response>OK</response>
     <set name="CF1C1" value="0"/>
     <set name="CF1C2" value="0"/>
     <set name="CF1C4" value="0"/>
     <set name="CF1C8" value="0"/>
+    <set name="CF2C1" value="0"/>
+    <set name="CF2C2" value="0"/>
+    <set name="CF2C4" value="0"/>
+    <set name="CF2C8" value="0"/>
+    <set name="CF3C1" value="0"/>
+    <set name="CF3C2" value="0"/>
+    <set name="CF3C4" value="0"/>
+    <set name="CF3C8" value="0"/>
+    <set name="CF1C1N" value=""/>
+    <set name="CF1C2N" value=""/>
+    <set name="CF1C4N" value=""/>
+    <set name="CF1C8N" value=""/>
+    <set name="CF2C1N" value=""/>
+    <set name="CF2C2N" value=""/>
+    <set name="CF2C4N" value=""/>
+    <set name="CF2C8N" value=""/>
+    <set name="CF3C1N" value=""/>
+    <set name="CF3C2N" value=""/>
+    <set name="CF3C4N" value=""/>
+    <set name="CF3C8N" value=""/>
+    <set name="CF1C1T" value="129"/>
+    <set name="CF2C1T" value="129"/>
+    <set name="CF2C1O" value="20"/>
+    <set name="CF3C1T" value="129"/>
 </chat>
 
 <chat>
-    <!-- Disable forwarding, all -->
+    <!-- Erase forwarding, unconditional -->
     <command>AT+CCFC=0,4</command>
     <response>OK</response>
     <set name="CF0C1" value="0"/>
     <set name="CF0C2" value="0"/>
     <set name="CF0C4" value="0"/>
     <set name="CF0C8" value="0"/>
+    <set name="CF0C1N" value=""/>
+    <set name="CF0C2N" value=""/>
+    <set name="CF0C4N" value=""/>
+    <set name="CF0C8N" value=""/>
+    <set name="CF0C1T" value="129"/>
 </chat>
 
 <chat>
-    <!-- Disable forwarding, all voice -->
-    <command>AT+CCFC=0,4,*,,1</command>
+    <!-- Erase forwarding, unconditional voice -->
+    <command>AT+CCFC=0,4,,,1</command>
     <response>OK</response>
     <set name="CF0C1" value="0"/>
-    <set name="CF0C1N" value="*"/>
+    <set name="CF0C1N" value=""/>
+    <set name="CF0C1T" value="129"/>
 </chat>
 
 <chat>
-    <!-- Disable forwarding, all data -->
-    <command>AT+CCFC=0,4,*,,2</command>
+    <!-- Erase forwarding, unconditional data -->
+    <command>AT+CCFC=0,4,,,2</command>
     <response>OK</response>
     <set name="CF0C2" value="0"/>
-    <set name="CF0C2N" value="*"/>
+    <set name="CF0C2N" value=""/>
 </chat>
 
 <chat>
-    <!-- Disable forwarding, all fax -->
-    <command>AT+CCFC=0,4,*,,4</command>
+    <!-- Erase forwarding, unconditional fax -->
+    <command>AT+CCFC=0,4,,,4</command>
     <response>OK</response>
     <set name="CF0C4" value="0"/>
-    <set name="CF0C4N" value="*"/>
+    <set name="CF0C4N" value=""/>
 </chat>
 
 <chat>
-    <!-- Disable forwarding, all sms -->
-    <command>AT+CCFC=0,4,*,,8</command>
+    <!-- Erase forwarding, unconditional sms -->
+    <command>AT+CCFC=0,4,,,8</command>
     <response>OK</response>
     <set name="CF0C8" value="0"/>
-    <set name="CF0C8N" value="*"/>
+    <set name="CF0C8N" value=""/>
 </chat>
 
 <chat>
-    <!-- Disable forwarding, when busy -->
+    <!-- Erase forwarding, when busy -->
     <command>AT+CCFC=1,4</command>
     <response>OK</response>
     <set name="CF1C1" value="0"/>
     <set name="CF1C2" value="0"/>
     <set name="CF1C4" value="0"/>
     <set name="CF1C8" value="0"/>
+    <set name="CF1C1N" value=""/>
+    <set name="CF1C2N" value=""/>
+    <set name="CF1C4N" value=""/>
+    <set name="CF1C8N" value=""/>
+    <set name="CF1C1T" value="129"/>
 </chat>
 
 <chat>
-    <!-- Disable forwarding, all voice -->
-    <command>AT+CCFC=1,4,*,,1</command>
+    <!-- Erase forwarding, when busy voice -->
+    <command>AT+CCFC=1,4,,,1</command>
     <response>OK</response>
     <set name="CF1C1" value="0"/>
-    <set name="CF1C1N" value="*"/>
+    <set name="CF1C1N" value=""/>
+    <set name="CF1C1T" value="129"/>
 </chat>
 
 <chat>
-    <!-- Disable forwarding, all data -->
-    <command>AT+CCFC=1,4,*,,2</command>
+    <!-- Erase forwarding, when busy data -->
+    <command>AT+CCFC=1,4,,,2</command>
     <response>OK</response>
     <set name="CF1C2" value="0"/>
-    <set name="CF1C2N" value="*"/>
+    <set name="CF1C2N" value=""/>
 </chat>
 
 <chat>
-    <!-- Disable forwarding, all fax -->
-    <command>AT+CCFC=1,4,*,,4</command>
+    <!-- Erase forwarding, when busy fax -->
+    <command>AT+CCFC=1,4,,,4</command>
     <response>OK</response>
     <set name="CF1C4" value="0"/>
-    <set name="CF1C4N" value="*"/>
+    <set name="CF1C4N" value=""/>
 </chat>
 
 <chat>
-    <!-- Disable forwarding, all sms -->
-    <command>AT+CCFC=1,4,*,,8</command>
+    <!-- Erase forwarding, when busy sms -->
+    <command>AT+CCFC=1,4,,,8</command>
     <response>OK</response>
     <set name="CF1C8" value="0"/>
-    <set name="CF1C8N" value="*"/>
+    <set name="CF1C8N" value=""/>
 </chat>
 
+<chat>
+    <!-- Erase forwarding, no reply -->
+    <command>AT+CCFC=2,4</command>
+    <response>OK</response>
+    <set name="CF2C1" value="0"/>
+    <set name="CF2C2" value="0"/>
+    <set name="CF2C4" value="0"/>
+    <set name="CF2C8" value="0"/>
+    <set name="CF2C1N" value=""/>
+    <set name="CF2C2N" value=""/>
+    <set name="CF2C4N" value=""/>
+    <set name="CF2C8N" value=""/>
+    <set name="CF2C1T" value="129"/>
+    <set name="CF2C1O" value="20"/>
+</chat>
+
+<chat>
+    <!-- Erase forwarding, no reply voice -->
+    <command>AT+CCFC=2,4,,,1</command>
+    <response>OK</response>
+    <set name="CF2C1" value="0"/>
+    <set name="CF2C1N" value=""/>
+    <set name="CF2C1T" value="129"/>
+    <set name="CF2C1O" value="20"/>
+</chat>
+
+<chat>
+    <!-- Erase forwarding, no reply data -->
+    <command>AT+CCFC=2,4,,,2</command>
+    <response>OK</response>
+    <set name="CF2C2" value="0"/>
+    <set name="CF2C2N" value=""/>
+</chat>
+
+<chat>
+    <!-- Erase forwarding, no reply fax -->
+    <command>AT+CCFC=2,4,,,4</command>
+    <response>OK</response>
+    <set name="CF2C4" value="0"/>
+    <set name="CF2C4N" value="*"/>
+</chat>
+
+<chat>
+    <!-- Erase forwarding, no reply sms -->
+    <command>AT+CCFC=2,4,,,8</command>
+    <response>OK</response>
+    <set name="CF2C8" value="0"/>
+    <set name="CF2C8N" value=""/>
+</chat>
+
+<chat>
+    <!-- Erase forwarding, not reachable -->
+    <command>AT+CCFC=3,4</command>
+    <response>OK</response>
+    <set name="CF3C1" value="0"/>
+    <set name="CF3C2" value="0"/>
+    <set name="CF3C4" value="0"/>
+    <set name="CF3C8" value="0"/>
+    <set name="CF3C1N" value=""/>
+    <set name="CF3C2N" value=""/>
+    <set name="CF3C4N" value=""/>
+    <set name="CF3C8N" value=""/>
+    <set name="CF3C1T" value="129"/>
+</chat>
+
+<chat>
+    <!-- Erase forwarding, not reachable voice -->
+    <command>AT+CCFC=3,4,,,1</command>
+    <response>OK</response>
+    <set name="CF3C1" value="0"/>
+    <set name="CF3C1N" value=""/>
+    <set name="CF3C1T" value="129"/>
+</chat>
+
+<chat>
+    <!-- Erase forwarding, not reachable data -->
+    <command>AT+CCFC=3,4,,,2</command>
+    <response>OK</response>
+    <set name="CF3C2" value="0"/>
+    <set name="CF3C2N" value=""/>
+</chat>
+
+<chat>
+    <!-- Erase forwarding, not reachable fax -->
+    <command>AT+CCFC=3,4,,,4</command>
+    <response>OK</response>
+    <set name="CF3C4" value="0"/>
+    <set name="CF3C4N" value=""/>
+</chat>
+
+<chat>
+    <!-- Erase forwarding, not reachable sms -->
+    <command>AT+CCFC=3,4,,,8</command>
+    <response>OK</response>
+    <set name="CF3C8" value="0"/>
+    <set name="CF3C8N" value=""/>
+</chat>
 <chat>
     <!-- Query call forwarding number (unconditional) -->
     <command>AT+CCFC=0,2</command>
-    <response>+CCFC: ${CF0C1},1,${CF0C1N}\n+CCFC: ${CF0C2},2,${CF0C2N}\n+CCFC: ${CF0C4},4,${CF0C4N}\n+CCFC: ${CF0C8},8,${CF0C8N}\nOK</response>
+    <response>+CCFC: ${CF0C1},1,${CF0C1N},${CF0C1T}\n+CCFC: ${CF0C2},2,${CF0C2N}\n+CCFC: ${CF0C4},4,${CF0C4N}\n+CCFC: ${CF0C8},8,${CF0C8N}\nOK</response>
 </chat>
 
 <chat>
     <!-- Query call forwarding number (when busy) -->
     <command>AT+CCFC=1,2</command>
-    <response>+CCFC: ${CF1C1},1,${CF1C1N}\n+CCFC: ${CF1C2},2,${CF1C2N}\n+CCFC: ${CF1C4},4,${CF1C4N}\n+CCFC: ${CF1C8},8,${CF1C8N}\nOK</response>
+    <response>+CCFC: ${CF1C1},1,${CF1C1N},${CF1C1T}\n+CCFC: ${CF1C2},2,${CF1C2N}\n+CCFC: ${CF1C4},4,${CF1C4N}\n+CCFC: ${CF1C8},8,${CF1C8N}\nOK</response>
+</chat>
+
+<chat>
+    <!-- Query call forwarding number (no reply) -->
+    <command>AT+CCFC=2,2</command>
+    <response>+CCFC: ${CF2C1},1,${CF2C1N},${CF2C1T},,,${CF2C1O}\n+CCFC: ${CF2C2},2,${CF2C2N}\n+CCFC: ${CF2C4},4,${CF2C4N}\n+CCFC: ${CF2C8},8,${CF2C8N}\nOK</response>
+</chat>
+
+<chat>
+    <!-- Query call forwarding number (not reachable) -->
+    <command>AT+CCFC=3,2</command>
+    <response>+CCFC: ${CF3C1},1,${CF3C1N},${CF3C1T}\n+CCFC: ${CF3C2},2,${CF3C2N}\n+CCFC: ${CF3C4},4,${CF3C4N}\n+CCFC: ${CF3C8},8,${CF3C8N}\nOK</response>
 </chat>
 
 <chat>
