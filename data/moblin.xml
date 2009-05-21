@@ -984,21 +984,12 @@
     <set name="BARVAO" value="1"/>
     <set name="BARVOI" value="0"/>
     <set name="BARVOX" value="0"/>
-    <set name="BARVAI" value="0"/>
-    <set name="BARVIR" value="0"/>
-    <set name="BARVNT" value="0"/>
-    <set name="BARVNM" value="0"/>
-    <set name="BARVNS" value="0"/>
-    <set name="BARVNA" value="0"/>
-    <set name="BARVAB" value="0"/>
-    <set name="BARVAG" value="0"/>
-    <set name="BARVAC" value="0"/>
 </chat>
 
 <chat>
 	<!-- BAOC (Barr All Outgoing Calls) - Query -->
 	<command>AT+CLCK="AO",2</command>
-	<response>+CLCK: ${BARVAO},7\nOK</response>
+	<response>+CLCK: ${BARVAO},1\nOK</response>
 </chat>
 
 
@@ -1009,21 +1000,12 @@
     <set name="BARVAO" value="0"/>
     <set name="BARVOI" value="1"/>
     <set name="BARVOX" value="0"/>
-    <set name="BARVAI" value="0"/>
-    <set name="BARVIR" value="0"/>
-    <set name="BARVNT" value="0"/>
-    <set name="BARVNM" value="0"/>
-    <set name="BARVNS" value="0"/>
-    <set name="BARVNA" value="0"/>
-    <set name="BARVAB" value="0"/>
-    <set name="BARVAG" value="0"/>
-    <set name="BARVAC" value="0"/>
 </chat>
 
 <chat>
 	<!-- BOIC (Barr Outgoing International Calls) - Query -->
 	<command>AT+CLCK="OI",2</command>
-	<response>+CLCK: ${BARVOI},7\nOK</response>
+	<response>+CLCK: ${BARVOI},1\nOK</response>
 </chat>
 
 
@@ -1034,87 +1016,60 @@
     <set name="BARVAO" value="0"/>
     <set name="BARVOI" value="0"/>
     <set name="BARVOX" value="1"/>
-    <set name="BARVAI" value="0"/>
-    <set name="BARVIR" value="0"/>
-    <set name="BARVNT" value="0"/>
-    <set name="BARVNM" value="0"/>
-    <set name="BARVNS" value="0"/>
-    <set name="BARVNA" value="0"/>
-    <set name="BARVAB" value="0"/>
-    <set name="BARVAG" value="0"/>
-    <set name="BARVAC" value="0"/>
 </chat>
 
 <chat>
 	<!-- BOIC-exHC (Barr Outgoing International Calls except to Home Country) - Query -->
 	<command>AT+CLCK="OX",2</command>
-	<response>+CLCK: ${BARVOX},7\nOK</response>
+	<response>+CLCK: ${BARVOX},1\nOK</response>
 </chat>
 
 <chat>
 	<!-- BAIC (Barr All Incoming Calls) - Assign -->
 	<command>AT+CLCK="AI",1,"${PIN2VALUE}",1</command>
 	<response>OK</response>
-    <set name="BARVAO" value="0"/>
-    <set name="BARVOI" value="0"/>
-    <set name="BARVOX" value="0"/>
     <set name="BARVAI" value="1"/>
     <set name="BARVIR" value="0"/>
     <set name="BARVNT" value="0"/>
     <set name="BARVNM" value="0"/>
     <set name="BARVNS" value="0"/>
     <set name="BARVNA" value="0"/>
-    <set name="BARVAB" value="0"/>
-    <set name="BARVAG" value="0"/>
-    <set name="BARVAC" value="0"/>
 </chat>
 
 <chat>
 	<!-- BAIC (Barr All Incoming Calls) - Query -->
 	<command>AT+CLCK="AI",2</command>
-	<response>+CLCK: ${BARVAI},7\nOK</response>
+	<response>+CLCK: ${BARVAI},1\nOK</response>
 </chat>
 
 <chat>
 	<!-- BIC-Roam (Barr Incoming Calls when Roaming outside the home country) - Assign -->
 	<command>AT+CLCK="IR",1,"${PIN2VALUE}",1</command>
 	<response>OK</response>
-    <set name="BARVAO" value="0"/>
-    <set name="BARVOI" value="0"/>
-    <set name="BARVOX" value="0"/>
     <set name="BARVAI" value="0"/>
     <set name="BARVIR" value="1"/>
     <set name="BARVNT" value="0"/>
     <set name="BARVNM" value="0"/>
     <set name="BARVNS" value="0"/>
     <set name="BARVNA" value="0"/>
-    <set name="BARVAB" value="0"/>
-    <set name="BARVAG" value="0"/>
-    <set name="BARVAC" value="0"/>
 </chat>
 
 <chat>
 	<!-- BIC-Roam (Barr Incoming Calls when Roaming outside the home country) - Query -->
 	<command>AT+CLCK="IR",2</command>
-	<response>+CLCK: ${BARVIR},7\nOK</response>
+	<response>+CLCK: ${BARVIR},1\nOK</response>
 </chat>
 
 <chat>
 	<!-- barr incoming calls from numbers Not stored to TA memory - Assign -->
 	<command>AT+CLCK="NT",1,"${PIN2VALUE}",1</command>
 	<response>OK</response>
-    <set name="BARVAO" value="0"/>
-    <set name="BARVOI" value="0"/>
-    <set name="BARVOX" value="0"/>
     <set name="BARVAI" value="0"/>
     <set name="BARVIR" value="0"/>
     <set name="BARVNT" value="1"/>
     <set name="BARVNM" value="0"/>
     <set name="BARVNS" value="0"/>
     <set name="BARVNA" value="0"/>
-    <set name="BARVAB" value="0"/>
-    <set name="BARVAG" value="0"/>
-    <set name="BARVAC" value="0"/>
 </chat>
 
 <chat>
@@ -1127,18 +1082,12 @@
 	<!-- barr incoming calls from numbers Not stored to MT memory - Assign -->
 	<command>AT+CLCK="NM",1,"${PIN2VALUE}",1</command>
 	<response>OK</response>
-    <set name="BARVAO" value="0"/>
-    <set name="BARVOI" value="0"/>
-    <set name="BARVOX" value="0"/>
     <set name="BARVAI" value="0"/>
     <set name="BARVIR" value="0"/>
     <set name="BARVNT" value="0"/>
     <set name="BARVNM" value="1"/>
     <set name="BARVNS" value="0"/>
     <set name="BARVNA" value="0"/>
-    <set name="BARVAB" value="0"/>
-    <set name="BARVAG" value="0"/>
-    <set name="BARVAC" value="0"/>
 </chat>
 
 <chat>
@@ -1151,18 +1100,12 @@
 	<!-- barr incoming calls from numbers Not stored to SIM/UICC memory - Assign -->
 	<command>AT+CLCK="NS",1,"${PIN2VALUE}",1</command>
 	<response>OK</response>
-    <set name="BARVAO" value="0"/>
-    <set name="BARVOI" value="0"/>
-    <set name="BARVOX" value="0"/>
     <set name="BARVAI" value="0"/>
     <set name="BARVIR" value="0"/>
     <set name="BARVNT" value="0"/>
     <set name="BARVNM" value="0"/>
     <set name="BARVNS" value="1"/>
     <set name="BARVNA" value="0"/>
-    <set name="BARVAB" value="0"/>
-    <set name="BARVAG" value="0"/>
-    <set name="BARVAC" value="0"/>
 </chat>
 
 <chat>
@@ -1175,18 +1118,12 @@
 	<!-- barr incoming calls from numbers Not stored to Any memory - Assign -->
 	<command>AT+CLCK="NA",1,"${PIN2VALUE}",1</command>
 	<response>OK</response>
-    <set name="BARVAO" value="0"/>
-    <set name="BARVOI" value="0"/>
-    <set name="BARVOX" value="0"/>
     <set name="BARVAI" value="0"/>
     <set name="BARVIR" value="0"/>
     <set name="BARVNT" value="0"/>
     <set name="BARVNM" value="0"/>
     <set name="BARVNS" value="0"/>
     <set name="BARVNA" value="1"/>
-    <set name="BARVAB" value="0"/>
-    <set name="BARVAG" value="0"/>
-    <set name="BARVAC" value="0"/>
 </chat>
 
 <chat>
@@ -1208,26 +1145,6 @@
     <set name="BARVNM" value="0"/>
     <set name="BARVNS" value="0"/>
     <set name="BARVNA" value="0"/>
-    <set name="BARVAB" value="0"/>
-    <set name="BARVAG" value="0"/>
-    <set name="BARVAC" value="0"/>
-</chat>
-
-<chat>
-	<!-- All Barring Services - Query -->
-	<command>AT+CLCK="AB",2</command>
-	<response>+CLCK: ${BARVAO},7\nOK</response>
-	<response>+CLCK: ${BARVOI},7\nOK</response>
-	<response>+CLCK: ${BARVOX},7\nOK</response>
-	<response>+CLCK: ${BARVAI},7\nOK</response>
-	<response>+CLCK: ${BARVIR},7\nOK</response>
-	<response>+CLCK: ${BARVNT},7\nOK</response>
-	<response>+CLCK: ${BARVNM},7\nOK</response>
-	<response>+CLCK: ${BARVNS},7\nOK</response>
-	<response>+CLCK: ${BARVNA},7\nOK</response>
-	<response>+CLCK: ${BARVAB},7\nOK</response>
-	<response>+CLCK: ${BARVAG},7\nOK</response>
-	<response>+CLCK: ${BARVAC},7\nOK</response>
 </chat>
 
 <chat>
@@ -1240,14 +1157,6 @@
 </chat>
 
 <chat>
-	<!-- All outGoing barring services - Query -->
-	<command>AT+CLCK="AG",2</command>
-	<response>+CLCK: ${BARVAO},7\nOK</response>
-	<response>+CLCK: ${BARVOI},7\nOK</response>
-	<response>+CLCK: ${BARVOX},7\nOK</response>
-</chat>
-
-<chat>
 	<!-- All inComing barring services - UNLOCK ONLY -->
 	<command>AT+CLCK="AC",0,"${PIN2VALUE}"</command>
 	<response>OK</response>
@@ -1257,17 +1166,6 @@
     <set name="BARVNM" value="0"/>
     <set name="BARVNS" value="0"/>
     <set name="BARVNA" value="0"/>
-</chat>
-
-<chat>
-	<!-- All inComing barring services - Query -->
-	<command>AT+CLCK="AC",2</command>
-	<response>+CLCK: ${BARVAI},7\nOK</response>
-	<response>+CLCK: ${BARVIR},7\nOK</response>
-	<response>+CLCK: ${BARVNT},7\nOK</response>
-	<response>+CLCK: ${BARVNM},7\nOK</response>
-	<response>+CLCK: ${BARVNS},7\nOK</response>
-	<response>+CLCK: ${BARVNA},7\nOK</response>
 </chat>
 
 <!-- ****************** Facility Locks ***************************** -->
@@ -1375,6 +1273,13 @@
 </chat>
 
 <!-- ******************** Change Call Barring Passwords ********************** -->
+<chat>
+    <!-- Change Barring PIN (success) -->
+    <command>AT+CPWD="AB","${PIN2VALUE}","*"</command>
+    <response>OK</response>
+    <set name="PIN2VALUE" value="${*}"/>
+</chat>
+
 <chat>
     <!-- Change Barring PIN (success) -->
     <command>AT+CPWD="AO","${PIN2VALUE}","*"</command>
