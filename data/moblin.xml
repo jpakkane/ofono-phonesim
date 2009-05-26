@@ -75,9 +75,6 @@
     <!-- Extended error message string -->
     <set name="ERR" value="EXTENDED ERROR STRING"/>
 
-    <!-- Subscriber number information -->
-    <set name="NUM" value=""/>
-
     <!-- Network registration presentation flag -->
     <set name="REG" value="1,0"/>
 
@@ -577,7 +574,7 @@
 <chat>
     <!-- Query subscriber number -->
     <command>AT+CNUM</command>
-    <response>+CNUM: ,"${NUM}",129\nOK</response>
+    <response>+CNUM: ,"+358501234567",145,,4\nOK</response>
 </chat>
 
 <chat>
