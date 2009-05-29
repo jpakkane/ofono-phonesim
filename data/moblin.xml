@@ -178,6 +178,10 @@
     <set name="CF3C1T" value="129"/>
     <set name="CF2C1O" value="20"/>
 
+    <!-- Service Center Address -->
+    <set name="SCA" value="+15551234567"/>
+    <set name="SCAT" value="145"/>
+
     <!-- Fixed Dialling presentation mode -->
     <set name="FD" value="0"/>
 
@@ -2100,6 +2104,34 @@
     <command>AT+CFUN=*</command>
     <response>OK</response>
     <set name="FUN" value="*"/>
+</chat>
+
+<chat>
+    <!-- Supports? SMS Service Center Address -->
+    <command>AT+CSCA=?</command>
+    <response>OK</response>
+</chat>
+
+<chat>
+    <!-- Query SMS Service Center Address -->
+    <command>AT+CSCA?</command>
+    <response>+CSCA: "${SCA}",${SCAT}\nOK</response>
+</chat>
+
+<chat>
+    <!-- Set SMS Service Center Address -->
+    <command>AT+CSCA="*",145</command>
+    <response>OK</response>
+    <set name="SCA" value="*"/>
+    <set name="SCAT" value="145"/>
+</chat>
+
+<chat>
+    <!-- Set SMS Service Center Address, unknwon -->
+    <command>AT+CSCA="*",129</command>
+    <response>OK</response>
+    <set name="SCA" value="*"/>
+    <set name="SCAT" value="129"/>
 </chat>
 
 <chat>
