@@ -2107,6 +2107,24 @@
 </chat>
 
 <chat>
+    <!-- Query CSMS Support -->
+    <command>AT+CSMS=?</command>
+    <response>+CSMS=(0)\nOK</response>
+</chat>
+
+<chat>
+    <!-- Query CSMS Setting -->
+    <command>AT+CSMS?</command>
+    <response>+CSMS: 0,1,1,1\nOK</response>
+</chat>
+
+<chat>
+    <!-- Set CSMS -->
+    <command>AT+CSMS=0</command>
+    <response>+CSMS: 1,1,1\nOK</response>
+</chat>
+
+<chat>
     <!-- Supports? SMS Service Center Address -->
     <command>AT+CSCA=?</command>
     <response>OK</response>
@@ -2631,16 +2649,14 @@
 </state>
 
 <chat>
-    <!-- Request the number of messages in the incoming broadcast queue -->
-    <command>AT+CPMS="BM"</command>
-    <response>+CPMS: 0,99,${MSGCOUNT},99,${MSGCOUNT},99\nOK</response>
-    <set name="MSGLISTCOPY" value=""/>
-    <set name="MSGMEM" value="BM"/>
+    <!-- CPMS Support -->
+    <command>AT+CPMS=?</command>
+    <response>+CPMS: ("SM","ME"),("SM","ME"),("SM","ME")\nOK</response>
 </chat>
 
 <chat>
     <!-- Request the number of messages in the incoming SIM queue -->
-    <command>AT+CPMS="SM"</command>
+    <command>AT+CPMS="SM","SM","SM"</command>
     <response>+CPMS: 0,99,${MSGCOUNT},99,${MSGCOUNT},99\nOK</response>
     <set name="MSGLISTCOPY" value=""/>
     <set name="MSGMEM" value="SM"/>
@@ -2648,10 +2664,16 @@
 
 <chat>
     <!-- Request the number of messages in the incoming ordinary queue -->
-    <command>AT+CPMS="ME"</command>
+    <command>AT+CPMS="ME","ME","ME"</command>
     <response>+CPMS: ${MSGCOUNT},99,${MSGCOUNT},99,${MSGCOUNT},99\nOK</response>
     <set name="MSGLISTCOPY" value="${MSGLIST}"/>
     <set name="MSGMEM" value="ME"/>
+</chat>
+
+<chat>
+    <!-- Query CNMI support -->
+    <command>AT+CNMI=?</command>
+    <response>+CNMI: (0,1,2,3),(0,1),(0,1,2),(0),(0,1)\nOK</response>
 </chat>
 
 <chat>
