@@ -315,7 +315,8 @@ bool SimChat::command( const QString& cmd )
     }
 
     // Send the response.
-    state()->rules()->respond( response, responseDelay, eol );
+    if (!readSMS && !deleteSMS && !listSMS)
+        state()->rules()->respond( response, responseDelay, eol );
 
     // Set the variables.
     for ( int varNum = 0; varNum < variables.size(); ++varNum ) {
@@ -1264,7 +1265,6 @@ void SimRules::respond( const QString& resp, int delay, bool eol )
         if (return_error_count == 0)
             return_error_string = "";
     }
-
 
     QByteArray escaped = expandEscapes( r, eol ).toUtf8();
     if ( !delay ) {
