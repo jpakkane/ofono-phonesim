@@ -307,7 +307,7 @@
 <chat>
     <!-- Get manufacturer identifier -->
     <command>AT+CGMI</command>
-    <response>${GMI}\nOK</response>
+    <response>${GMI}\n\nOK</response>
 </chat>
 
 <chat>
@@ -319,19 +319,19 @@
 <chat>
     <!-- Get manufacturer identifier, V.25ter version -->
     <command>AT+GMI</command>
-    <response>${GMI}\nOK</response>
+    <response>${GMI}\n\nOK</response>
 </chat>
 
 <chat>
     <!-- Get manufacturer model -->
     <command>AT+CGMM</command>
-    <response>${GMM}\nOK</response>
+    <response>${GMM}\n\nOK</response>
 </chat>
 
 <chat>
     <!-- Get manufacturer model, V.25ter version -->
     <command>AT+GMM</command>
-    <response>${GMM}\nOK</response>
+    <response>${GMM}\n\nOK</response>
 </chat>
 
 <chat>
@@ -343,13 +343,13 @@
 <chat>
     <!-- Get manufacturer revision -->
     <command>AT+CGMR</command>
-    <response>${GMR}\nOK</response>
+    <response>${GMR}\n\nOK</response>
 </chat>
 
 <chat>
     <!-- Get manufacturer revision, V.25ter version -->
     <command>AT+GMR</command>
-    <response>${GMR}\nOK</response>
+    <response>${GMR}\n\nOK</response>
 </chat>
 
 <chat>
@@ -361,7 +361,7 @@
 <chat>
     <!-- Get serial number -->
     <command>AT+CGSN</command>
-    <response>${GSN}\nOK</response>
+    <response>${GSN}\n\nOK</response>
 </chat>
 
 <chat>
@@ -373,13 +373,13 @@
 <chat>
     <!-- Get serial number, V.25ter version -->
     <command>AT+GSN</command>
-    <response>${GSN}\nOK</response>
+    <response>${GSN}\n\nOK</response>
 </chat>
 
 <chat>
     <!-- Get SIM id -->
     <command>AT+CIMI</command>
-    <response>${IMSI}\nOK</response>
+    <response>${IMSI}\n\nOK</response>
 </chat>
 
 <chat>
@@ -391,13 +391,13 @@
 <chat>
     <!-- Query current character set -->
     <command>AT+CSCS?</command>
-    <response>+CSCS: "${SCS}"\nOK</response>
+    <response>+CSCS: "${SCS}"\n\nOK</response>
 </chat>
 
 <chat>
     <!-- Query all supported character sets -->
     <command>AT+CSCS=?</command>
-    <response>+CSCS: "GSM","IRA","PCCP437","PCDN","8859-1","HEX","UCS2"\nOK</response>
+    <response>+CSCS: "GSM","IRA","PCCP437","PCDN","8859-1","HEX","UCS2"\n\nOK</response>
 </chat>
 
 <chat>
@@ -410,13 +410,13 @@
 <chat>
     <!-- Query current wireless network (GSM = 12) -->
     <command>AT+WS46?</command>
-    <response>12\nOK</response>
+    <response>12\n\nOK</response>
 </chat>
 
 <chat>
     <!-- Query all supported wireless network types -->
     <command>AT+WS46=?</command>
-    <response>(12)\nOK</response>
+    <response>(12)\n\nOK</response>
 </chat>
 
 <chat>
@@ -430,13 +430,13 @@
 <chat>
     <!-- Query current type of address (local = 129, international = 145) -->
     <command>AT+CSTA?</command>
-    <response>${STA}\nOK</response>
+    <response>${STA}\n\nOK</response>
 </chat>
 
 <chat>
     <!-- Query supported address types -->
     <command>AT+CSTA=?</command>
-    <response>(129, 145)\nOK</response>
+    <response>(129, 145)\n\nOK</response>
 </chat>
 
 <chat>
@@ -456,13 +456,13 @@
 <chat>
     <!-- Query bearer service type (autobauding = 0) -->
     <command>AT+CBST?</command>
-    <response>+CBST: 0\nOK</response>
+    <response>+CBST: 0\n\nOK</response>
 </chat>
 
 <chat>
     <!-- Query supported bearer service types -->
     <command>AT+CBST=?</command>
-    <response>+CBST: (0),(0),(0)\nOK</response>
+    <response>+CBST: (0),(0),(0)\n\nOK</response>
 </chat>
 
 <chat>
@@ -474,13 +474,13 @@
 <chat>
     <!-- Query radio link protocol -->
     <command>AT+CRLP?</command>
-    <response>+CRLP: 61,61,48,6\nOK</response>
+    <response>+CRLP: 61,61,48,6\n\nOK</response>
 </chat>
 
 <chat>
     <!-- Query supported radio link protocols -->
     <command>AT+CRLP=?</command>
-    <response>+CRLP: (61),(61),(48),(6)\nOK</response>
+    <response>+CRLP: (61),(61),(48),(6)\n\nOK</response>
 </chat>
 
 <chat>
@@ -492,13 +492,13 @@
 <chat>
     <!-- Query service reporting control -->
     <command>AT+CR?</command>
-    <response>+CR: ${CR}\nOK</response>
+    <response>+CR: ${CR}\n\nOK</response>
 </chat>
 
 <chat>
     <!-- Query supported service reporting controls -->
     <command>AT+CR=?</command>
-    <response>+CR: (0,1)\nOK</response>
+    <response>+CR: (0,1)\n\nOK</response>
 </chat>
 
 <chat>
@@ -518,19 +518,19 @@
 <chat>
     <!-- Extended error report -->
     <command>AT+CEER</command>
-    <response>+CEER: ${ERR}\nOK</response>
+    <response>+CEER: ${ERR}\n\nOK</response>
 </chat>
 
 <chat>
     <!-- Query extended celluar result code status -->
     <command>AT+CRC?</command>
-    <response>+CRC: ${CRC}\nOK</response>
+    <response>+CRC: ${CRC}\n\nOK</response>
 </chat>
 
 <chat>
     <!-- Query supported cellular result code status values -->
     <command>AT+CRC=?</command>
-    <response>+CRC: (0,1)\nOK</response>
+    <response>+CRC: (0,1)\n\nOK</response>
 </chat>
 
 <chat>
@@ -550,13 +550,13 @@
 <chat>
     <!-- Query Ericsson-style call monitoring status -->
     <command>AT*ECAM?</command>
-    <response>*ECAM: ${ECAM}\nOK</response>
+    <response>*ECAM: ${ECAM}\n\nOK</response>
 </chat>
 
 <chat>
     <!-- Query supported call monitoring status values -->
     <command>AT*ECAM=?</command>
-    <response>*ECAM: (0,1)\nOK</response>
+    <response>*ECAM: (0,1)\n\nOK</response>
 </chat>
 
 <chat>
@@ -578,7 +578,7 @@
 <chat>
     <!-- Query subscriber number -->
     <command>AT+CNUM</command>
-    <response>+CNUM: ,"+358501234567",145,,4\nOK</response>
+    <response>+CNUM: ,"+358501234567",145,,4\n\nOK</response>
 </chat>
 
 <chat>
@@ -590,13 +590,13 @@
 <chat>
     <!-- Query network registration result code presentation -->
     <command>AT+CREG?</command>
-    <response>+CREG: ${REG},1\nOK</response>
+    <response>+CREG: ${REG},1\n\nOK</response>
 </chat>
 
 <chat>
     <!-- Query supported network registration result code presentation types -->
     <command>AT+CREG=?</command>
-    <response>+CREG: (0,1,2)\nOK</response>
+    <response>+CREG: (0,1,2)\n\nOK</response>
 </chat>
 
 <chat>
@@ -609,13 +609,13 @@
 <chat>
     <!-- Query GPRS network registration result code presentation -->
     <command>AT+CGREG?</command>
-    <response>+CGREG: ${GREG},0\nOK</response>
+    <response>+CGREG: ${GREG},0\n\nOK</response>
 </chat>
 
 <chat>
     <!-- Query GPRS network registration result code presentation types -->
     <command>AT+CGREG=?</command>
-    <response>+CGREG: (0,1,2)\nOK</response>
+    <response>+CGREG: (0,1,2)\n\nOK</response>
 </chat>
 
 <chat>
@@ -630,25 +630,25 @@
 <chat>
   <!-- Request PLMNS descriptors -->
   <command>AT+COPN</command>
-  <response delay="2000">+COPN: ${OP1PLMN},"${OP1}"\n+COPN: ${OP2PLMN},"${OP2}"\n+COPN: ${OP3PLMN},"${OP3}"\n+COPN: ${OP4PLMN},"${OP4}"\n+COPN: ${OP5PLMN},"${OP5}"\n+COPN: ${OP6PLMN},"${OP6}"\n+COPN: ${OP7PLMN},"${OP7}"\n+COPN: ${OP8PLMN},"${OP8}"\n+COPN: ${OP9PLMN},"${OP9}"\n+COPN: ${OP10PLMN},"${OP10}"\n+COPN: ${OP11PLMN},"${OP11}"\nOK</response>
+  <response delay="2000">+COPN: ${OP1PLMN},"${OP1}"\n+COPN: ${OP2PLMN},"${OP2}"\n+COPN: ${OP3PLMN},"${OP3}"\n+COPN: ${OP4PLMN},"${OP4}"\n+COPN: ${OP5PLMN},"${OP5}"\n+COPN: ${OP6PLMN},"${OP6}"\n+COPN: ${OP7PLMN},"${OP7}"\n+COPN: ${OP8PLMN},"${OP8}"\n+COPN: ${OP9PLMN},"${OP9}"\n+COPN: ${OP10PLMN},"${OP10}"\n+COPN: ${OP11PLMN},"${OP11}"\n\nOK</response>
 </chat>
 
 <chat>
     <!-- Query current operator selection -->
     <command>AT+COPS?</command>
-    <response delay="500">+COPS: ${OPMODE},${OPFORMAT},${OPDATA}\nOK</response>
+    <response delay="500">+COPS: ${OPMODE},${OPFORMAT},${OPDATA}\n\nOK</response>
 </chat>
 
 <chat>
   <!-- Query current operator and plmn (Example) -->
   <command>AT+COPS=3,2;+COPS?;+COPS=3,0;+COPS?</command>
-  <response delay="500">+COPS: 0,2,&quot;${OPPLMN}&quot;\n+COPS: 0,0,&quot;${OP}&quot;\nOK</response>
+  <response delay="500">+COPS: 0,2,&quot;${OPPLMN}&quot;\n+COPS: 0,0,&quot;${OP}&quot;\n\nOK</response>
 </chat>
 
 <chat>
     <!-- Query supported operators, always reports -->
     <command>AT+COPS=?</command>
-    <response delay="2000">+COPS: (${OP1STATE},&quot;${OP1}&quot;,&quot;TTAU&quot;,&quot;${OP1PLMN}&quot;),(${OP2STATE},&quot;${OP2}&quot;,&quot;MFN&quot;,&quot;${OP2PLMN}&quot;),(${OP3STATE},&quot;${OP3}&quot;,&quot;CNT&quot;,&quot;${OP3PLMN}&quot;),(${OP4STATE},&quot;${OP4}&quot;,&quot;BNT&quot;,&quot;${OP4PLMN}&quot;),(${OP5STATE},&quot;${OP5}&quot;,&quot;INT&quot;,&quot;${OP5PLMN}&quot;),(${OP6STATE},&quot;${OP6}&quot;,&quot;PNT&quot;,&quot;${OP6PLMN}&quot;),(${OP7STATE},&quot;${OP7}&quot;,&quot;TNT&quot;,&quot;${OP7PLMN}&quot;),(${OP8STATE},&quot;${OP8}&quot;,&quot;MNT&quot;,&quot;${OP8PLMN}&quot;),(${OP9STATE},&quot;${OP9}&quot;,&quot;IMSI&quot;,&quot;${OP9PLMN}&quot;),(${OP10STATE},&quot;${OP10}&quot;,&quot;NOT&quot;,&quot;${OP10PLMN}&quot;),(${OP11STATE},&quot;${OP11}&quot;,&quot;SER&quot;,&quot;${OP11PLMN}&quot;)\nOK</response>
+    <response delay="2000">+COPS: (${OP1STATE},&quot;${OP1}&quot;,&quot;TTAU&quot;,&quot;${OP1PLMN}&quot;),(${OP2STATE},&quot;${OP2}&quot;,&quot;MFN&quot;,&quot;${OP2PLMN}&quot;),(${OP3STATE},&quot;${OP3}&quot;,&quot;CNT&quot;,&quot;${OP3PLMN}&quot;),(${OP4STATE},&quot;${OP4}&quot;,&quot;BNT&quot;,&quot;${OP4PLMN}&quot;),(${OP5STATE},&quot;${OP5}&quot;,&quot;INT&quot;,&quot;${OP5PLMN}&quot;),(${OP6STATE},&quot;${OP6}&quot;,&quot;PNT&quot;,&quot;${OP6PLMN}&quot;),(${OP7STATE},&quot;${OP7}&quot;,&quot;TNT&quot;,&quot;${OP7PLMN}&quot;),(${OP8STATE},&quot;${OP8}&quot;,&quot;MNT&quot;,&quot;${OP8PLMN}&quot;),(${OP9STATE},&quot;${OP9}&quot;,&quot;IMSI&quot;,&quot;${OP9PLMN}&quot;),(${OP10STATE},&quot;${OP10}&quot;,&quot;NOT&quot;,&quot;${OP10PLMN}&quot;),(${OP11STATE},&quot;${OP11}&quot;,&quot;SER&quot;,&quot;${OP11PLMN}&quot;)\n\nOK</response>
 </chat>
 
 <chat>
@@ -855,13 +855,13 @@
 <chat>
   <!-- Request selection of preferred PLMN list -->
   <command>AT+CPLS?</command>
-  <response delay="1000">+CPLS: 0\nOK</response> -->
+  <response delay="1000">+CPLS: 0\n\nOK</response> -->
 </chat>
 
 <chat>
   <!-- Request preferred operators -->
   <command>AT+CPOL?</command>
-  <response delay="2000">+CPOL: ${PO1}\n+CPOL: ${PO2}\nOK</response>
+  <response delay="2000">+CPOL: ${PO1}\n+CPOL: ${PO2}\n\nOK</response>
 </chat>
 
 <chat>
@@ -990,7 +990,7 @@
 <chat>
 	<!-- BAOC (Barr All Outgoing Calls) - Query -->
 	<command>AT+CLCK="AO",2</command>
-	<response>+CLCK: ${BARVAO},1\nOK</response>
+	<response>+CLCK: ${BARVAO},1\n\nOK</response>
 </chat>
 
 
@@ -1006,7 +1006,7 @@
 <chat>
 	<!-- BOIC (Barr Outgoing International Calls) - Query -->
 	<command>AT+CLCK="OI",2</command>
-	<response>+CLCK: ${BARVOI},1\nOK</response>
+	<response>+CLCK: ${BARVOI},1\n\nOK</response>
 </chat>
 
 
@@ -1022,7 +1022,7 @@
 <chat>
 	<!-- BOIC-exHC (Barr Outgoing International Calls except to Home Country) - Query -->
 	<command>AT+CLCK="OX",2</command>
-	<response>+CLCK: ${BARVOX},1\nOK</response>
+	<response>+CLCK: ${BARVOX},1\n\nOK</response>
 </chat>
 
 <chat>
@@ -1040,7 +1040,7 @@
 <chat>
 	<!-- BAIC (Barr All Incoming Calls) - Query -->
 	<command>AT+CLCK="AI",2</command>
-	<response>+CLCK: ${BARVAI},1\nOK</response>
+	<response>+CLCK: ${BARVAI},1\n\nOK</response>
 </chat>
 
 <chat>
@@ -1058,7 +1058,7 @@
 <chat>
 	<!-- BIC-Roam (Barr Incoming Calls when Roaming outside the home country) - Query -->
 	<command>AT+CLCK="IR",2</command>
-	<response>+CLCK: ${BARVIR},1\nOK</response>
+	<response>+CLCK: ${BARVIR},1\n\nOK</response>
 </chat>
 
 <chat>
@@ -1076,7 +1076,7 @@
 <chat>
 	<!-- barr incoming calls from numbers Not stored to TA memory - Query -->
 	<command>AT+CLCK="NT",2</command>
-	<response>+CLCK: ${BARVNT},7\nOK</response>
+	<response>+CLCK: ${BARVNT},7\n\nOK</response>
 </chat>
 
 <chat>
@@ -1094,7 +1094,7 @@
 <chat>
 	<!-- barr incoming calls from numbers Not stored to MT memory - Query -->
 	<command>AT+CLCK="NM",2</command>
-	<response>+CLCK: ${BARVNM},7\nOK</response>
+	<response>+CLCK: ${BARVNM},7\n\nOK</response>
 </chat>
 
 <chat>
@@ -1112,7 +1112,7 @@
 <chat>
 	<!-- barr incoming calls from numbers Not stored to SIM/UICC memory - Query -->
 	<command>AT+CLCK="NS",2</command>
-	<response>+CLCK: ${BARVNS},7\nOK</response>
+	<response>+CLCK: ${BARVNS},7\n\nOK</response>
 </chat>
 
 <chat>
@@ -1130,7 +1130,7 @@
 <chat>
 	<!-- barr incoming calls from numbers Not stored to Any memory - Query -->
 	<command>AT+CLCK="NA",2</command>
-	<response>+CLCK: ${BARVNA},7\nOK</response>
+	<response>+CLCK: ${BARVNA},7\n\nOK</response>
 </chat>
 
 <chat>
@@ -1174,14 +1174,14 @@
 <chat>
     <!-- Query available facility locks -->
     <command>AT+CLCK=?</command>
-    <response>+CLCK: PS(8),SC(8)\nOK</response>
+    <response>+CLCK: PS(8),SC(8)\n\nOK</response>
 </chat>
 
 <!-- FIXED DIALLING LOCKS -->
 <chat>
   <!-- Query available facility lock -->
   <command>AT+CLCK="FD",2</command>
-  <response>+CLCK: ${FD}\nOK</response>
+  <response>+CLCK: ${FD}\n\nOK</response>
 </chat>
 
 <chat>
@@ -1208,7 +1208,7 @@
 <chat>
     <!-- Query available facility locks -->
     <command>AT+CLCK="SC",2</command>
-    <response delay="1000">+CLCK: ${SC}\nOK</response>
+    <response delay="1000">+CLCK: ${SC}\n\nOK</response>
 </chat>
 
 <chat>
@@ -1234,7 +1234,7 @@
 <chat>
     <!-- Query available facility locks -->
     <command>AT+CLCK="PS",2</command>
-    <response delay="1000">+CLCK: ${PS}\nOK</response>
+    <response delay="1000">+CLCK: ${PS}\n\nOK</response>
 </chat>
 
 <chat>
@@ -1347,13 +1347,13 @@
 <chat>
     <!-- Query calling line identifier presentation mode -->
     <command>AT+CLIP?</command>
-    <response>+CLIP: ${LIP},1\nOK</response>
+    <response>+CLIP: ${LIP},1\n\nOK</response>
 </chat>
 
 <chat>
     <!-- Query supported calling line identifier presentation modes -->
     <command>AT+CLIP=?</command>
-    <response>+CLIP: (0,1)\nOK</response>
+    <response>+CLIP: (0,1)\n\nOK</response>
 </chat>
 
 <chat>
@@ -1366,13 +1366,13 @@
 <chat>
     <!-- Query calling line identication restriction mode -->
     <command>AT+CLIR?</command>
-    <response>+CLIR: ${LIR},${LIR_STATUS}\nOK</response>
+    <response>+CLIR: ${LIR},${LIR_STATUS}\n\nOK</response>
 </chat>
 
 <chat>
     <!-- Query supported calling line identication restriction modes -->
     <command>AT+CLIR=?</command>
-    <response>+CLIR: (0,1,2)\nOK</response>
+    <response>+CLIR: (0,1,2)\n\nOK</response>
 </chat>
 
 <chat>
@@ -1385,13 +1385,13 @@
 <chat>
     <!-- Query originating line identifier presentation mode -->
     <command>AT+COLP?</command>
-    <response>+COLP: ${OLP},1\nOK</response>
+    <response>+COLP: ${OLP},1\n\nOK</response>
 </chat>
 
 <chat>
     <!-- Query supported originating line identifier presentation modes -->
     <command>AT+COLP=?</command>
-    <response>+COLP: (0,1)\nOK</response>
+    <response>+COLP: (0,1)\n\nOK</response>
 </chat>
 
 <chat>
@@ -1404,7 +1404,7 @@
 <chat>
     <!-- Query closed user group status (not supported yet) -->
     <command>AT+CCUG?</command>
-    <response>+CCUG: 0,0,0\nOK</response>
+    <response>+CCUG: 0,0,0\n\nOK</response>
 </chat>
 
 <chat>
@@ -1417,7 +1417,7 @@
 <chat>
     <!-- Query supported call forwarding reasons -->
     <command>AT+CCFC=?</command>
-    <response>+CCFC: (0,1,2,3,4,5)\nOK</response>
+    <response>+CCFC: (0,1,2,3,4,5)\n\nOK</response>
 </chat>
 
 <chat>
@@ -1787,85 +1787,85 @@
 <chat>
     <!-- Query call forwarding number (unconditional) -->
     <command>AT+CCFC=0,2</command>
-    <response>+CCFC: ${CF0C1},1,${CF0C1N},${CF0C1T}\n+CCFC: ${CF0C2},2,${CF0C2N}\n+CCFC: ${CF0C4},4,${CF0C4N}\n+CCFC: ${CF0C8},8,${CF0C8N}\nOK</response>
+    <response>+CCFC: ${CF0C1},1,${CF0C1N},${CF0C1T}\n+CCFC: ${CF0C2},2,${CF0C2N}\n+CCFC: ${CF0C4},4,${CF0C4N}\n+CCFC: ${CF0C8},8,${CF0C8N}\n\nOK</response>
 </chat>
 
 <chat>
     <!-- Query call forwarding number (when busy) -->
     <command>AT+CCFC=1,2</command>
-    <response>+CCFC: ${CF1C1},1,${CF1C1N},${CF1C1T}\n+CCFC: ${CF1C2},2,${CF1C2N}\n+CCFC: ${CF1C4},4,${CF1C4N}\n+CCFC: ${CF1C8},8,${CF1C8N}\nOK</response>
+    <response>+CCFC: ${CF1C1},1,${CF1C1N},${CF1C1T}\n+CCFC: ${CF1C2},2,${CF1C2N}\n+CCFC: ${CF1C4},4,${CF1C4N}\n+CCFC: ${CF1C8},8,${CF1C8N}\n\nOK</response>
 </chat>
 
 <chat>
     <!-- Query call forwarding number (no reply) -->
     <command>AT+CCFC=2,2</command>
-    <response>+CCFC: ${CF2C1},1,${CF2C1N},${CF2C1T},,,${CF2C1O}\n+CCFC: ${CF2C2},2,${CF2C2N}\n+CCFC: ${CF2C4},4,${CF2C4N}\n+CCFC: ${CF2C8},8,${CF2C8N}\nOK</response>
+    <response>+CCFC: ${CF2C1},1,${CF2C1N},${CF2C1T},,,${CF2C1O}\n+CCFC: ${CF2C2},2,${CF2C2N}\n+CCFC: ${CF2C4},4,${CF2C4N}\n+CCFC: ${CF2C8},8,${CF2C8N}\n\nOK</response>
 </chat>
 
 <chat>
     <!-- Query call forwarding number (not reachable) -->
     <command>AT+CCFC=3,2</command>
-    <response>+CCFC: ${CF3C1},1,${CF3C1N},${CF3C1T}\n+CCFC: ${CF3C2},2,${CF3C2N}\n+CCFC: ${CF3C4},4,${CF3C4N}\n+CCFC: ${CF3C8},8,${CF3C8N}\nOK</response>
+    <response>+CCFC: ${CF3C1},1,${CF3C1N},${CF3C1T}\n+CCFC: ${CF3C2},2,${CF3C2N}\n+CCFC: ${CF3C4},4,${CF3C4N}\n+CCFC: ${CF3C8},8,${CF3C8N}\n\nOK</response>
 </chat>
 
 <chat>
     <!-- Query call waiting presentation mode -->
     <command>AT+CCWA?</command>
-    <response>+CCWA: 1\nOK</response>
+    <response>+CCWA: 1\n\nOK</response>
 </chat>
 
 <chat>
     <!-- Query call waiting -->
     <command>AT+CCWA=1,2</command>
-    <response delay="2000">+CCWA: ${CWA_V},1\n+CCWA: ${CWA_D},2\n+CCWA: ${CWA_F},4\nOK</response>
+    <response delay="2000">+CCWA: ${CWA_V},1\n+CCWA: ${CWA_D},2\n+CCWA: ${CWA_F},4\n\nOK</response>
 </chat>
 
 <chat>
     <!-- Query call waiting -->
     <command>AT+CCWA=1,2,7</command>
-    <response delay="2000">+CCWA: ${CWA_V},1\n+CCWA: ${CWA_D},2\n+CCWA: ${CWA_F},4\nOK</response>
+    <response delay="2000">+CCWA: ${CWA_V},1\n+CCWA: ${CWA_D},2\n+CCWA: ${CWA_F},4\n\nOK</response>
 </chat>
 
 <chat>
     <!-- Query call waiting -->
     <command>AT+CCWA=1,2,1</command>
-    <response delay="2000">+CCWA: ${CWA_V},1\nOK</response>
+    <response delay="2000">+CCWA: ${CWA_V},1\n\nOK</response>
 </chat>
 
 <chat>
     <!-- Query call waiting -->
     <command>AT+CCWA=1,2,2</command>
-    <response delay="2000">+CCWA: ${CWA_D},2\nOK</response>
+    <response delay="2000">+CCWA: ${CWA_D},2\n\nOK</response>
 </chat>
 
 <chat>
     <!-- Query call waiting -->
     <command>AT+CCWA=1,2,4</command>
-    <response delay="2000">+CCWA: ${CWA_F},4\nOK</response>
+    <response delay="2000">+CCWA: ${CWA_F},4\n\nOK</response>
 </chat>
 
 <chat>
     <!-- Query call waiting -->
     <command>AT+CCWA=1,2,3</command>
-    <response delay="2000">+CCWA: ${CWA_V},1\n+CCWA: ${CWA_D},2\nOK</response>
+    <response delay="2000">+CCWA: ${CWA_V},1\n+CCWA: ${CWA_D},2\n\nOK</response>
 </chat>
 
 <chat>
     <!-- Query call waiting -->
     <command>AT+CCWA=1,2,5</command>
-    <response delay="2000">+CCWA: ${CWA_V},1\n+CCWA: ${CWA_F},4\nOK</response>
+    <response delay="2000">+CCWA: ${CWA_V},1\n+CCWA: ${CWA_F},4\n\nOK</response>
 </chat>
 
 <chat>
     <!-- Query call waiting -->
     <command>AT+CCWA=1,2,6</command>
-    <response delay="2000">+CCWA: ${CWA_D},2\n+CCWA: ${CWA_F},4\nOK</response>
+    <response delay="2000">+CCWA: ${CWA_D},2\n+CCWA: ${CWA_F},4\n\nOK</response>
 </chat>
 
 <chat>
     <!-- Query supported call waiting presentation modes -->
     <command>AT+CCWA=?</command>
-    <response>+CCWA: (0,1)\nOK</response>
+    <response>+CCWA: (0,1)\n\nOK</response>
 </chat>
 
 <chat>
@@ -1932,13 +1932,13 @@
 <chat>
     <!-- Query unstructured supplementary service presentation mode -->
     <command>AT+CUSD?</command>
-    <response>+CUSD: 0\nOK</response>
+    <response>+CUSD: 0\n\nOK</response>
 </chat>
 
 <chat>
     <!-- Query supported unstructured supplementary presentation modes -->
     <command>AT+CUSD=?</command>
-    <response>+CUSD: (0,1)\nOK</response>
+    <response>+CUSD: (0,1)\n\nOK</response>
 </chat>
 
 <chat>
@@ -1958,7 +1958,7 @@
 <chat>
     <!-- Query Advice of charge value from the ME -->
     <command>AT+CAOC=0</command>
-    <response>+CAOC: "${AOC}"\nOK</response>
+    <response>+CAOC: "${AOC}"\n\nOK</response>
 </chat>
 
 <chat>
@@ -1971,13 +1971,13 @@
 <chat>
     <!-- Query CCM reporting mode command -->
     <command>AT+CAOC?</command>
-    <response>+CAOC: ${AOCMODE}\nOK</response>
+    <response>+CAOC: ${AOCMODE}\n\nOK</response>
 </chat>
 
 <chat>
     <!-- Query support for advice of charge command -->
     <command>AT+CAOC=?</command>
-    <response>+CAOC: (0-2)\nOK</response>
+    <response>+CAOC: (0-2)\n\nOK</response>
 </chat>
 
 <chat>
@@ -1990,7 +1990,7 @@
 <chat>
     <!-- Query Accumulated Call Meter value -->
     <command>AT+CACM?</command>
-    <response>+CACM: "${ACM}"\nOK</response>
+    <response>+CACM: "${ACM}"\n\nOK</response>
 </chat>
 
 <chat>
@@ -2009,7 +2009,7 @@
 <chat>
     <!-- Query Accumulated Call Meter Maximum value -->
     <command>AT+CAMM?</command>
-    <response>+CAMM: "${ACMMAX}"\nOK</response>
+    <response>+CAMM: "${ACMMAX}"\n\nOK</response>
 </chat>
 
 <chat>
@@ -2028,7 +2028,7 @@
 <chat>
     <!-- Query Price per Unit and Currency command -->
     <command>AT+CPUC?</command>
-    <response>+CPUC: "${PPU}"\nOK</response>
+    <response>+CPUC: "${PPU}"\n\nOK</response>
 </chat>
 
 <chat>
@@ -2047,25 +2047,25 @@
 <chat>
     <!-- Query Call Meter maximum event mode command -->
     <command>AT+CCWE?</command>
-    <response>+CCWE: ${CWEMODE}\nOK</response>
+    <response>+CCWE: ${CWEMODE}\n\nOK</response>
 </chat>
 
 <chat>
     <!-- Query Call Meter maximum event support command -->
     <command>AT+CCWE=?</command>
-    <response>+CCWE: (0,1)\nOK</response>
+    <response>+CCWE: (0,1)\n\nOK</response>
 </chat>
 
 <chat>
     <!-- Query supplementary service notifications -->
     <command>AT+CSSN?</command>
-    <response>+CSSN: ${SSN}\nOK</response>
+    <response>+CSSN: ${SSN}\n\nOK</response>
 </chat>
 
 <chat>
     <!-- Query support for supplementary service notifications -->
     <command>AT+CSSN=?</command>
-    <response>+CSSN: (0,1),(0,1)\nOK</response>
+    <response>+CSSN: (0,1),(0,1)\n\nOK</response>
 </chat>
 
 <chat>
@@ -2078,25 +2078,25 @@
 <chat>
     <!-- Query phone activity status -->
     <command>AT+CPAS</command>
-    <response>+CPAS: ${PAS}\nOK</response>
+    <response>+CPAS: ${PAS}\n\nOK</response>
 </chat>
 
 <chat>
     <!-- Query supported phone activity status values -->
     <command>AT+CPAS=?</command>
-    <response>+CPAS: (0-5)\nOK</response>
+    <response>+CPAS: (0-5)\n\nOK</response>
 </chat>
 
 <chat>
     <!-- Query phone functionality setting -->
     <command>AT+CFUN?</command>
-    <response>+CFUN: ${FUN}\nOK</response>
+    <response>+CFUN: ${FUN}\n\nOK</response>
 </chat>
 
 <chat>
     <!-- Query supported phone functionality settings -->
     <command>AT+CFUN=?</command>
-    <response>+CFUN: (0-4)\nOK</response>
+    <response>+CFUN: (0-4)\n\nOK</response>
 </chat>
 
 <chat>
@@ -2109,19 +2109,19 @@
 <chat>
     <!-- Query CSMS Support -->
     <command>AT+CSMS=?</command>
-    <response>+CSMS=(0)\nOK</response>
+    <response>+CSMS=(0)\n\nOK</response>
 </chat>
 
 <chat>
     <!-- Query CSMS Setting -->
     <command>AT+CSMS?</command>
-    <response>+CSMS: 0,1,1,1\nOK</response>
+    <response>+CSMS: 0,1,1,1\n\nOK</response>
 </chat>
 
 <chat>
     <!-- Set CSMS -->
     <command>AT+CSMS=0</command>
-    <response>+CSMS: 1,1,1\nOK</response>
+    <response>+CSMS: 1,1,1\n\nOK</response>
 </chat>
 
 <chat>
@@ -2133,7 +2133,7 @@
 <chat>
     <!-- Query SMS Service Center Address -->
     <command>AT+CSCA?</command>
-    <response>+CSCA: "${SCA}",${SCAT}\nOK</response>
+    <response>+CSCA: "${SCA}",${SCAT}\n\nOK</response>
 </chat>
 
 <chat>
@@ -2155,13 +2155,13 @@
 <chat>
     <!-- Check for which PIN is required -->
     <command>AT+CPIN?</command>
-    <response delay="2000">+CPIN: ${PINNAME}\nOK</response>
+    <response delay="2000">+CPIN: ${PINNAME}\n\nOK</response>
 </chat>
 
 <chat>
     <!-- Enter PIN (success) -->
     <command>AT+CPIN="${PINVALUE}"</command>
-    <response>+CPIN: READY\nOK</response>
+    <response>+CPIN: READY\n\nOK</response>
     <set name="PINNAME" value="READY"/>
 </chat>
 
@@ -2175,7 +2175,7 @@
 <chat>
     <!-- Change PIN using PUK (success) -->
     <command>AT+CPIN="${PUKVALUE}","*"</command>
-    <response>+CPIN: READY\nOK</response>
+    <response>+CPIN: READY\n\nOK</response>
     <set name="PINVALUE" value="${*}"/>
     <set name="PINNAME" value="READY"/>
 </chat>
@@ -2183,7 +2183,7 @@
 <chat>
   <!-- Change PIN2 using PUK2 (success) -->
   <command>AT+CPIN="${PUK2VALUE}","*"</command>
-  <response>+CPIN: READY\nOK</response>
+  <response>+CPIN: READY\n\nOK</response>
   <set name="PIN2VALUE" value="${*}"/>
   <set name="PINNAME" value="READY"/>
 </chat>
@@ -2208,7 +2208,7 @@
     <chat>
         <!-- Enter PIN (success) -->
         <command>AT+CPIN="${PINVALUE}"</command>
-        <response>+CPIN: READY\nOK</response>
+        <response>+CPIN: READY\n\nOK</response>
         <set name="PINNAME" value="READY"/>
         <switch name="default"/>
     </chat>
@@ -2216,7 +2216,7 @@
     <chat>
         <!-- Change PIN using PUK (success) -->
         <command>AT+CPIN="${PUKVALUE}","*"</command>
-        <response>+CPIN: READY\nOK</response>
+        <response>+CPIN: READY\n\nOK</response>
         <set name="PINVALUE" value="${*}"/>
         <set name="PINNAME" value="READY"/>
         <switch name="default"/>
@@ -2237,7 +2237,7 @@
     <chat>
         <!-- Enter PIN (success) -->
         <command>AT+CPIN="${PINVALUE}"</command>
-        <response>+CPIN: READY\nOK</response>
+        <response>+CPIN: READY\n\nOK</response>
         <set name="PINNAME" value="READY"/>
         <switch name="default"/>
     </chat>
@@ -2245,7 +2245,7 @@
     <chat>
         <!-- Change PIN using PUK (success) -->
         <command>AT+CPIN="${PUKVALUE}","*"</command>
-        <response>+CPIN: READY\nOK</response>
+        <response>+CPIN: READY\n\nOK</response>
         <set name="PINVALUE" value="${*}"/>
         <set name="PINNAME" value="READY"/>
         <switch name="default"/>
@@ -2263,13 +2263,13 @@
 <chat>
     <!-- Query battery charge -->
     <command>AT+CBC</command>
-    <response>+CBC: ${BC}\nOK</response>
+    <response>+CBC: ${BC}\n\nOK</response>
 </chat>
 
 <chat>
     <!-- Query supported battery charge values -->
     <command>AT+CBC=?</command>
-    <response>+CBC: (0,1,2,3),(1-100)\nOK</response>
+    <response>+CBC: (0,1,2,3),(1-100)\n\nOK</response>
 </chat>
 
 <chat>
@@ -2280,25 +2280,25 @@
 <chat>
     <!-- Query signal quality (default reported as "not detectable") -->
     <command>AT+CSQ</command>
-    <response>+CSQ: ${SQ}\nOK</response>
+    <response>+CSQ: ${SQ}\n\nOK</response>
 </chat>
 
 <chat>
     <!-- Query supported signal quality values -->
     <command>AT+CSQ=?</command>
-    <response>+CSQ: (0-31,99),(0-7,99)\nOK</response>
+    <response>+CSQ: (0-31,99),(0-7,99)\n\nOK</response>
 </chat>
 
 <chat>
     <!-- Query mobile equipment control mode -->
     <command>AT+CMEC?</command>
-    <response>+CMEC: ${MEC}\nOK</response>
+    <response>+CMEC: ${MEC}\n\nOK</response>
 </chat>
 
 <chat>
     <!-- Query supported mobile equipment control modes -->
     <command>AT+CMEC=?</command>
-    <response>+CMEC: (0-2),(0-2),(0-2)\nOK</response>
+    <response>+CMEC: (0-2),(0-2),(0-2)\n\nOK</response>
 </chat>
 
 <chat>
@@ -2329,13 +2329,13 @@
 <chat>
     <!-- Query mobile equipment event reporting mode -->
     <command>AT+CMER?</command>
-    <response>+CMER: ${MER}\nOK</response>
+    <response>+CMER: ${MER}\n\nOK</response>
 </chat>
 
 <chat>
     <!-- Query supported mobile equipment event reporting modes -->
     <command>AT+CMER=?</command>
-    <response>+CMER: (0-3),(0-2),(0-2),(0-2),(0-1)\nOK</response>
+    <response>+CMER: (0-3),(0-2),(0-2),(0-2),(0-1)\n\nOK</response>
 </chat>
 
 <chat>
@@ -2368,12 +2368,12 @@
 <chat>
     <!-- Query file's length -->
     <command>AT+CRSM=176,28486,0,0,0</command>
-    <response>+CRSM: 103,17\nOK</response>
+    <response>+CRSM: 103,17\n\nOK</response>
 </chat>
 <chat>
     <!-- Query file contents -->
     <command>AT+CRSM=176,28486,0,0,*</command>
-    <response>+CRSM: 144,0,036F466F6E6FFFFFFFFFFFFFFFFFFFFFFF\nOK</response>
+    <response>+CRSM: 144,0,036F466F6E6FFFFFFFFFFFFFFFFFFFFFFF\n\nOK</response>
 </chat>
 
 <chat>
@@ -2387,13 +2387,13 @@
 <chat>
     <!-- Query the current band -->
     <command>AT*TBAND?</command>
-    <response>*TBAND: ${BAND}\nOK</response>
+    <response>*TBAND: ${BAND}\n\nOK</response>
 </chat>
 
 <chat>
     <!-- Query the list of available bands -->
     <command>AT*TBAND=?</command>
-    <response>*TBAND: "${BAND0}"\n*TBAND: "${BAND1}"\n*TBAND: "${BAND2}"\n*TBAND: "${BAND3}"\n*TBAND: "${BAND4}"\n*TBAND: "${BAND5}"\n*TBAND: "${BAND6}"\n*TBAND: "${BAND7}"\n*TBAND: "${BAND8}"\n*TBAND: "${BAND9}"\n*TBAND: "${BANDA}"\n*TBAND: "${BANDB}"\n*TBAND: "${BANDC}"\n*TBAND: "${BANDD}"\n*TBAND: "${BANDE}"\n*TBAND: "${BANDF}"\nOK</response>
+    <response>*TBAND: "${BAND0}"\n*TBAND: "${BAND1}"\n*TBAND: "${BAND2}"\n*TBAND: "${BAND3}"\n*TBAND: "${BAND4}"\n*TBAND: "${BAND5}"\n*TBAND: "${BAND6}"\n*TBAND: "${BAND7}"\n*TBAND: "${BAND8}"\n*TBAND: "${BAND9}"\n*TBAND: "${BANDA}"\n*TBAND: "${BANDB}"\n*TBAND: "${BANDC}"\n*TBAND: "${BANDD}"\n*TBAND: "${BANDE}"\n*TBAND: "${BANDF}"\n\nOK</response>
 </chat>
 
 <chat>
@@ -2591,13 +2591,13 @@
 <chat>
     <!-- Query SMS message format -->
     <command>AT+CMGF?</command>
-    <response>+CMGF: ${CMGF}\nOK</response>
+    <response>+CMGF: ${CMGF}\n\nOK</response>
 </chat>
 
 <chat>
     <!-- Query SMS message format values -->
     <command>AT+CMGF=?</command>
-    <response>+CMGF: (0,1)\nOK</response>
+    <response>+CMGF: (0,1)\n\nOK</response>
 </chat>
 
 <chat>
@@ -2651,13 +2651,13 @@
 <chat>
     <!-- CPMS Support -->
     <command>AT+CPMS=?</command>
-    <response>+CPMS: ("SM","ME"),("SM","ME"),("SM","ME")\nOK</response>
+    <response>+CPMS: ("SM","ME"),("SM","ME"),("SM","ME")\n\nOK</response>
 </chat>
 
 <chat>
     <!-- Request the number of messages in the incoming SIM queue -->
     <command>AT+CPMS="SM","SM","SM"</command>
-    <response>+CPMS: 0,99,${MSGCOUNT},99,${MSGCOUNT},99\nOK</response>
+    <response>+CPMS: 0,99,${MSGCOUNT},99,${MSGCOUNT},99\n\nOK</response>
     <set name="MSGLISTCOPY" value=""/>
     <set name="MSGMEM" value="SM"/>
 </chat>
@@ -2665,7 +2665,7 @@
 <chat>
     <!-- Request the number of messages in the incoming ordinary queue -->
     <command>AT+CPMS="ME","ME","ME"</command>
-    <response>+CPMS: ${MSGCOUNT},99,${MSGCOUNT},99,${MSGCOUNT},99\nOK</response>
+    <response>+CPMS: ${MSGCOUNT},99,${MSGCOUNT},99,${MSGCOUNT},99\n\nOK</response>
     <set name="MSGLISTCOPY" value="${MSGLIST}"/>
     <set name="MSGMEM" value="ME"/>
 </chat>
@@ -2673,7 +2673,7 @@
 <chat>
     <!-- Query CNMI support -->
     <command>AT+CNMI=?</command>
-    <response>+CNMI: (0,1,2,3),(0,1),(0,1,2),(0),(0,1)\nOK</response>
+    <response>+CNMI: (0,1,2,3),(0,1),(0,1,2),(0),(0,1)\n\nOK</response>
 </chat>
 
 <chat>
@@ -2715,13 +2715,13 @@
 <chat>
     <!-- Query mobile equipment error reporting mode -->
     <command>AT+CMEE?</command>
-    <response>+CMEE: ${MEE}\nOK</response>
+    <response>+CMEE: ${MEE}\n\nOK</response>
 </chat>
 
 <chat>
     <!-- Query available mobile equipment error reporting modes -->
     <command>AT+CMEE=?</command>
-    <response>+CMEE: (0-2)\nOK</response>
+    <response>+CMEE: (0-2)\n\nOK</response>
 </chat>
 
 <chat>
@@ -2864,7 +2864,7 @@
 <chat>
     <!-- Modem identifier -->
     <command>ATI</command>
-    <response>${ID}\nOK</response>
+    <response>${ID}\n\nOK</response>
 </chat>
 
 <chat>
@@ -2900,7 +2900,7 @@
 <chat>
     <!-- Country of installation -->
     <command>AT+GCI</command>
-    <response>TROLLVILLE\nOK</response>
+    <response>TROLLVILLE\n\nOK</response>
 </chat>
 
 <chat>
