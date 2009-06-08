@@ -22,20 +22,22 @@
 
 QSMSMessageList::QSMSMessageList()
 {
-SMSList.clear();
-statusList.clear();
-deletedFlagList.clear();
+    SMSList.clear();
+    statusList.clear();
+    deletedFlagList.clear();
+    lengthList.clear();
 }
 
 QSMSMessageList::~QSMSMessageList()
 {
 }
 
-void QSMSMessageList::appendSMS( const QByteArray &m )
+void QSMSMessageList::appendSMS( const QByteArray &m, int length )
 {
     SMSList.append(m);
     statusList.append(QSMSMessageList::REC_UNREAD);
     deletedFlagList.append(false);
+    lengthList.append(length);
 }
 
 
@@ -54,11 +56,15 @@ QSMSMessageList::SMSStatus QSMSMessageList::getStatus( int i ) const
    return statusList[i];
 }
 
+int QSMSMessageList::getLength( int i ) const
+{
+    return lengthList[i];
+}
+
 void QSMSMessageList::setStatus( const SMSStatus &s, int i )
 {
     statusList[i] = s;
 }
-
 
 bool QSMSMessageList::getDeletedFlag( int i ) const
 {
@@ -84,6 +90,3 @@ QByteArray & QSMSMessageList::operator[]( int i )
     return SMSList[i];
 
 }
-
-
-

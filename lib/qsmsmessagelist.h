@@ -36,7 +36,7 @@ public:
     QSMSMessageList();
     ~QSMSMessageList();
 
-    void appendSMS( const QByteArray & );
+    void appendSMS( const QByteArray &, int len );
     void deleteSMS( int );  //note SMS's are not actually physically deleted. A flag is set
 
     int count() const; //returns the total number, even those that are 'deleted'
@@ -46,6 +46,7 @@ public:
 
     bool getDeletedFlag( int ) const;
     void setDeletedFlag( bool, int );
+    int getLength( int ) const;
 
     QByteArray & readSMS( int );//returns and sets the status of an SMS
     QByteArray & operator[]( int );//only returns an SMS, does not set status
@@ -54,6 +55,7 @@ private:
     QList<QByteArray> SMSList;
     QList<SMSStatus> statusList;
     QList<bool> deletedFlagList;
+    QList<int> lengthList;
 };
 
 #endif
