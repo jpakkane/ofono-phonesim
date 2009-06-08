@@ -370,16 +370,13 @@ bool SimChat::command( const QString& cmd )
                     continue;
 
                 status = QString::number(SMSList.getStatus(i));
-                listSMSResponse.append("+CMGL: " + QString::number(i+1) + "," + status + ",," + 
-                                       QString::number(SMSList.getLength(i)) + "\r\n" +
-                                       PS_toHex( SMSList.readSMS(i) ));// <index> starts at 1, <length>
-                                                                   // is ignored thus set to 10 arbitrarily
-                if( (i+1) < SMSList.count() )  //if not the last message, tag on a <CR><LF> to the response
-                    listSMSResponse.append("\r\n");
+                listSMSResponse.append("+CMGL: " + QString::number(i+1) + "," + status + ",," +
+                                       QString::number(SMSList.getLength(i)) + "\\n" +
+                                       PS_toHex( SMSList.readSMS(i) ) + "\\n");
             }
         }
 
-        listSMSResponse.append("\r\nOK");
+        listSMSResponse.append("\\nOK");
         state()->rules()->respond(listSMSResponse , responseDelay, eol );
     }
 
@@ -394,6 +391,7 @@ bool SimChat::command( const QString& cmd )
             SMSList.deleteSMS(index-1);
             deleteSMSResponse.append("OK");
         }
+
         state()->rules()->respond(deleteSMSResponse , responseDelay, eol );
     }
 
@@ -407,9 +405,11 @@ bool SimChat::command( const QString& cmd )
         } else {
             QString status = QString::number(SMSList.getStatus(index-1));
             readSMSResponse.append("+CMGR: " + status + ",," +
-                                       QString::number(SMSList.getLength(index-1)) + "\r\n" +
-                                       PS_toHex( SMSList.readSMS(index-1) ));
+                                       QString::number(SMSList.getLength(index-1)) + "\\n" +
+                                       PS_toHex( SMSList.readSMS(index-1) ) + "\\n");
         }
+
+	readSMSResponse += "\\nOK";
         state()->rules()->respond(readSMSResponse , responseDelay, eol );
     }
     return true;
@@ -907,10 +907,10 @@ bool SimRules::simCommand( const QString& cmd )
         while ( pinValue.size() > 0 && pinValue[pinValue.size() - 1] == (char)0xFF )
             pinValue = pinValue.left( pinValue.size() - 1 );
         if ( QString::fromUtf8( pukValue ) != variable( pukName ) ) {
-            respond( "+CSIM: 4,9804\nOK" );
+            respond( "+CSIM: 4,9804\\n\\nOK" );
         } else {
             setVariable( pinName, QString::fromUtf8( pinValue ) );
-            respond( "+CSIM: 4,9000\nOK" );
+            respond( "+CSIM: 4,9000\\n\\nOK" );
         }
         return true;
     }
@@ -1066,12 +1066,12 @@ void SimRules::phoneBook( const QString& cmd )
                 response += QChar(',');
             response += "\"" + name + "\"";
         }
-        response += ")\nOK";
+        response += ")\\n\\nOK";
         respond( response );
     } else if ( cmd.startsWith( "AT+CPBS?" ) ) {
         respond( "+CPBS: \"" + currentPhoneBook + "\"," +
                  QString::number( pb->used() ) + "," +
-                 QString::number( pb->size() ) + "\nOK" );
+                 QString::number( pb->size() ) + "\\n\\nOK" );
     } else if ( cmd.startsWith( "AT+CPBS=\"" ) ) {
         QString name = cmd.mid(9).left(2);
         if ( phoneBooks.contains( name ) ) {
@@ -1092,7 +1092,7 @@ void SimRules::phoneBook( const QString& cmd )
             respond( "ERROR" );
         }
     } else if ( cmd.startsWith( "AT+CPBR=?" ) ) {
-        respond( "+CPBR: (1-" + QString::number( pb->size() ) + "),32,16\nOK" );
+        respond( "+CPBR: (1-" + QString::number( pb->size() ) + "),32,16\\n\\nOK" );
     } else if ( cmd.startsWith( "AT+CPBR=" ) ) {
         QString args = cmd.mid(8);
         int comma = args.indexOf( QChar(',') );
@@ -1225,16 +1225,12 @@ QString expandEscapes( const QString& data, bool eol )
         if ( ch == '\n' ) {
             res += ( '\r' );
             res += ( '\n' );
-            res += ( '\r' );
-            res += ( '\n' );
         } else if ( ch == '\\' ) {
             ch = *buf++;
             if ( ch == '\0' ) {
                 res += ( '\\' );
                 break;
             } else if ( ch == 'n' ) {
-                res += ( '\r' );
-                res += ( '\n' );
                 res += ( '\r' );
                 res += ( '\n' );
                 ch = '\n';

@@ -191,7 +191,7 @@ bool SimApplication::execute( const QString& cmd )
     if ( param[1] == (char)0x10 ) {
         // Download of a TERMINAL PROFILE.  We respond with a simple OK,
         // on the assumption that what we were sent was valid.
-        d->rules->respond( "+CSIM: 4,9000\nOK" );
+        d->rules->respond( "+CSIM: 4,9000\\n\\nOK" );
 
         // Abort the SIM application and force it to return to the main menu.
         abort();
@@ -200,13 +200,13 @@ bool SimApplication::execute( const QString& cmd )
         QByteArray resp = d->currentCommand;
         if ( resp.isEmpty() ) {
             // We weren't expecting a FETCH.
-            d->rules->respond( "+CSIM: 4,6F00\nOK" );
+            d->rules->respond( "+CSIM: 4,6F00\\n\\nOK" );
             return true;
         }
         resp += (char)0x90;
         resp += (char)0x00;
         d->rules->respond( "+CSIM: " + QString::number( resp.size() * 2 ) + "," +
-                           QAtUtils::toHex( resp ) + "\nOK" );
+                           QAtUtils::toHex( resp ) + "\\n\\nOK" );
     } else if ( param[1] == (char)0x14 ) {
         // Process a TERMINAL RESPONSE message.
         QSimTerminalResponse resp;
@@ -214,7 +214,7 @@ bool SimApplication::execute( const QString& cmd )
         if ( resp.command().type() != QSimCommand::NoCommand &&
              resp.command().type() != d->expectedType ) {
             // Response to the wrong type of command.
-            d->rules->respond( "+CSIM: 4,6F00\nOK" );
+            d->rules->respond( "+CSIM: 4,6F00\\n\\nOK" );
             return true;
         }
         response( resp );
@@ -224,17 +224,17 @@ bool SimApplication::execute( const QString& cmd )
         QSimEnvelope env;
         env = QSimEnvelope::fromPdu( param.mid(5) );
         if ( env.type() == QSimEnvelope::EventDownload ) {
-            d->rules->respond( "+CSIM: 4,9000\nOK" );
+            d->rules->respond( "+CSIM: 4,9000\\n\\nOK" );
             return true;
         }
         if ( env.type() != QSimEnvelope::MenuSelection )
             return false;
         if ( d->expectedType != QSimCommand::SetupMenu ) {
             // Envelope sent for the wrong type of command.
-            d->rules->respond( "+CSIM: 4,6F00\nOK" );
+            d->rules->respond( "+CSIM: 4,6F00\\n\\nOK" );
             return true;
         }
-        d->rules->respond( "+CSIM: 4,9000\nOK" );
+        d->rules->respond( "+CSIM: 4,9000\\n\\nOK" );
         d->expectedType = QSimCommand::NoCommand;
         d->currentCommand = QByteArray();
         d->target = 0;
@@ -287,7 +287,7 @@ void SimApplication::response( const QSimTerminalResponse& resp )
         return;
     if ( d->currentCommand.isEmpty() || resp.command().type() == QSimCommand::SetupMenu ) {
         // No new command, so respond with a simple OK.
-        d->rules->respond( "+CSIM: 4,9000\nOK" );
+        d->rules->respond( "+CSIM: 4,9000\\n\\nOK" );
     } else {
         // There is a new command, so send back 91XX to the TERMINAL RESPONSE
         // or ENVELOPE request to indicate that we have another command to
@@ -296,7 +296,7 @@ void SimApplication::response( const QSimTerminalResponse& resp )
         data += (char)0x91;
         data += (char)(d->currentCommand.size());
         d->rules->respond( "+CSIM: " + QString::number( data.size() * 2 ) + "," +
-                           QAtUtils::toHex( data ) + "\nOK" );
+                           QAtUtils::toHex( data ) + "\\n\\nOK" );
         d->rules->unsolicited
             ( "*TCMD: " + QString::number( d->currentCommand.size() ) );
     }
