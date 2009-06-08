@@ -371,7 +371,8 @@ bool SimChat::command( const QString& cmd )
                     continue;
 
                 status = QString::number(SMSList.getStatus(i));
-                listSMSResponse.append("+CMGL: " + QString::number(i+1) + "," + status + ",10\r\n" +
+                listSMSResponse.append("+CMGL: " + QString::number(i+1) + "," + status + ",," + 
+                                       QString::number(SMSList.getLength(i)) + "\r\n" +
                                        PS_toHex( SMSList.readSMS(i) ));// <index> starts at 1, <length>
                                                                    // is ignored thus set to 10 arbitrarily
                 if( (i+1) < SMSList.count() )  //if not the last message, tag on a <CR><LF> to the response
