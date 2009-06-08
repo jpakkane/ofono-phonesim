@@ -18,12 +18,8 @@
 ****************************************************************************/
 
 #include <server.h>
-#ifndef PHONESIM_TARGET
-    #include "control.h"
-    #include <qapplication.h>
-#else
-    #include <qcoreapplication.h>
-#endif
+#include "control.h"
+#include <qapplication.h>
 #include <qstring.h>
 #include <qdebug.h>
 #include <stdlib.h>
@@ -38,11 +34,7 @@ static void usage()
 
 int main(int argc, char **argv)
 {
-#ifndef PHONESIM_TARGET
     QApplication app(argc, argv);
-#else
-    QCoreApplication app(argc, argv);
-#endif
     QString filename;
     int port = 12345;
     int index;
@@ -78,12 +70,8 @@ int main(int argc, char **argv)
 
     PhoneSimServer *pss = new PhoneSimServer(filename, port, 0);
 
-#ifndef PHONESIM_TARGET
     if (with_gui)
         pss->setHardwareManipulator(new ControlFactory);
-#else
-    Q_UNUSED(pss);
-#endif
 
     return app.exec();
 }

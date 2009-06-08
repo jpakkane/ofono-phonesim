@@ -19,9 +19,7 @@
 
 #include "phonesim.h"
 
-#ifndef PHONESIM_TARGET
 #include "hardwaremanipulator.h"
-#endif
 #include "simfilesystem.h"
 #include "simapplication.h"
 #include "callmanager.h"
@@ -361,7 +359,6 @@ bool SimChat::command( const QString& cmd )
             state()->rules()->forgetCall
                 ( state()->rules()->expand( forgetCallId ).toInt() );
     }
-#ifndef PHONESIM_TARGET
     if ( listSMS && state()->rules()->getMachine() ) {
         QString listSMSResponse;
         QSMSMessageList &SMSList = state()->rules()->getMachine()->getSMSList();
@@ -384,13 +381,8 @@ bool SimChat::command( const QString& cmd )
 
         listSMSResponse.append("\r\nOK");
         state()->rules()->respond(listSMSResponse , responseDelay, eol );
-    } else
-#endif
-    if ( listSMS ) {
-        state()->rules()->respond("OK" , responseDelay, eol );
     }
 
-#ifndef PHONESIM_TARGET
     if ( deleteSMS && state()->rules()->getMachine() ) {
         QString deleteSMSResponse;
         QSMSMessageList &SMSList = state()->rules()->getMachine()->getSMSList();
@@ -403,13 +395,8 @@ bool SimChat::command( const QString& cmd )
             deleteSMSResponse.append("OK");
         }
         state()->rules()->respond(deleteSMSResponse , responseDelay, eol );
-    } else
-#endif
-    if ( deleteSMS ) {
-        state()->rules()->respond("OK" , responseDelay, eol );
     }
 
-#ifndef PHONESIM_TARGET
     if ( readSMS && state()->rules()->getMachine() ) {
         QString readSMSResponse;
         QSMSMessageList &SMSList = state()->rules()->getMachine()->getSMSList();
@@ -424,10 +411,6 @@ bool SimChat::command( const QString& cmd )
                                        PS_toHex( SMSList.readSMS(index-1) ));
         }
         state()->rules()->respond(readSMSResponse , responseDelay, eol );
-    } else
-#endif
-    if ( readSMS ) {
-        state()->rules()->respond("OK" , responseDelay, eol );
     }
     return true;
 }
@@ -505,9 +488,6 @@ SimRules::SimRules( int fd, QObject *p,  const QString& filename, HardwareManipu
     setSocketDescriptor(fd);
     machine = 0;
 
-#ifdef PHONESIM_TARGET
-    Q_UNUSED(hmf);
-#else
     if (hmf)
         machine = hmf->create(0);
 
@@ -521,7 +501,6 @@ SimRules::SimRules( int fd, QObject *p,  const QString& filename, HardwareManipu
         connect(machine, SIGNAL(switchTo(QString)),
                 this, SLOT(switchTo(QString)));
     }
-#endif
 
     _callManager = new CallManager(this);
     connect( _callManager, SIGNAL(send(QString)),
@@ -531,12 +510,10 @@ SimRules::SimRules( int fd, QObject *p,  const QString& filename, HardwareManipu
     connect( _callManager, SIGNAL(dialCheck(QString,bool&)),
              this, SLOT(dialCheck(QString,bool&)) );
 
-#ifndef PHONESIM_TARGET
     if ( machine ) {
         connect( machine, SIGNAL(startIncomingCall(QString)),
                  _callManager, SLOT(startIncomingCall(QString)) );
     }
-#endif
 
     connect(this,SIGNAL(readyRead()),
         this,SLOT(tryReadCommand()));
@@ -845,9 +822,7 @@ void SimRules::tryReadCommand()
 
 void SimRules::destruct()
 {
-#ifndef PHONESIM_TARGET
     if (machine) machine->deleteLater();
-#endif
     deleteLater();
 }
 
@@ -855,9 +830,7 @@ void SimRules::setPhoneNumber(const QString &s)
 {
     mPhoneNumber = s;
 
-#ifndef PHONESIM_TARGET
     if (machine) machine->setPhoneNumber(s);
-#endif
 }
 
 HardwareManipulator * SimRules::getMachine() const
@@ -948,10 +921,8 @@ bool SimRules::simCommand( const QString& cmd )
 
 void SimRules::command( const QString& cmd )
 {
-#ifndef PHONESIM_TARGET
     if(getMachine())
         getMachine()->handleToData(cmd);
-#endif
 
     // Process call-related commands with the call manager.
     if ( _callManager->command( cmd ) )
@@ -1309,10 +1280,8 @@ void SimRules::respond( const QString& resp, int delay, bool eol )
         connect(timer,SIGNAL(timeout()),this,SLOT(delayTimeout()));
         timer->start( delay );
     }
-#ifndef PHONESIM_TARGET
     if(getMachine())
         getMachine()->handleFromData(QString(escaped));
-#endif
 }
 
 
