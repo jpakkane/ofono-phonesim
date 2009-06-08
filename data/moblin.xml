@@ -2685,16 +2685,12 @@
 <chat>
     <!-- List the messages in an SMS message store -->
     <command>AT+CMGL*</command>
-    <!-- response>${MSGLISTCOPY}OK</response> -->
     <listSMS/>  
 </chat>
 
 <chat>
     <!-- Delete a particular message from an SMS message store -->
     <command>AT+CMGD=*</command>
-    <!-- <response>OK</response> -->
-    <!-- <set name="MSGLIST" value=""/> -->
-    <!-- <set name="MSGCOUNT" value="0"/> -->
     <deleteSMS/>
 </chat>
 
