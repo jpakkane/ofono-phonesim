@@ -140,19 +140,21 @@ void HardwareManipulator::constructSMSMessage( const int type, const QString &se
 
 void HardwareManipulator::sendSMS( const QSMSMessage &m )
 {
-    int originalCount = getSMSList().count();
     if( m.shouldSplit() ) {
         QList<QSMSMessage> list = m.split();
 
         for( int i =0; i < list.count(); i++ ) {
-            SMSList.appendSMS( list[i].toPdu() );
+            QByteArray pdu = list[i].toPdu();
+            uint pdulen = pdu.length() - QSMSMessage::pduAddressLength( pdu );
+            SMSList.appendSMS( pdu, pdulen );
+            emit unsolicitedCommand("+CMTI: \"SM\","+QString::number( getSMSList().count()));
         }
     } else {
-        SMSList.appendSMS( m.toPdu() );
-    }
-
-    if ( getSMSList().count() > originalCount )
+        QByteArray pdu = m.toPdu();
+        uint pdulen = pdu.length() - QSMSMessage::pduAddressLength( pdu );
+        SMSList.appendSMS( pdu, pdulen );
         emit unsolicitedCommand("+CMTI: \"SM\","+QString::number( getSMSList().count()));
+    }
 }
 
 void HardwareManipulator::constructSMSDatagram(int port, const QString &sender, const QByteArray &data,

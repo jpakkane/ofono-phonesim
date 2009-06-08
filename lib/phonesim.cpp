@@ -233,6 +233,7 @@ SimChat::SimChat( SimState *state, SimXmlNode& e )
 
     listSMS = false;
     deleteSMS = false;
+    readSMS = false;
 
     while ( n != 0 ) {
         if ( n->tag == "command" ) {
@@ -266,11 +267,12 @@ SimChat::SimChat( SimState *state, SimXmlNode& e )
             newCallVar = n->getAttribute( "name" );
         } else if ( n->tag == "forgetcall" ) {
             forgetCallId = n->getAttribute( "id" );
-        }
-          else if ( n->tag == "listSMS" ) {
+        } else if ( n->tag == "listSMS" ) {
             listSMS = true;
         } else if ( n->tag =="deleteSMS" ) {
             deleteSMS = true;
+        } else if ( n->tag == "readSMS" ) {
+            readSMS = true;
         }
 
         n = n->next;
@@ -404,6 +406,27 @@ bool SimChat::command( const QString& cmd )
     } else
 #endif
     if ( deleteSMS ) {
+        state()->rules()->respond("OK" , responseDelay, eol );
+    }
+
+#ifndef PHONESIM_TARGET
+    if ( readSMS && state()->rules()->getMachine() ) {
+        QString readSMSResponse;
+        QSMSMessageList &SMSList = state()->rules()->getMachine()->getSMSList();
+        int index = wild.toInt();
+
+        if ( index > SMSList.count() || index <= 0 || (SMSList.getDeletedFlag(index-1) == true) ) {
+            readSMSResponse.append("ERROR");
+        } else {
+            QString status = QString::number(SMSList.getStatus(index-1));
+            readSMSResponse.append("+CMGR: " + status + ",," +
+                                       QString::number(SMSList.getLength(index-1)) + "\r\n" +
+                                       PS_toHex( SMSList.readSMS(index-1) ));
+        }
+        state()->rules()->respond(readSMSResponse , responseDelay, eol );
+    } else
+#endif
+    if ( readSMS ) {
         state()->rules()->respond("OK" , responseDelay, eol );
     }
     return true;

@@ -165,6 +165,7 @@ private:
     QString forgetCallId;
     bool listSMS;
     bool deleteSMS;
+    bool readSMS;
 };
 
 

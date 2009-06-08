@@ -2699,6 +2699,12 @@
 </chat>
 
 <chat>
+    <!-- Reads a particular message from the SMS message store -->
+    <command>AT+CMGR=*</command>
+    <readSMS/>
+</chat>
+
+<chat>
     <!-- Set cell broadcast channels -->
     <command>AT+CSCB=0,*</command>
     <response>OK</response>
