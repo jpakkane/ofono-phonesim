@@ -328,7 +328,7 @@ void CallManager::startIncomingCall( const QString& number, bool dialBack )
     if ( info.state == CallState_Waiting ) {
         emit unsolicited( "+CCWA: " + QAtUtils::encodeNumber( number ) + ",1" );
     } else {
-        emit unsolicited( "RING\n+CLIP: " + QAtUtils::encodeNumber( number ) );
+        emit unsolicited( "RING\\n\\n+CLIP: " + QAtUtils::encodeNumber( number ) );
     }
 
     // Announce the incoming call using Ericsson-style state notifications.
