@@ -211,6 +211,9 @@ SimFileSystem::SimFileSystem( SimRules *rules, SimXmlNode& e )
         }
         child = child->next;
     }
+
+    /* Select DFgsm initially */
+    currentItem = findItem("7F20");
 }
 
 SimFileSystem::~SimFileSystem()
@@ -244,22 +247,30 @@ void SimFileSystem::crsm( const QString& args )
         {
             offset = (int)((p1 << 8) + p2);
             length = (int)p3;
-            item = findItemRelative( fileid );
-            if ( item ) {
+            item = findItem( fileid );
+            if ( item && item->recordSize() <= 1 ) {
                 contents = item->contents();
                 if ( ( offset + length ) > contents.size() ) {
                     sw1 = 0x94;
                     sw2 = 0x02;
-                } else {
-                    sw1 = 0x9F;
-                    sw2 = length;
+                } else if ( length ) {
+                    sw1 = 0x9f;
+                    sw2 = length - offset;
                     response =
                         QAtUtils::toHex( contents.mid( offset, length ) );
+                } else {
+                    sw1 = 0x67;
+                    sw2 = contents.size() - offset;
                 }
+            } else if ( item ) {
+                sw1 = 0x94;
+                sw2 = 0x08;
             } else {
                 sw1 = 0x94;
                 sw2 = 0x04;
             }
+            if ( item )
+                currentItem = item;
         }
         break;
 
@@ -267,11 +278,15 @@ void SimFileSystem::crsm( const QString& args )
         {
             offset = (int)(p1 - 1);
             length = (int)p3;
-            item = findItemRelative( fileid );
-            if ( p2 == 0x04 && item ) { // Only absolute reads are supported.
+            item = findItem( fileid );
+            // Only absolute reads are supported.
+            if ( p2 == 0x04 && item && item->recordSize() > 1 ) {
                 offset *= item->recordSize();
                 contents = item->contents();
-                if ( ( offset + length ) > contents.size() ) {
+                if ( length < 1 || length > item->recordSize() ) {
+                    sw1 = 0x67;
+                    sw2 = item->recordSize();
+                } else if ( offset >= contents.size() || offset < 0 ) {
                     sw1 = 0x94;
                     sw2 = 0x02;
                 } else {
@@ -280,20 +295,30 @@ void SimFileSystem::crsm( const QString& args )
                     response =
                         QAtUtils::toHex( contents.mid( offset, length ) );
                 }
-            } else {
+            } else if ( item && p2 != 0x04 ) {
+                sw1 = 0x6b;
+                sw2 = 0x00;
+            } else if ( item ) {
                 sw1 = 0x94;
                 sw2 = 0x08;
+            } else {
+                sw1 = 0x94;
+                sw2 = 0x04;
             }
+            if ( item )
+                currentItem = item;
         }
         break;
 
         case 192:       // GET RESPONSE
         {
-            if ( !findItemRelative( fileid ) ) {
+            item = findItem( fileid );
+            if ( !item ) {
                 sw1 = 0x94;
                 sw2 = 0x04;
                 break;
             }
+            currentItem = item;
         }
         // Fall through to the next case.
 
