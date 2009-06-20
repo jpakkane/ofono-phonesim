@@ -291,10 +291,6 @@
     <!-- current band.  0 means automatic and 1,"name" means manually select "name" -->
     <set name="BAND" value="0"/>
 
-  <!-- Broadcast a cell location -->
-
-<unsolicited delay="500">+CBM: 8807A200320111B8669A5D0641D9E1B47BDE68341A8D46A3D168341A8D46A3D168341A8D46A3D168341A8D46A3D168341A8D46A3D168341A8D46A3D168341A8D46A3D168341A8D46A3D168341A8D46A3D168341A8D46A3D100</unsolicited>
-
 <!-- Time -->
 <!-- Enable for testing
 <unsolicited delay="3000" once="true">*TTZ: 2, "11/25/2007, 12:12:12+40", 0</unsolicited>
@@ -2624,7 +2620,7 @@
 
     <chat>
 	<command wildcard="true">00*</command>
-	<response>OK</response>
+	<response>+CMGS: 0\n\nOK</response>
 	<switch name="default"/>
     </chat>
 </state>
