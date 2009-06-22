@@ -2549,7 +2549,6 @@
     <entry index="39" number="35933" name="BuyIt"/>
     <entry index="40" number="2468DD" name="Wildcard"/>
     <entry index="101" number="10101" name="GSM Test"/>
-    <entry index="101" number="10101" name="GSM Test"/>
     <entry index="121" number="10101" name="Test for 75 characters a line: ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ"/>
     <entry index="122" number="+12345" name="Test for International number"/>
     <entry index="123" number="12345" name="Test for slash: AB;CD,EFG"/>
