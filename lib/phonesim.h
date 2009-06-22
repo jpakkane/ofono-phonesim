@@ -205,14 +205,34 @@ public:
 
     QString number( int index ) const;
     QString name( int index ) const;
+    int hidden( int index ) const;
+    QString group( int index ) const;
+    QString adNumber( int index ) const;
+    QString secondText( int index ) const;
+    QString email( int index ) const;
+    QString sipUri( int index ) const;
+    QString telUri( int index ) const;
 
-    void setDetails( int index, const QString& number, const QString& name );
+    void setDetails( int index, const QString& number, const QString& name,
+                     int hidden = -1, const QString& group = QString(),
+                     const QString& adNumber = QString(),
+                     const QString& secondText = QString(),
+                     const QString& email = QString(),
+                     const QString& sipUri = QString(),
+                     const QString& telUri = QString() );
 
     bool contains( const QString& number ) const { return numbers.contains( number ); }
 
 private:
     QStringList numbers;
     QStringList names;
+    QList<int> hiddens;
+    QStringList groups;
+    QStringList adNumbers;
+    QStringList secondTexts;
+    QStringList emails;
+    QStringList sipUris;
+    QStringList telUris;
 };
 
 class HardwareManipulatorFactory;

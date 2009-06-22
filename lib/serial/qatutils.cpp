@@ -284,17 +284,22 @@ QString QAtUtils::nextString( const QString& buf, uint& posn )
 
     \sa nextString(), skipField()
 */
-uint QAtUtils::parseNumber( const QString& str, uint& posn )
+uint QAtUtils::parseNumber( const QString& str, uint& posn , int invalidValue)
 {
     uint num = 0;
+    int isValid = 0;
     while ( posn < (uint)str.length() && ( str[posn] == ' ' || str[posn] == ',' ) ) {
         ++posn;
     }
     while ( posn < (uint)str.length() && str[posn] >= '0' && str[posn] <= '9' ) {
+        isValid = 1;
         num = num * 10 + (uint)(str[posn].unicode() - '0');
         ++posn;
     }
-    return num;
+    if (isValid)
+        return num;
+    else
+        return invalidValue;
 }
 
 /*!

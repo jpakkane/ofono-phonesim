@@ -2549,6 +2549,12 @@
     <entry index="39" number="35933" name="BuyIt"/>
     <entry index="40" number="2468DD" name="Wildcard"/>
     <entry index="101" number="10101" name="GSM Test"/>
+    <entry index="101" number="10101" name="GSM Test"/>
+    <entry index="121" number="10101" name="Test for 75 characters a line: ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ"/>
+    <entry index="122" number="+12345" name="Test for International number"/>
+    <entry index="123" number="12345" name="Test for slash: AB;CD,EFG"/>
+    <entry index="124" number="800820" name="abc/h" hidden="1" group="FSF" adnumber="+800821"/>
+    <entry index="125" number="800820" name="def/m" hidden="1" group="FSF" adnumber="+800821" secondtext="abd" email="ofono@ofono.org" sip_uri="ofono_sip@ofono.org" tel_uri="ofono_tel@ofono.org"/>
 </phonebook>
 
 <phonebook name="FD" size="20">

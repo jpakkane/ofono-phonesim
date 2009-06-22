@@ -30,6 +30,16 @@
 #include <qregexp.h>
 #include <qdebug.h>
 
+#define PHONEBOOK_NLENGTH 32
+#define PHONEBOOK_TLENGTH 16
+#define PHONEBOOK_GLENGTH 256
+#define PHONEBOOK_SLENGTH 16
+#define PHONEBOOK_ELENGTH 256
+#define PHONEBOOK_SIPLENGTH 256
+#define PHONEBOOK_TELLENGTH 256
+
+#define INVALID_VALUE_HIDDEN -1
+
 SimXmlNode::SimXmlNode( const QString& _tag )
 {
     parent = 0;
@@ -976,6 +986,13 @@ SimPhoneBook::SimPhoneBook( int size, QObject *parent )
     while ( size-- > 0 ) {
         numbers.append( QString() );
         names.append( QString() );
+        hiddens.append( INVALID_VALUE_HIDDEN );
+        groups.append( QString() );
+        adNumbers.append( QString() );
+        secondTexts.append( QString() );
+        emails.append( QString() );
+        sipUris.append( QString() );
+        telUris.append( QString() );
     }
 }
 
@@ -1009,12 +1026,77 @@ QString SimPhoneBook::name( int index ) const
         return QString();
 }
 
-void SimPhoneBook::setDetails
-        ( int index, const QString& number, const QString& name )
+int SimPhoneBook::hidden( int index ) const
+{
+    if ( index >= 1 && index <= hiddens.size() )
+        return hiddens[index - 1];
+    else
+        return INVALID_VALUE_HIDDEN;
+}
+
+QString SimPhoneBook::group( int index ) const
+{
+    if ( index >= 1 && index <= groups.size() )
+        return groups[index - 1];
+    else
+        return QString();
+}
+
+QString SimPhoneBook::adNumber( int index ) const
+{
+    if ( index >= 1 && index <= adNumbers.size() )
+        return adNumbers[index - 1];
+    else
+        return QString();
+}
+
+QString SimPhoneBook::secondText( int index ) const
+{
+    if ( index >= 1 && index <= secondTexts.size() )
+        return secondTexts[index - 1];
+    else
+        return QString();
+}
+
+QString SimPhoneBook::email( int index ) const
+{
+    if ( index >= 1 && index <= emails.size() )
+        return emails[index - 1];
+    else
+        return QString();
+}
+
+QString SimPhoneBook::sipUri( int index ) const
+{
+    if ( index >= 1 && index <= sipUris.size() )
+        return sipUris[index - 1];
+    else
+        return QString();
+}
+
+QString SimPhoneBook::telUri( int index ) const
+{
+    if ( index >= 1 && index <= telUris.size() )
+        return telUris[index - 1];
+    else
+        return QString();
+}
+
+void SimPhoneBook::setDetails( int index, const QString& number,
+    const QString& name, int hidden, const QString& group,
+    const QString& adNumber, const QString& secondText, const QString& email,
+    const QString& sipUri, const QString& telUri )
 {
     if ( index >= 1 && index <= numbers.size() ) {
         numbers.replace( index - 1, number );
         names.replace( index - 1, name );
+        hiddens.replace( index - 1, hidden );
+        groups.replace( index - 1, group );
+        adNumbers.replace( index - 1, adNumber );
+        secondTexts.replace( index - 1, secondText );
+        emails.replace( index - 1, email );
+        sipUris.replace( index - 1, sipUri );
+        telUris.replace( index - 1, telUri );
     }
 }
 
@@ -1035,13 +1117,24 @@ void SimRules::loadPhoneBook( SimXmlNode& node )
     SimXmlNode *n = node.children;
     while ( n != 0 ) {
         if ( n->tag == "entry" ) {
-
             // Load a phone book entry.
             int index = n->getAttribute( "index" ).toInt();
             QString number = n->getAttribute( "number" );
             QString name = n->getAttribute( "name" );
-            pb->setDetails( index, number, name );
-
+            QString hiddenString = n->getAttribute( "hidden" );
+            int hidden;
+            if ( hiddenString.isEmpty() )
+                hidden = INVALID_VALUE_HIDDEN;
+            else
+                hidden = hiddenString.toInt();
+            QString group = n->getAttribute( "group" );
+            QString adNumber = n->getAttribute( "adnumber" );
+            QString secondText = n->getAttribute( "secondtext" );
+            QString email = n->getAttribute( "email" );
+            QString sipUri = n->getAttribute( "sip_uri" );
+            QString telUri = n->getAttribute( "tel_uri" );
+            pb->setDetails( index, number, name, hidden, group, adNumber,
+                            secondText, email, sipUri, telUri );
         }
         n = n->next;
     }
@@ -1093,7 +1186,14 @@ void SimRules::phoneBook( const QString& cmd )
             respond( "ERROR" );
         }
     } else if ( cmd.startsWith( "AT+CPBR=?" ) ) {
-        respond( "+CPBR: (1-" + QString::number( pb->size() ) + "),32,16\\n\\nOK" );
+        respond( "+CPBR: (1-" + QString::number( pb->size() ) + ")"
+                 + "," + QString::number( PHONEBOOK_NLENGTH )
+                 + "," + QString::number( PHONEBOOK_TLENGTH )
+                 + "," + QString::number( PHONEBOOK_GLENGTH )
+                 + "," + QString::number( PHONEBOOK_SLENGTH )
+                 + "," + QString::number( PHONEBOOK_ELENGTH )
+                 + "," + QString::number( PHONEBOOK_SIPLENGTH )
+                 + "," + QString::number( PHONEBOOK_TELLENGTH ) + "\\n\\nOK");
     } else if ( cmd.startsWith( "AT+CPBR=" ) ) {
         QString args = cmd.mid(8);
         int comma = args.indexOf( QChar(',') );
@@ -1110,10 +1210,48 @@ void SimRules::phoneBook( const QString& cmd )
         while ( first <= last ) {
             QString number = pb->number( first );
             QString name = pb->name( first );
+            int hidden = pb->hidden( first );
+            QString group = pb->group( first );
+            QString adNumber = pb->adNumber( first );
+            QString secondText = pb->secondText( first );
+            QString email = pb->email( first );
+            QString sipUri = pb->sipUri( first );
+            QString telUri = pb->telUri( first );
             if ( !number.isEmpty() ) {
-                respond( "+CPBR: " + QString::number(first) + "," +
+                QString s = "+CPBR: " + QString::number( first ) + "," +
                          QAtUtils::encodeNumber( number ) + ",\"" +
-                         QAtUtils::quote( name ) + "\"" );
+                         QAtUtils::quote( name ) + "\"";
+                if (hidden != INVALID_VALUE_HIDDEN) {
+                    s += "," + QString::number( hidden );
+                } else
+                    goto out;
+                if ( !group.isEmpty() ) {
+                    s += ",\"" + QAtUtils::quote( group ) + "\"";
+                } else
+                    goto out;
+                if ( !adNumber.isEmpty() ) {
+                    s += "," + QAtUtils::encodeNumber( adNumber );
+                } else
+                    goto out;
+                if ( !secondText.isEmpty() ) {
+                    s += ",\"" + QAtUtils::quote( secondText ) + "\"";
+                } else
+                    goto out;
+                if ( !email.isEmpty() ) {
+                    s += ",\"" + QAtUtils::quote( email ) + "\"";
+                } else
+                    goto out;
+                if ( !sipUri.isEmpty() ) {
+                    s += ",\"" + QAtUtils::quote( sipUri ) + "\"";
+                } else
+                    goto out;
+                if ( !telUri.isEmpty() ) {
+                    s += ",\"" + QAtUtils::quote( telUri ) + "\"";
+                } else
+                    goto out;
+
+out:
+                respond( s );
             }
             ++first;
         }
@@ -1135,13 +1273,28 @@ void SimRules::phoneBook( const QString& cmd )
             uint type = QAtUtils::parseNumber( cmd, posn );
             QString name = QAtUtils::nextString( cmd, posn );
             number = QAtUtils::decodeNumber( number, type );
-            // 32 & 16 are the limits from AT+CPBR=? above
-            if (name.length() > 16 || number.length() > 32) {
-                respond( "ERROR" );
-                return;
+            QString group = QAtUtils::nextString( cmd, posn );
+            QString adNumber = QAtUtils::nextString( cmd, posn );
+            uint adType = QAtUtils::parseNumber( cmd, posn );
+            adNumber = QAtUtils::decodeNumber( adNumber, adType );
+            QString secondText = QAtUtils::nextString( cmd, posn );
+            QString email = QAtUtils::nextString( cmd, posn );
+            QString sipUri = QAtUtils::nextString( cmd, posn );
+            QString telUri = QAtUtils::nextString( cmd, posn );
+            int hidden = QAtUtils::parseNumber( cmd, posn, INVALID_VALUE_HIDDEN);
+            if ( number.length() > PHONEBOOK_NLENGTH ||
+                 name.length() > PHONEBOOK_TLENGTH ||
+                 group.length() > PHONEBOOK_GLENGTH ||
+                 adNumber.length() > PHONEBOOK_NLENGTH ||
+                 secondText.length() > PHONEBOOK_SLENGTH ||
+                 email.length() > PHONEBOOK_ELENGTH ||
+                 sipUri.length() > PHONEBOOK_SIPLENGTH ||
+                 telUri.length() > PHONEBOOK_TELLENGTH ) {
+                 respond( "ERROR" );
+                 return;
             }
-
-            pb->setDetails( index, number, name );
+            pb->setDetails( index, number, name, hidden, group,
+                            adNumber, secondText, email, sipUri, telUri );
         }
         respond( "OK" );
     } else {

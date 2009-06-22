@@ -46,7 +46,7 @@ public:
     static QString decodeNumber( QAtResultParser& parser );
     static QString encodeNumber( const QString& value, bool keepPlus = false );
     static QString nextString( const QString& buf, uint& posn );
-    static uint parseNumber( const QString& str, uint& posn );
+    static uint parseNumber( const QString& str, uint& posn, int invalidValue = 0);
     static void skipField( const QString& str, uint& posn );
     static QString stripNumber( const QString& number );
     static bool octalEscapes();
