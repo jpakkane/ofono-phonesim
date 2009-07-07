@@ -2589,22 +2589,26 @@ void QCBSDeliverMessage::pack(const QCBSMessage &m, QSMSDataCodingScheme scheme)
     mPosn = 0;
     mBits = 0;
 
-    scheme = QSMS_8BitAlphabet; // Only 8-bit works at present.
+    scheme = QSMS_DefaultAlphabet;
     QByteArray data;
-    mBuffer.append( (char)( ((m.messageCode() & 0x000003F0)>>2) | (m.scope() & 0x03)) );
-    mBuffer.append( (char)((m.messageCode() & 0x0000000F) | (m.updateNumber() & 0x0000000F)<<4) );
+    mBuffer.append( (char) (((m.messageCode() >> 4) & 0x3F) | (m.scope() << 6)) );
+    mBuffer.append( (char)(((m.messageCode() & 0xF) << 4) | (m.updateNumber() & 0xF)) );
     mBuffer.append( (char)((m.channel() & 0x0000FF00) >> 8) );
     mBuffer.append( (char)(m.channel() & 0x000000FF) );
-    mBuffer.append( (char)( ((scheme & 0x0F)<<4) | (m.language() & 0x0F)) );
-    mBuffer.append( (char)( ((m.numPages() & 0x0F)<<4) | (m.page() & 0x0F)) );
+    mBuffer.append( (char)(((scheme & 0x0F)<<4) | (m.language() & 0x0F)) );
+    mBuffer.append( (char)((m.numPages() & 0x0F) | ((m.page() & 0x0F) << 4)) );
 
     QTextCodec *codec = QAtUtils::codec( "gsm" );
     QByteArray header;
-    setUserData(m.text(), scheme, codec, header,true);
-    int numPad = 88 - (m.text().length()  + data.size());
 
-    for ( int i=0; i<numPad; i++ )
-        appendOctet(0x0D);
+    QString paddedText = m.text();
+
+    int numPad = 93 - getEncodedLength(paddedText, paddedText.length());
+
+    for (int i = 0; i < numPad; i++)
+    	paddedText.append(QChar(0x0D));
+
+    setUserData(paddedText, scheme, codec, header,true);
 }
 
 Q_IMPLEMENT_USER_METATYPE(QSMSMessage)
