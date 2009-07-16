@@ -393,12 +393,12 @@
 <chat>
     <!-- Query all supported character sets -->
     <command>AT+CSCS=?</command>
-    <response>+CSCS: "GSM","IRA","PCCP437","PCDN","8859-1","HEX","UCS2","UTF-8"\n\nOK</response>
+    <response>+CSCS: "GSM","IRA","PCCP437","PCDN","8859-1","HEX","UCS2"\n\nOK</response>
 </chat>
 
 <chat>
     <!-- Set character set -->
-    <command>AT+CSCS=*</command>
+    <command>AT+CSCS="*"</command>
     <response>OK</response>
     <set name="SCS" value="*"/>
 </chat>
