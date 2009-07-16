@@ -340,6 +340,7 @@ private:
     void writeGsmFrame( int type, const char *data, uint len );
     void writeChatData( const char *data, uint len );
 
+    QString convertCharset( const QString& s );
     void initPhoneBooks();
     void phoneBook( const QString& cmd );
     bool simCommand( const QString& cmd );

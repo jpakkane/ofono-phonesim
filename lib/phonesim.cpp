@@ -1140,6 +1140,27 @@ void SimRules::loadPhoneBook( SimXmlNode& node )
     }
 }
 
+QString SimRules::convertCharset( const QString& str )
+{
+    if ( variables["SCS"] == "UCS2" ) {
+        static const char hexchars[] = "0123456789ABCDEF";
+        const QChar *c = str.unicode();
+        int length = str.length();
+        QString s;
+        while ( length-- > 0 ) {
+            uint ch = c->unicode();
+            ++c;
+            s += hexchars[ (ch >> 12) & 0x0F ];
+            s += hexchars[ (ch >> 8) & 0x0F ];
+            s += hexchars[ (ch >> 4) & 0x0F ];
+            s += hexchars[ ch & 0x0F ];
+        }
+        return s;
+    } else {
+        return str;
+    }
+}
+
 void SimRules::phoneBook( const QString& cmd )
 {
     SimPhoneBook *pb = currentPB();
@@ -1209,14 +1230,14 @@ void SimRules::phoneBook( const QString& cmd )
         }
         while ( first <= last ) {
             QString number = pb->number( first );
-            QString name = pb->name( first );
+            QString name = convertCharset( pb ->name( first ) );
             int hidden = pb->hidden( first );
-            QString group = pb->group( first );
+            QString group = convertCharset( pb->group( first ) );
             QString adNumber = pb->adNumber( first );
-            QString secondText = pb->secondText( first );
-            QString email = pb->email( first );
-            QString sipUri = pb->sipUri( first );
-            QString telUri = pb->telUri( first );
+            QString secondText = convertCharset( pb->secondText( first ) );
+            QString email = convertCharset( pb->email( first ) );
+            QString sipUri = convertCharset( pb->sipUri( first ) );
+            QString telUri = convertCharset( pb->telUri( first ) );
             if ( !number.isEmpty() ) {
                 QString s = "+CPBR: " + QString::number( first ) + "," +
                          QAtUtils::encodeNumber( number ) + ",\"" +
@@ -1366,8 +1387,8 @@ QString expandEscapes( const QString& data, bool eol )
 {
     // Expand escapes and end of line markers in the data.
     static char const escapes[] = "\a\bcde\fghijklm\nopq\rs\tu\vwxyz";
-    QString res;
-    QByteArray buffer = data.toLatin1();
+    QByteArray res;
+    QByteArray buffer = data.toUtf8();
     const char *buf = buffer.data();
     int ch;
     int prevch = 0;
@@ -1404,7 +1425,8 @@ QString expandEscapes( const QString& data, bool eol )
         res += ( '\r' );
         res += ( '\n' );
     }
-    return res;
+
+    return QString::fromUtf8(res.data());
 }
 
 

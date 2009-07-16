@@ -61,7 +61,7 @@
     <set name="ID" value="Moblin-Intel Synthetic Phone"/>
 
     <!-- Character set -->
-    <set name="SCS" value="IRA"/>
+    <set name="SCS" value="UCS2"/>
 
     <!-- Type of address (local = 129, international = 145) -->
     <set name="STA" value="129"/>
@@ -264,9 +264,9 @@
     <set name="BARVAB" value="0"/>
     <set name="BARVAG" value="0"/>
     <set name="BARVAC" value="0"/>
-    
+
     <!-- accessories, handsfree and car.  0 means not connected, 1 for connected -->
-    <set name="HANDSFREE" value="0"/> 
+    <set name="HANDSFREE" value="0"/>
 
     <set name="CARHANDSFREE" value="0"/>
 
@@ -393,7 +393,7 @@
 <chat>
     <!-- Query all supported character sets -->
     <command>AT+CSCS=?</command>
-    <response>+CSCS: "GSM","IRA","PCCP437","PCDN","8859-1","HEX","UCS2"\n\nOK</response>
+    <response>+CSCS: "GSM","IRA","PCCP437","PCDN","8859-1","HEX","UCS2","UTF-8"\n\nOK</response>
 </chat>
 
 <chat>
@@ -2554,6 +2554,7 @@
     <entry index="123" number="12345" name="Test for slash: AB;CD,EFG"/>
     <entry index="124" number="800820" name="abc/h" hidden="1" group="FSF" adnumber="+800821"/>
     <entry index="125" number="800820" name="def/m" hidden="1" group="FSF" adnumber="+800821" secondtext="abd" email="ofono@ofono.org" sip_uri="ofono_sip@ofono.org" tel_uri="ofono_tel@ofono.org"/>
+    <entry index="126" number="800820" name="上海/m" hidden="1" group="英特尔" adnumber="+800821"/>
 </phonebook>
 
 <phonebook name="FD" size="20">
@@ -2667,7 +2668,7 @@
 <chat>
     <!-- List the messages in an SMS message store -->
     <command>AT+CMGL*</command>
-    <listSMS/>  
+    <listSMS/>
 </chat>
 
 <chat>
