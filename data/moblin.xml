@@ -61,7 +61,7 @@
     <set name="ID" value="Moblin-Intel Synthetic Phone"/>
 
     <!-- Character set -->
-    <set name="SCS" value="UCS2"/>
+    <set name="SCS" value="IRA"/>
 
     <!-- Type of address (local = 129, international = 145) -->
     <set name="STA" value="129"/>
