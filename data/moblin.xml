@@ -3129,6 +3129,61 @@ OK</response>
     FF FF FF FF FF FF FF FF FF FF FF FF FF FF
 </file>
 
+<file name="EFsst">
+    3C 00 FC 0C 00 00 7F DF 00 31 0F C0
+</file>
+
+<file name="EFcbmi">
+    03 E7 FF FF FF FF FF FF FF FF FF FF FF FF
+</file>
+
+<file name="EFcbmid">
+    10 01 FF FF FF FF FF FF FF FF FF FF FF FF
+</file>
+
+<!-- Record 1
+     Length of alpha identifier: 32 chars
+     Alpha Identifier: "ABC"
+     Length of BCD number: "03"
+     TON & NPI: Telephony & Unknown
+     Dialed Number: 123
+     CCI: None
+     EXT2: None
+
+     Record 2
+     Length of alpha identifier: 32 chars
+     Alpha Identifier: "DEF"
+     Length of BCD number "04"
+     TON & NPI: Telephony & Unknown
+     Dialed Number: 9876
+     CCI: None
+     EXT2: None
+-->
+<file name="EFfdn" recordsize="48">
+    41 42 43 FF FF FF FF FF FF FF FF FF FF FF FF FF
+    FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF
+    03 81 21 F3 FF FF FF FF FF FF FF FF FF FF 44 45
+    46 FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF
+    FF FF FF FF FF FF FF FF FF FF FF FF FF FF 03 81
+    89 67 FF FF FF FF FF FF FF FF FF FF
+</file>
+
+<file name="EFbdn" recordsize="48">
+    43 42 41 FF FF FF FF FF FF FF FF FF FF FF FF FF
+    FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF
+    03 81 23 F1 FF FF FF FF FF FF FF FF FF FF
+</file>
+
+<file name="EFecc" recordsize="4">
+    01 02 FF 00
+    11 F2 FF 00
+</file>
+
+<file name="EFsmsp" recordsize="28">
+    FD FF FF FF FF FF FF FF FF FF FF FF FF 09
+    91 11 22 33 44 55 66 77 F8 FF FF FF FF FF
+</file>
+
 </filesystem>
 
 </simulator>
