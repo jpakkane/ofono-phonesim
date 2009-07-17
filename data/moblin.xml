@@ -3141,6 +3141,10 @@ OK</response>
     10 01 FF FF FF FF FF FF FF FF FF FF FF FF
 </file>
 
+<file name="EFcbmir">
+    00 32 00 32 FF FF FF FF FF FF FF FF FF FF FF FF
+</file>
+
 <!-- Record 1
      Length of alpha identifier: 32 chars
      Alpha Identifier: "ABC"
