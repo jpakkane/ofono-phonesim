@@ -37,6 +37,9 @@ public:
     // Find an item with a specific id.
     SimFileItem *findItem( const QString& fileid ) const;
 
+    // Find access conditions for an item with a specific id.
+    int findItemAccess( const QString& _fileid ) const;
+
     // Find the parent of an item with a specific id even if the
     // item itself does not exist.  The parameter should be fully qualified.
     SimFileItem *findItemParent( const QString& fileid ) const;
@@ -57,7 +60,7 @@ class SimFileItem : public QObject
 {
     Q_OBJECT
 public:
-    SimFileItem( const QString& fileid, SimFileItem *parentDir );
+    SimFileItem( const QString& fileid, SimFileItem *parentDir, int access = 0 );
     ~SimFileItem();
 
     QString fileid() const { return _fileid; }
@@ -68,6 +71,8 @@ public:
 
     int recordSize() const { return _recordSize; }
     void setRecordSize( int value ) { _recordSize = value; }
+
+    int access() const { return _access; }
 
     bool isDirectory() const { return _isDirectory; }
     void setIsDirectory( bool value ) { _isDirectory = value; }
@@ -83,6 +88,7 @@ private:
     int _recordSize;
     bool _isDirectory;
     QList<SimFileItem *> _children;
+    int _access;
 };
 
 #endif
