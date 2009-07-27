@@ -3062,10 +3062,6 @@ OK</response>
 
 <filesystem>
 
-<file name="EFphase">
-    03
-</file>
-
 <file name="EFimsi">
     08 09 10 10 10 32 54 76 98
 </file>
@@ -3129,7 +3125,7 @@ OK</response>
     FF FF FF FF FF FF FF FF FF FF FF FF FF FF
 </file>
 
-<file name="EFsst">
+<file name="EFust">
     3C 00 FC 0C 00 00 7F DF 00 31 0F C0
 </file>
 

@@ -24,6 +24,13 @@
 
 class SimFileItem;
 
+enum file_type {
+    FILE_TYPE_TRANSPARENT = 0,
+    FILE_TYPE_LINEAR_FIXED = 1,
+    FILE_TYPE_CYCLIC = 3,
+    FILE_TYPE_INVALID = 0xff
+};
+
 class SimFileSystem : public QObject
 {
     Q_OBJECT
@@ -39,6 +46,9 @@ public:
 
     // Find access conditions for an item with a specific id.
     int findItemAccess( const QString& _fileid ) const;
+
+    // Find file type for an item with a specific id.
+    enum file_type findItemFileType( const QString& _fileid ) const;
 
     // Find the parent of an item with a specific id even if the
     // item itself does not exist.  The parameter should be fully qualified.
@@ -60,7 +70,8 @@ class SimFileItem : public QObject
 {
     Q_OBJECT
 public:
-    SimFileItem( const QString& fileid, SimFileItem *parentDir, int access = 0 );
+    SimFileItem( const QString& fileid, SimFileItem *parentDir,
+                 int access = 0, enum file_type type = FILE_TYPE_INVALID);
     ~SimFileItem();
 
     QString fileid() const { return _fileid; }
@@ -73,6 +84,7 @@ public:
     void setRecordSize( int value ) { _recordSize = value; }
 
     int access() const { return _access; }
+    enum file_type type() const { return _type; }
 
     bool isDirectory() const { return _isDirectory; }
     void setIsDirectory( bool value ) { _isDirectory = value; }
@@ -89,6 +101,7 @@ private:
     bool _isDirectory;
     QList<SimFileItem *> _children;
     int _access;
+    enum file_type _type;
 };
 
 #endif
