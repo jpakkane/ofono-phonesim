@@ -343,11 +343,15 @@ void SimFileSystem::crsm( const QString& args )
                 status[6] = 0x04;
             }
             status[7] = 0x00;           // RFU
-            status[8] = 0x00;
+
             int access = currentItem->access();
-            status[9] = (access >> 16) & 0xff;
-            status[10] = (access >> 8) & 0xff;
-            status[11] = (access >> 0) & 0xff;
+            status[8] = (access >> 16) & 0xff;
+            status[9] = (access >> 8) & 0xff;
+            status[10] = (access >> 0) & 0xff;
+
+            // File Status, TS 11.11, Section 9.3
+            status[11] = 0x01;
+
             status[12] = 2;             // Size of data that follows.
             if ( currentItem->isDirectory() ) {
                 status[13] = 0x00;
