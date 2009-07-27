@@ -39,8 +39,8 @@ static SimFileInfo const knownFiles[] =
     {"2F05",        "3F00",     "EFelp",       0},
 
     {"7F10",        "3F00",     "DFtelecom",   0},
-    {"6F3A",        "7F10",     "EFadn",       0x10ff44},
-    {"6F3B",        "7F10",     "EFfdn",       0x21ff44},
+    {"6F3A",        "7F10",     "EFadn",       0x01ff44},
+    {"6F3B",        "7F10",     "EFfdn",       0x12ff44},
     {"6F3C",        "7F10",     "EFsms",       0x11ff44},
     {"6F3D",        "7F10",     "EFccp",       0x11ff44},
     {"6F40",        "7F10",     "EFmsisdn",    0x11ff44},
@@ -48,75 +48,75 @@ static SimFileInfo const knownFiles[] =
     {"6F43",        "7F10",     "EFsmss",      0x11ff44},
     {"6F44",        "7F10",     "EFlnd",       0},
     {"6F47",        "7F10",     "EFsmsr",      0x11ff44},
-    {"6F49",        "7F10",     "EFsdn",       0x41ff44},
+    {"6F49",        "7F10",     "EFsdn",       0x14ff44},
     {"6F4A",        "7F10",     "EFext1",      0x11ff44},
-    {"6F4B",        "7F10",     "EFext2",      0x21ff44},
-    {"6F4C",        "7F10",     "EFext3",      0x41ff44},
-    {"6F4D",        "7F10",     "EFbdn",       0x21ff44},
+    {"6F4B",        "7F10",     "EFext2",      0x12ff44},
+    {"6F4C",        "7F10",     "EFext3",      0x14ff44},
+    {"6F4D",        "7F10",     "EFbdn",       0x12ff44},
     {"6F4E",        "7F10",     "EFext4",      0x11ff44},
     {"6F4F",        "7F10",     "EFeccp",      0x11ff44}, // 51.011
-    {"6F58",        "7F10",     "EFcmi",       0x41ff44}, // 51.011
+    {"6F58",        "7F10",     "EFcmi",       0x14ff44}, // 51.011
 
     {"5F50",        "7F10",     "DFgraphics",  0},
-    {"4F20",        "5F50",     "EFimg",       0x41ff44},
-    {"4F01",        "5F50",     "EFimg1",      0x41ff44}, // Usual names of
-    {"4F02",        "5F50",     "EFimg2",      0x41ff44}, // Image data files.
-    {"4F03",        "5F50",     "EFimg3",      0x41ff44},
-    {"4F04",        "5F50",     "EFimg4",      0x41ff44},
-    {"4F05",        "5F50",     "EFimg5",      0x41ff44},
+    {"4F20",        "5F50",     "EFimg",       0x14ff44},
+    {"4F01",        "5F50",     "EFimg1",      0x14ff44}, // Usual names of
+    {"4F02",        "5F50",     "EFimg2",      0x14ff44}, // Image data files.
+    {"4F03",        "5F50",     "EFimg3",      0x14ff44},
+    {"4F04",        "5F50",     "EFimg4",      0x14ff44},
+    {"4F05",        "5F50",     "EFimg5",      0x14ff44},
 
     {"7F20",        "3F00",     "DFgsm",       0},
-    {"6F05",        "7F20",     "EFlp",        0x10ff44},
-    {"6F07",        "7F20",     "EFimsi",      0x41ff44},
+    {"6F05",        "7F20",     "EFlp",        0x01ff44},
+    {"6F07",        "7F20",     "EFimsi",      0x14ff44},
     {"6F20",        "7F20",     "EFkc",        0x11ff44},
     {"6F2C",        "7F20",     "EFdck",       0x11ff44}, // 51.011
     {"6F30",        "7F20",     "EFplmnsel",   0},
-    {"6F31",        "7F20",     "EFhpplmn",    0x41ff44},
-    {"6F32",        "7F20",     "EFcnl",       0x41ff44}, // 51.011
+    {"6F31",        "7F20",     "EFhpplmn",    0x14ff44},
+    {"6F32",        "7F20",     "EFcnl",       0x14ff44}, // 51.011
     {"6F37",        "7F20",     "EFacmmax",    0x11ff44},
-    {"6F38",        "7F20",     "EFsst",       0x41ff44},
+    {"6F38",        "7F20",     "EFsst",       0x14ff44},
     {"6F39",        "7F20",     "EFacm",       0x11f144},
-    {"6F3E",        "7F20",     "EFgid1",      0x41ff44},
-    {"6F3F",        "7F20",     "EFgid2",      0x41ff44},
+    {"6F3E",        "7F20",     "EFgid1",      0x14ff44},
+    {"6F3F",        "7F20",     "EFgid2",      0x14ff44},
     {"6F41",        "7F20",     "EFpuct",      0x11ff44},
     {"6F45",        "7F20",     "EFcbmi",      0x11ff44},
-    {"6F46",        "7F20",     "EFspn",       0x40ff44},
-    {"6F48",        "7F20",     "EFcbmid",     0x41ff44},
+    {"6F46",        "7F20",     "EFspn",       0x04ff44},
+    {"6F48",        "7F20",     "EFcbmid",     0x14ff44},
     {"6F50",        "7F20",     "EFcbmir",     0x11ff44},
-    {"6F51",        "7F20",     "EFnia",       0x41ff44},
+    {"6F51",        "7F20",     "EFnia",       0x14ff44},
     {"6F52",        "7F20",     "EFkcgprs",    0x11ff44},
     {"6F53",        "7F20",     "EFlocigprs",  0},
     {"6F54",        "7F20",     "EFsume",      0},
     {"6F60",        "7F20",     "EFplmnwact",  0x11ff44},
-    {"6F61",        "7F20",     "EFoplmnwact", 0x41ff44},
-    {"6F62",        "7F20",     "EFhplmnwact", 0x41ff44},
+    {"6F61",        "7F20",     "EFoplmnwact", 0x14ff44},
+    {"6F62",        "7F20",     "EFhplmnwact", 0x14ff44},
     {"6F63",        "7F20",     "EFcpbcch",    0x11ff44},
-    {"6F64",        "7F20",     "EFinvscan",   0x41ff44},
+    {"6F64",        "7F20",     "EFinvscan",   0x14ff44},
     {"6F74",        "7F20",     "EFbcch",      0},
-    {"6F78",        "7F20",     "EFacc",       0x41ff44},
+    {"6F78",        "7F20",     "EFacc",       0x14ff44},
     {"6F7B",        "7F20",     "EFfplmn",     0x11ff44},
     {"6F7E",        "7F20",     "EFloci",      0x11ff44},
-    {"6FAD",        "7F20",     "EFad",        0x40ff44},
+    {"6FAD",        "7F20",     "EFad",        0x04ff44},
     {"6FAE",        "7F20",     "EFphase",     0},
-    {"6FB1",        "7F20",     "EFvgcs",      0x41ff44},
+    {"6FB1",        "7F20",     "EFvgcs",      0x14ff44},
     {"6FB2",        "7F20",     "EFvgcss",     0x11ff44},
-    {"6FB3",        "7F20",     "EFvbs",       0x41ff44},
+    {"6FB3",        "7F20",     "EFvbs",       0x14ff44},
     {"6FB4",        "7F20",     "EFvbss",      0x11ff44},
-    {"6FB5",        "7F20",     "EFemlpp",     0x41ff44},
+    {"6FB5",        "7F20",     "EFemlpp",     0x14ff44},
     {"6FB6",        "7F20",     "EFaaem",      0x11ff44},
-    {"6FB7",        "7F20",     "EFecc",       0x40ff44},
-    {"6FC5",        "7F20",     "EFpnn",       0x40ff44}, // 51.011
-    {"6FC6",        "7F20",     "EFopl",       0x40ff44}, // 51.011
+    {"6FB7",        "7F20",     "EFecc",       0x04ff44},
+    {"6FC5",        "7F20",     "EFpnn",       0x04ff44}, // 51.011
+    {"6FC6",        "7F20",     "EFopl",       0x04ff44}, // 51.011
     {"6FC7",        "7F20",     "EFmbdn",      0x11ff44}, // 51.011
     {"6FC8",        "7F20",     "EFext6",      0x11ff44}, // 51.011
     {"6FC9",        "7F20",     "EFmbi",       0x11ff44}, // 51.011
     {"6FCA",        "7F20",     "EFmwis",      0x11ff44}, // 51.011
     {"6FCB",        "7F20",     "EFcfis",      0x11ff44}, // 51.011
     {"6FCC",        "7F20",     "EFext7",      0x11ff44}, // 51.011
-    {"6FCD",        "7F20",     "EFspdi",      0x41ff44}, // 51.011
+    {"6FCD",        "7F20",     "EFspdi",      0x14ff44}, // 51.011
     {"6FCE",        "7F20",     "EFmmsn",      0x11ff44}, // 51.011
     {"6FCF",        "7F20",     "EFext8",      0x11ff44}, // 51.011
-    {"6FD0",        "7F20",     "EFmmsicp",    0x41ff44}, // 51.011
+    {"6FD0",        "7F20",     "EFmmsicp",    0x14ff44}, // 51.011
     {"6FD1",        "7F20",     "EFmmsup",     0x11ff44}, // 51.011
     {"6FD2",        "7F20",     "EFmmsucp",    0x11ff44}, // 51.011
 
@@ -149,14 +149,14 @@ static SimFileInfo const knownFiles[] =
     {"5F60",        "7F20",     "DFcts",       0},
 
     {"5F70",        "7F20",     "DFsolsa",     0},
-    {"4F30",        "5F70",     "EFsai",       0x41ff44},
+    {"4F30",        "5F70",     "EFsai",       0x14ff44},
     {"4F31",        "5F70",     "EFsll",       0x11ff44},
 
     {"5F3C",        "7F20",     "DFmexe",      0},
-    {"4F40",        "5F3C",     "EFmexe-st",   0x41ff44},
-    {"4F41",        "5F3C",     "EForpk",      0x41ff44},
-    {"4F42",        "5F3C",     "EFarpk",      0x41ff44},
-    {"4F43",        "5F3C",     "EFtprpk",     0x41ff44},
+    {"4F40",        "5F3C",     "EFmexe-st",   0x14ff44},
+    {"4F41",        "5F3C",     "EForpk",      0x14ff44},
+    {"4F42",        "5F3C",     "EFarpk",      0x14ff44},
+    {"4F43",        "5F3C",     "EFtprpk",     0x14ff44},
 
     {"7F22",        "3F00",     "DFis41",      0},
 
