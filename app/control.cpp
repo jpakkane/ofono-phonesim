@@ -36,6 +36,8 @@
 
 #define TWO_BYTE_MAX 65535
 #define FOUR_CHAR 4
+#define FOUR_BYTE_MAX 0x7FFFFFFF
+#define EIGHT_CHAR 8
 #define HEX_BASE 16
 
 class ControlWidget : public QWidget
@@ -179,21 +181,21 @@ void ControlWidget::sendREG()
     if ( ui->chkLocationInfo->checkState() == Qt::Checked ) {
         bool ok;
 
-        int LAC = p->convertString(ui->leLAC->text(),TWO_BYTE_MAX,FOUR_CHAR,HEX_BASE, &ok);
+        p->convertString(ui->leLAC->text(),TWO_BYTE_MAX,FOUR_CHAR,HEX_BASE, &ok);
         if (!ok) {
             p->warning(tr("Invalid LAC"),
                     tr("Location Area Code must be 4 hex digits long"));
             return;
         }
 
-        int cellID = p->convertString(ui->leCellID->text(),TWO_BYTE_MAX,FOUR_CHAR,HEX_BASE, &ok);
+        p->convertString(ui->leCellID->text(),FOUR_BYTE_MAX,EIGHT_CHAR,HEX_BASE, &ok);
         if (!ok) {
             p->warning(tr("Invalid Cell ID"),
-                    tr("Cell ID must be 4 hex digits long"));
+                    tr("Cell ID must be 8 hex digits long"));
             return;
         }
 
-        commandString.append("," + QString::number(LAC) + "," + QString::number(cellID));
+        commandString.append(",\"" + ui->leLAC->text() + "\",\"" + ui->leCellID->text() + "\"");
     }
 
     emit unsolicitedCommand(commandString);
