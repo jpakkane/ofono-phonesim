@@ -1,5 +1,5 @@
 TARGET=phonesim
-CONFIG+=no_tr no_singleexec static
+CONFIG+=no_tr no_singleexec static debug
 DEFINES+=PHONESIM
 
 INCLUDES=.

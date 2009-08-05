@@ -7,3 +7,4 @@ QT *= core gui network xml
 INCLUDEPATH += ../lib
 DESTDIR = ./..
 LIBS += -L../lib -lphonesim
+CONFIG += debug
