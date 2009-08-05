@@ -189,7 +189,7 @@ void SimFileSystem::crsm( const QString& args )
     uint p1 = QAtUtils::parseNumber( args, posn );
     uint p2 = QAtUtils::parseNumber( args, posn );
     uint p3 = QAtUtils::parseNumber( args, posn );
-    QString data = QAtUtils::fromHex( args.mid( (int)posn ) );
+    QByteArray data = QAtUtils::fromHex( args.mid( (int)posn ) );
 
     // Determine how to execute the command.
     bool ok = true;
@@ -327,17 +327,73 @@ void SimFileSystem::crsm( const QString& args )
 
         case 214:       // UPDATE BINARY
         {
-            // Not implemented yet.
-            sw1 = 0x94;
-            sw2 = 0x08;
+            offset = (int)((p1 << 8) + p2);
+            length = (int)p3;
+            item = findItem( fileid );
+            if ( item && item->recordSize() <= 1 && data.size() == length ) {
+                contents = item->contents();
+                if ( ( offset + length ) > contents.size() ) {
+                    sw1 = 0x94;
+                    sw2 = 0x02;
+                } else if ( length ) {
+                    sw1 = 0x90;
+                    sw2 = 0x00;
+                    item->setContents(
+                            contents.left( offset ) +
+                            data +
+                            contents.mid( offset + length ) );
+                } else {
+                    sw1 = 0x67;
+                    sw2 = contents.size() - offset;
+                }
+            } else if ( item ) {
+                sw1 = 0x94;
+                sw2 = 0x08;
+            } else {
+                sw1 = 0x94;
+                sw2 = 0x04;
+            }
+            if ( item )
+                currentItem = item;
         }
         break;
 
         case 220:       // UPDATE RECORD
         {
-            // Not implemented yet.
-            sw1 = 0x94;
-            sw2 = 0x08;
+            offset = (int)(p1 - 1);
+            length = (int)p3;
+            item = findItem( fileid );
+            // Only absolute writes are supported.
+            if ( p2 == 0x04 && item && item->recordSize() == length &&
+                    data.size() == length ) {
+                offset *= item->recordSize();
+                contents = item->contents();
+                if ( offset >= contents.size() || offset < 0 ) {
+                    sw1 = 0x94;
+                    sw2 = 0x02;
+                } else {
+                    sw1 = 0x90;
+                    sw2 = 0x00;
+                    item->setContents(
+                            contents.left( offset ) +
+                            data +
+                            contents.mid( offset + length ) );
+                }
+            } else if ( item && p2 != 0x04 && !length ) {
+                sw1 = 0x67;
+                sw2 = item->recordSize();
+            } else if ( item && p2 != 0x04 ) {
+                sw1 = 0x6b;
+                sw2 = 0x00;
+            } else if ( item ) {
+                sw1 = 0x94;
+                sw2 = 0x08;
+            } else {
+                sw1 = 0x94;
+                sw2 = 0x04;
+            }
+            if ( item )
+                currentItem = item;
         }
         break;
 

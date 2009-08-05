@@ -3197,6 +3197,20 @@ OK</response>
     43 05 00 4C 6F 6E 67 45 06 00 53 68 6F 72 74 FF FF FF FF FF
 </file>
 
+<file name="EFmwis" recordsize="6">
+    01 01 00 00 00 00
+</file>
+
+<file name="EFmbdn" recordsize="48">
+    FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF
+    FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF
+    FF FF 03 81 76 98 FF FF FF FF FF FF FF FF FF FF
+</file>
+
+<file name="EFmbi" recordsize="5">
+    01 00 00 00 00
+</file>
+
 </filesystem>
 
 </simulator>
