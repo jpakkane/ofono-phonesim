@@ -2634,7 +2634,7 @@
 <chat>
     <!-- CPMS Support -->
     <command>AT+CPMS=?</command>
-    <response>+CPMS: ("SM","ME"),("SM","ME"),("SM","ME")\n\nOK</response>
+    <response>+CPMS: ("SM","ME"),("SM","ME"),("SM")\n\nOK</response>
 </chat>
 
 <chat>
@@ -2647,7 +2647,7 @@
 
 <chat>
     <!-- Request the number of messages in the incoming ordinary queue -->
-    <command>AT+CPMS="ME","ME","ME"</command>
+    <command>AT+CPMS="ME","ME","SM"</command>
     <response>+CPMS: ${MSGCOUNT},99,${MSGCOUNT},99,${MSGCOUNT},99\n\nOK</response>
     <set name="MSGLISTCOPY" value="${MSGLIST}"/>
     <set name="MSGMEM" value="ME"/>
