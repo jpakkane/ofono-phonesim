@@ -7,11 +7,7 @@ QT *= core gui network xml
 INCLUDEPATH += ../lib
 LIBS += -L../lib -lphonesim
 CONFIG += debug
+DESTDIR=..
+target.path=$$INSTALL_PREFIX/bin
 
-phonesim_exec.files=$$TARGET
-phonesim_exec.path=$$INSTALL_PREFIX/bin
-phonesim_exec.hint=programs
-
-INSTALLS+=phonesim_exec
-
-DISTFILES+=$$TARGET
+INSTALLS+=target

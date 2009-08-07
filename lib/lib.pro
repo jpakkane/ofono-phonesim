@@ -38,12 +38,6 @@ PHONESIM_SOURCES= phonesim.cpp server.cpp hardwaremanipulator.cpp \
                   qsimterminalresponse.cpp \
                   qsimcontrolevent.cpp
 
-phonesim_headers.files=$$PHONESIM_HEADERS
-phonesim_headers.path=$$INSTALL_PREFIX/include/phonesim
-phonesim_headers.hint=headers
-
-INSTALLS+=phonesim_headers
-
 DISTFILES+=$$PHONESIM_HEADERS
 
 TEMPLATE=lib

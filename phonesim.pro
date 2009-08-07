@@ -5,10 +5,7 @@ TEMPLATE = subdirs
 SUBDIRS = lib app
 
 DATA_FILES= data/GSMSpecification.xml \
-	data/moblin.xml \
-	data/neo1973.xml \
-	data/peers.xml \
-	data/troll.xml
+	data/moblin.xml
 
 phonesim_data.files=$$DATA_FILES
 phonesim_data.path=$$INSTALL_PREFIX/share/phonesim
