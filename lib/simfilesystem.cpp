@@ -206,7 +206,16 @@ void SimFileSystem::crsm( const QString& args )
             offset = (int)((p1 << 8) + p2);
             length = (int)p3;
             item = findItem( fileid );
-            if ( item && item->recordSize() <= 1 ) {
+            if ( !item ) {
+                sw1 = 0x94;
+                sw2 = 0x04;
+            } else if ( item->recordSize() > 0) {
+                sw1 = 0x94;
+                sw2 = 0x08;
+            } else if ( !item->checkAccess( FILE_OP_READ, true ) ) {
+                sw1 = 0x98;
+                sw2 = 0x04;
+            } else {
                 contents = item->contents();
                 if ( ( offset + length ) > contents.size() ) {
                     sw1 = 0x94;
@@ -220,12 +229,6 @@ void SimFileSystem::crsm( const QString& args )
                     sw1 = 0x67;
                     sw2 = contents.size() - offset;
                 }
-            } else if ( item ) {
-                sw1 = 0x94;
-                sw2 = 0x08;
-            } else {
-                sw1 = 0x94;
-                sw2 = 0x04;
             }
             if ( item )
                 currentItem = item;
@@ -237,8 +240,20 @@ void SimFileSystem::crsm( const QString& args )
             offset = (int)(p1 - 1);
             length = (int)p3;
             item = findItem( fileid );
-            // Only absolute reads are supported.
-            if ( p2 == 0x04 && item && item->recordSize() > 1 ) {
+            if ( !item ) {
+                sw1 = 0x94;
+                sw2 = 0x04;
+            } else if ( p2 != 0x04 ) {
+                // Only absolute reads are supported.
+                sw1 = 0x6b;
+                sw2 = 0x00;
+            } else if ( !item->checkAccess( FILE_OP_READ, true ) ) {
+                sw1 = 0x98;
+                sw2 = 0x04;
+            } else if ( item->recordSize() <= 1 ) {
+                sw1 = 0x94;
+                sw2 = 0x08;
+            } else {
                 offset *= item->recordSize();
                 contents = item->contents();
                 if ( length < 1 || length > item->recordSize() ) {
@@ -253,15 +268,6 @@ void SimFileSystem::crsm( const QString& args )
                     response =
                         QAtUtils::toHex( contents.mid( offset, length ) );
                 }
-            } else if ( item && p2 != 0x04 ) {
-                sw1 = 0x6b;
-                sw2 = 0x00;
-            } else if ( item ) {
-                sw1 = 0x94;
-                sw2 = 0x08;
-            } else {
-                sw1 = 0x94;
-                sw2 = 0x04;
             }
             if ( item )
                 currentItem = item;
@@ -330,7 +336,16 @@ void SimFileSystem::crsm( const QString& args )
             offset = (int)((p1 << 8) + p2);
             length = (int)p3;
             item = findItem( fileid );
-            if ( item && item->recordSize() <= 1 && data.size() == length ) {
+            if ( !item ) {
+                sw1 = 0x94;
+                sw2 = 0x04;
+            } else if ( !item->checkAccess( FILE_OP_UPDATE, true ) ) {
+                sw1 = 0x98;
+                sw2 = 0x04;
+            } else if ( item->recordSize() > 1 || data.size() != length ) {
+                sw1 = 0x94;
+                sw2 = 0x08;
+            } else {
                 contents = item->contents();
                 if ( ( offset + length ) > contents.size() ) {
                     sw1 = 0x94;
@@ -346,12 +361,6 @@ void SimFileSystem::crsm( const QString& args )
                     sw1 = 0x67;
                     sw2 = contents.size() - offset;
                 }
-            } else if ( item ) {
-                sw1 = 0x94;
-                sw2 = 0x08;
-            } else {
-                sw1 = 0x94;
-                sw2 = 0x04;
             }
             if ( item )
                 currentItem = item;
@@ -363,9 +372,24 @@ void SimFileSystem::crsm( const QString& args )
             offset = (int)(p1 - 1);
             length = (int)p3;
             item = findItem( fileid );
-            // Only absolute writes are supported.
-            if ( p2 == 0x04 && item && item->recordSize() == length &&
-                    data.size() == length ) {
+            if ( !item ) {
+                sw1 = 0x94;
+                sw2 = 0x04;
+            } else if ( !length ) {
+                sw1 = 0x67;
+                sw2 = item->recordSize();
+            } else if ( !item->checkAccess( FILE_OP_UPDATE, true ) ) {
+                sw1 = 0x98;
+                sw2 = 0x04;
+            } else if ( p2 != 0x04 ) {
+                // Only absolute writes are supported.
+                sw1 = 0x6b;
+                sw2 = 0x00;
+            } else if ( item->recordSize() != length ||
+                    data.size() != length ) {
+                sw1 = 0x94;
+                sw2 = 0x08;
+            } else {
                 offset *= item->recordSize();
                 contents = item->contents();
                 if ( offset >= contents.size() || offset < 0 ) {
@@ -379,18 +403,6 @@ void SimFileSystem::crsm( const QString& args )
                             data +
                             contents.mid( offset + length ) );
                 }
-            } else if ( item && p2 != 0x04 && !length ) {
-                sw1 = 0x67;
-                sw2 = item->recordSize();
-            } else if ( item && p2 != 0x04 ) {
-                sw1 = 0x6b;
-                sw2 = 0x00;
-            } else if ( item ) {
-                sw1 = 0x94;
-                sw2 = 0x08;
-            } else {
-                sw1 = 0x94;
-                sw2 = 0x04;
             }
             if ( item )
                 currentItem = item;
@@ -557,4 +569,22 @@ SimFileItem *SimFileItem::findItem( const QString& fileid )
             return temp;
     }
     return 0;
+}
+
+bool SimFileItem::checkAccess( enum file_op op, bool havepin ) const
+{
+    switch ( (access() >> op) & 0xf ) {
+        case FILE_ACCESS_ALWAYS:
+            return true;
+
+        case FILE_ACCESS_CHV1:
+        case FILE_ACCESS_CHV2:
+            return havepin;
+
+        case FILE_ACCESS_RESERVED:
+        case FILE_ACCESS_ADM:
+        case FILE_ACCESS_NEVER:
+        default:
+            return false;
+    }
 }

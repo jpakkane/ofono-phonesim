@@ -31,6 +31,23 @@ enum file_type {
     FILE_TYPE_INVALID = 0xff
 };
 
+enum file_access {
+    FILE_ACCESS_ALWAYS = 0,
+    FILE_ACCESS_CHV1 = 1,
+    FILE_ACCESS_CHV2 = 2,
+    FILE_ACCESS_RESERVED = 3,
+    FILE_ACCESS_ADM = 4,
+    FILE_ACCESS_NEVER = 15,
+};
+
+enum file_op {
+    FILE_OP_READ = 20,
+    FILE_OP_UPDATE = 16,
+    FILE_OP_INCREASE = 12,
+    FILE_OP_REHABILITATE = 4,
+    FILE_OP_INVALIDATE = 0,
+};
+
 class SimFileSystem : public QObject
 {
     Q_OBJECT
@@ -92,6 +109,8 @@ public:
     QList<SimFileItem *> children() const { return _children; }
 
     SimFileItem *findItem( const QString& fileid );
+
+    bool checkAccess( enum file_op op, bool havepin ) const;
 
 private:
     QString _fileid;
