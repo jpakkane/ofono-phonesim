@@ -250,7 +250,7 @@ void SimFileSystem::crsm( const QString& args )
             } else if ( !item->checkAccess( FILE_OP_READ, true ) ) {
                 sw1 = 0x98;
                 sw2 = 0x04;
-            } else if ( item->recordSize() <= 1 ) {
+            } else if ( item->recordSize() <= 0 ) {
                 sw1 = 0x94;
                 sw2 = 0x08;
             } else {
@@ -318,7 +318,7 @@ void SimFileSystem::crsm( const QString& args )
             if ( currentItem->isDirectory() ) {
                 status[13] = 0x00;
                 status[14] = 0x00;
-            } else if ( currentItem->recordSize() > 1 ) {
+            } else if ( currentItem->recordSize() > 0 ) {
                 status[13] = (char)(currentItem->type() );
                 status[14] = (char)( currentItem->recordSize() );
             } else {
@@ -342,7 +342,7 @@ void SimFileSystem::crsm( const QString& args )
             } else if ( !item->checkAccess( FILE_OP_UPDATE, true ) ) {
                 sw1 = 0x98;
                 sw2 = 0x04;
-            } else if ( item->recordSize() > 1 || data.size() != length ) {
+            } else if ( item->recordSize() > 0 || data.size() != length ) {
                 sw1 = 0x94;
                 sw2 = 0x08;
             } else {
@@ -545,7 +545,7 @@ SimFileItem::SimFileItem( const QString& fileid, SimFileItem *parentDir,
 {
     _fileid = fileid;
     _parentDir = parentDir;
-    _recordSize = 1;
+    _recordSize = 0;
     _access = access;
     _isDirectory = false;
     _type = type;
