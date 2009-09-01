@@ -387,7 +387,11 @@ bool SimChat::command( const QString& cmd )
             }
         }
 
-        listSMSResponse.append("\\nOK");
+	if (listSMSResponse.isEmpty())
+            listSMSResponse.append("+CMS ERROR: 321");
+	else
+            listSMSResponse.append("\\nOK");
+
         state()->rules()->respond(listSMSResponse , responseDelay, eol );
     }
 
