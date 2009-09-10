@@ -1985,7 +1985,29 @@ void QPDUMessage::setUserData(const QString &txt, QSMSDataCodingScheme scheme, Q
         ++headerLen;
 
     // Strip off everything except the alphabet bits.
-    scheme = (QSMSDataCodingScheme)(scheme & 0x0C);
+    switch (scheme >> 6) {
+    case 0:
+    default:
+        scheme = (QSMSDataCodingScheme)(scheme & 0x0C);
+        break;
+    case 3:
+        switch ((scheme & 0x30) >> 4) {
+        case 0:
+        case 1:
+            scheme = QSMS_DefaultAlphabet;
+            break;
+        case 2:
+            scheme = QSMS_UCS2Alphabet;
+            break;
+        case 3:
+            if (scheme & 0x4)
+                scheme = QSMS_8BitAlphabet;
+            else
+                scheme = QSMS_DefaultAlphabet;
+            break;
+        }
+        break;
+    }
 
     if ( scheme == QSMS_DefaultAlphabet ) {
 
