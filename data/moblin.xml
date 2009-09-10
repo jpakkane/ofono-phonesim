@@ -1146,7 +1146,7 @@
 
 <chat>
 	<!-- All outGoing barring services - UNLOCK ONLY -->
-	<command>AT+CLCK="AG",0,"${PIN2VALUE}"</command>
+	<command>AT+CLCK="AG",0,"${PIN2VALUE}",1</command>
 	<response>OK</response>
     <set name="BARVAO" value="0"/>
     <set name="BARVOI" value="0"/>
@@ -1155,7 +1155,7 @@
 
 <chat>
 	<!-- All inComing barring services - UNLOCK ONLY -->
-	<command>AT+CLCK="AC",0,"${PIN2VALUE}"</command>
+	<command>AT+CLCK="AC",0,"${PIN2VALUE}",1</command>
 	<response>OK</response>
     <set name="BARVAI" value="0"/>
     <set name="BARVIR" value="0"/>
