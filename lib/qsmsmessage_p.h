@@ -116,9 +116,10 @@ public:
 
     QByteArray toByteArray() const { return mBuffer; }
 
-    void setBit(int b, bool on);
-    void setBits(int offset, int len, int val);
+    static void setBit(int b, bool on);
+    static void setBits(int offset, int len, int val);
     void commitBits();
+    static void commitBits(QByteArray& buffer);
     void appendOctet(uchar c) { mBuffer += (char)c; }
 
     bool bit(int b);
@@ -148,10 +149,12 @@ public:
     bool needOctets( uint num ) const
         { return ((uint)(mBuffer.size() - mPosn) >= num); }
 
+    static void appendAddress( QByteArray &buffer, const QString &strin, bool SCAddress );
+
 protected:
     QByteArray mBuffer;
-    int mPosn;
-    char mBits;
+    static int mPosn;
+    static char mBits;
 };
 
 

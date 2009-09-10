@@ -157,6 +157,7 @@ public:
     QByteArray toPdu() const;
     static QSMSMessage fromPdu( const QByteArray& pdu );
     static int pduAddressLength( const QByteArray& pdu );
+    static void appendAddress( QByteArray &buffer, const QString &strin, bool SCAddress );
 
     template <typename Stream> void serialize(Stream &stream) const;
     template <typename Stream> void deserialize(Stream &stream);

@@ -1122,6 +1122,184 @@ p, li { white-space: pre-wrap; }
        </item>
       </layout>
      </widget>
+     <widget class="QWidget" name="tab_4" >
+      <attribute name="title" >
+       <string>VoiceMail</string>
+      </attribute>
+      <layout class="QVBoxLayout" >
+       <property name="spacing" >
+        <number>6</number>
+       </property>
+       <property name="leftMargin" >
+        <number>9</number>
+       </property>
+       <property name="topMargin" >
+        <number>9</number>
+       </property>
+       <property name="rightMargin" >
+        <number>9</number>
+       </property>
+       <property name="bottomMargin" >
+        <number>9</number>
+       </property>
+       <item>
+        <widget class="QGroupBox" name="gbMailbox" >
+         <property name="title" >
+          <string>Mailbox</string>
+         </property>
+         <layout class="QVBoxLayout" >
+          <item>
+           <layout class="QGridLayout" >
+            <item row="0" column="0" >
+             <widget class="QLabel" name="lblDiallingNumber" >
+              <property name="text" >
+               <string>&amp;Dialling Number</string>
+              </property>
+              <property name="alignment" >
+               <set>Qt::AlignBottom|Qt::AlignLeading|Qt::AlignLeft</set>
+              </property>
+              <property name="buddy" >
+               <cstring>leServiceDiallingNumber</cstring>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1" >
+             <widget class="QLineEdit" name="leServiceDiallingNumber" >
+              <property name="inputMask" >
+               <string/>
+              </property>
+              <property name="maxLength" >
+               <number>12</number>
+              </property>
+              <property name="text" >
+               <string>6789</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <widget class="QLabel" name="leMessagesWaiting" >
+            <property name="text" >
+             <string>&amp;Messages waiting</string>
+            </property>
+            <property name="buddy" >
+             <cstring>twMessageList</cstring>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QTableWidget" name="twMessageList" >
+            <property name="columnCount" >
+             <number>3</number>
+            </property>
+            <property name="showGrid" >
+             <bool>false</bool>
+            </property>
+            <property name="selectionMode" >
+             <enum>QAbstractItemView::ExtendedSelection</enum>
+            </property>
+            <property name="selectionBehavior" >
+             <enum>QAbstractItemView::SelectRows</enum>
+            </property>
+            <property name="editTriggers" >
+             <set>QAbstractItemView::NoEditTriggers</set>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <layout class="QGridLayout" >
+            <item row="0" column="0" >
+             <widget class="QPushButton" name="pbNotifyUDH" >
+              <property name="text" >
+               <string>Send &amp;VoiceMail notification in SMS UDH</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1" >
+             <widget class="QPushButton" name="pbNotifyUDHEnhanced" >
+              <property name="text" >
+               <string>Send &amp;Enhanced VoiceMail notification</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="gbMessage" >
+         <property name="title" >
+          <string>Message</string>
+         </property>
+         <layout class="QVBoxLayout" >
+          <item>
+           <layout class="QGridLayout" >
+            <item row="0" column="0" >
+             <widget class="QLabel" name="lblSenderNumber" >
+              <property name="text" >
+               <string>&amp;Sender Number</string>
+              </property>
+              <property name="alignment" >
+               <set>Qt::AlignBottom|Qt::AlignLeading|Qt::AlignLeft</set>
+              </property>
+              <property name="buddy" >
+               <cstring>leSenderNumber</cstring>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1" >
+             <widget class="QLineEdit" name="leSenderNumber" >
+              <property name="inputMask" >
+               <string/>
+              </property>
+              <property name="maxLength" >
+               <number>12</number>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="2" >
+             <widget class="QPushButton" name="pbAddMessage" >
+              <property name="text" >
+               <string>&amp;Add message</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="0" >
+             <widget class="QLabel" name="lblPriority" >
+              <property name="text" >
+               <string>&amp;Urgent</string>
+              </property>
+              <property name="alignment" >
+               <set>Qt::AlignBottom|Qt::AlignLeading|Qt::AlignLeft</set>
+              </property>
+              <property name="buddy" >
+               <cstring>chkPriority</cstring>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="1" >
+             <widget class="QCheckBox" name="chkPriority" >
+              <property name="checked" >
+               <bool>false</bool>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="2" >
+             <widget class="QPushButton" name="pbRemoveMessage" >
+              <property name="text" >
+               <string>&amp;Remove selected</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </widget>
+       </item>
+      </layout>
+     </widget>
     </widget>
    </item>
    <item>

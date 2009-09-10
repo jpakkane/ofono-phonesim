@@ -25,6 +25,7 @@
 #include "qsmsmessagelist.h"
 
 class QSMSMessage;
+class QVMMessage;
 class HardwareManipulator : public QObject
 {
 Q_OBJECT
@@ -39,6 +40,7 @@ public slots:
     virtual void setPhoneNumber( const QString& );
     virtual void constructSMSMessage(const int type, const QString &sender, const QString &serviceCenter, const QString &text);
     virtual void sendSMS( const QSMSMessage& m );
+    virtual void sendVMNotify( int type, int count, const QList<QVMMessage> &received, const QList<QVMMessage> &deleted, const QString &mailbox );
 
 signals:
     void unsolicitedCommand(const QString &cmd);
@@ -73,5 +75,16 @@ private:
     QString ruleFilename;
 };
 
+class QVMMessage {
+public:
+    QVMMessage(int _id, const QString &from, bool pr) : id(_id),
+        sender(from), priority(pr), lengthSecs(50), retentionDays(2) {}
+
+    int id;
+    QString sender;
+    bool priority;
+    int lengthSecs;
+    int retentionDays;
+};
 
 #endif

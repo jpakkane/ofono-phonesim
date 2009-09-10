@@ -63,6 +63,10 @@ private slots:
     void sendCall();
     void atChanged();
     void resetTranslator();
+    void addVoicemail();
+    void delVoicemail();
+    void sendVMNotify( int type = 0 );
+    void sendEVMNotify();
 
 signals:
     void unsolicitedCommand(const QString &);
@@ -78,9 +82,24 @@ private:
     Ui_ControlBase *ui;
     Control *p;
     AtTranslator *translator;
+
+    class VoicemailItem {
+    public:
+        VoicemailItem( const QString &sender, bool urgent );
+
+        QTableWidgetItem sender;
+        QTableWidgetItem priority;
+        QTableWidgetItem pending;
+
+        bool notifyReceived;
+        bool notifyDeleted;
+        int id;
+
+        static int nextId;
+    };
+    QList<VoicemailItem> mailbox;
 };
 #include "control.moc"
-
 
 ControlWidget::ControlWidget(const QString &ruleFile, Control *parent)
     : QWidget(), p(parent)
@@ -106,6 +125,15 @@ ControlWidget::ControlWidget(const QString &ruleFile, Control *parent)
     connect(ui->pbIncomingCall, SIGNAL(clicked()), this, SLOT(sendCall()));
     connect(ui->openSpecButton, SIGNAL(clicked()), this, SLOT(resetTranslator()));
     connect(ui->atCheckBox, SIGNAL(clicked()), this, SLOT(atChanged()));
+    connect(ui->pbAddMessage, SIGNAL(clicked()), this, SLOT(addVoicemail()));
+    connect(ui->pbRemoveMessage, SIGNAL(clicked()), this, SLOT(delVoicemail()));
+    connect(ui->pbNotifyUDH, SIGNAL(clicked()), this, SLOT(sendVMNotify()));
+    connect(ui->pbNotifyUDHEnhanced, SIGNAL(clicked()), this, SLOT(sendEVMNotify()));
+
+    QStringList headers;
+    headers << "Sender" << "Priority" << "Notification Status";
+    ui->twMessageList->setHorizontalHeaderLabels( headers );
+    ui->twMessageList->verticalHeader()->hide();
 
     show();
 }
@@ -330,3 +358,81 @@ void ControlWidget::atChanged()
     ui->atGroupBox->setVisible( ui->atCheckBox->isChecked() );
 }
 
+void ControlWidget::sendVMNotify( int type )
+{
+    QList<QVMMessage> received;
+    QList<QVMMessage> deleted;
+
+    for ( QList<VoicemailItem>::iterator i = mailbox.begin();
+            i != mailbox.end(); ++i ) {
+        QVMMessage msg( i->id, i->sender.text(), i->priority.text() == "Urgent" );
+
+        if ( i->notifyReceived ) {
+            received.append( msg );
+
+            i->notifyReceived = false;
+            i->pending.setText( "" );
+        }
+
+        if ( i->notifyDeleted ) {
+            int position = i - mailbox.begin();
+
+            deleted.append( msg );
+
+            ui->twMessageList->takeItem( position, 0 );
+            ui->twMessageList->takeItem( position, 1 );
+            ui->twMessageList->takeItem( position, 2 );
+            ui->twMessageList->model()->removeRow( position );
+
+            mailbox.erase( i );
+        }
+    }
+
+    return p->sendVMNotify( type, mailbox.size(), received, deleted,
+            ui->leServiceDiallingNumber->text() );
+}
+
+void ControlWidget::sendEVMNotify()
+{
+    return sendVMNotify( 1 );
+}
+
+void ControlWidget::addVoicemail()
+{
+    int position = ui->twMessageList->rowCount();
+
+    mailbox.append( VoicemailItem(
+            ui->leSenderNumber->text(),
+            ui->chkPriority->isChecked() ) );
+    ui->leSenderNumber->setText( "" );
+    ui->chkPriority->setChecked( false );
+
+    ui->twMessageList->model()->insertRow( position );
+    ui->twMessageList->setItem( position, 0, &mailbox.last().sender );
+    ui->twMessageList->setItem( position, 1, &mailbox.last().priority );
+    ui->twMessageList->setItem( position, 2, &mailbox.last().pending );
+}
+
+void ControlWidget::delVoicemail()
+{
+    foreach ( QTableWidgetSelectionRange range,
+            ui->twMessageList->selectedRanges() ) {
+        for ( int i = range.topRow(); i <= range.bottomRow(); i ++ ) {
+            VoicemailItem &item = mailbox[i];
+
+            item.notifyDeleted = true;
+            item.pending.setText( "DELETE" );
+        }
+    }
+}
+
+int ControlWidget::VoicemailItem::nextId;
+
+ControlWidget::VoicemailItem::VoicemailItem( const QString &from, bool urgent )
+    : sender( from ), priority( urgent ? "Urgent" : "" ), pending( "NEW" )
+{
+    notifyReceived = true;
+    notifyDeleted = false;
+
+    id = nextId++;
+}

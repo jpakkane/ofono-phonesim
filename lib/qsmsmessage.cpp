@@ -1627,6 +1627,9 @@ QByteArray QPDUMessage::getOctets( uint len )
     return result;
 }
 
+int QPDUMessage::mPosn;
+char QPDUMessage::mBits;
+
 void QPDUMessage::setBit(int b, bool on)
 {
     if ( on )
@@ -1644,6 +1647,12 @@ void QPDUMessage::setBits(int offset, int len, int val)
 void QPDUMessage::commitBits()
 {
     mBuffer += mBits;
+    mBits = 0;
+}
+
+void QPDUMessage::commitBits( QByteArray &buffer )
+{
+    buffer += mBits;
     mBits = 0;
 }
 
@@ -1704,7 +1713,7 @@ static QByteArray collapse7Bit( const QByteArray& in )
     return out;
 }
 
-void QPDUMessage::setAddress(const QString &strin, bool SCAddress)
+void QPDUMessage::appendAddress( QByteArray &buffer, const QString &strin, bool SCAddress )
 {
     SMSAddressType at;
     int len, digit, octet;
@@ -1742,7 +1751,7 @@ void QPDUMessage::setAddress(const QString &strin, bool SCAddress)
 
     // Bail out early if the address is zero-length.
     if ( !len ) {
-        appendOctet(0);
+        buffer.append( (char) 0 );
         return;
     }
 
@@ -1760,16 +1769,16 @@ void QPDUMessage::setAddress(const QString &strin, bool SCAddress)
             len *= 2;
 
         // Output the length of the encoded address.
-        appendOctet(len);
+        buffer.append( len );
 
         // Output the type of number information.
         setBits(0, 4, SMS_NumberId_Unknown);
         setBits(4, 3, at);
         setBit(7, true);
-        commitBits();
+        commitBits( buffer );
 
         // Output the encoded address and exit.
-        mBuffer += bytes;
+        buffer += bytes;
         return;
     }
 
@@ -1777,12 +1786,12 @@ void QPDUMessage::setAddress(const QString &strin, bool SCAddress)
     if ( SCAddress )
         len++;
 
-    appendOctet(len);
+    buffer.append( len );
 
     setBits(0, 4, SMS_Phone);
     setBits(4, 3, at);
     setBit(7, true);
-    commitBits();
+    commitBits( buffer );
 
     bool upper4 = false;
     octet = 0;
@@ -1810,14 +1819,24 @@ void QPDUMessage::setAddress(const QString &strin, bool SCAddress)
                 octet = digit;
             } else {
                 octet |= (digit << 4);
-                appendOctet( octet );
+                buffer.append( octet );
             }
             upper4 = !upper4;
         }
     }
     if ( upper4 ) {
-        appendOctet( octet | 0xF0 );
+        buffer.append( octet | 0xF0 );
     }
+}
+
+void QPDUMessage::setAddress(const QString &strin, bool SCAddress)
+{
+    appendAddress( mBuffer, strin, SCAddress );
+}
+
+void QSMSMessage::appendAddress( QByteArray &buffer, const QString &strin, bool SCAddress )
+{
+    return QPDUMessage::appendAddress( buffer, strin, SCAddress );
 }
 
 // Expand the 7-bit GSM data to 8-bit-aligned characters.
