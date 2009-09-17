@@ -2689,6 +2689,12 @@
     <response>OK</response>
 </chat>
 
+<chat>
+    <!-- Remove cell broadcast channels -->
+    <command>AT+CSCB=1,*</command>
+    <response>OK</response>
+</chat>
+
 <!-- GSM 07.07: Mobile equipment errors -->
 
 <chat>
