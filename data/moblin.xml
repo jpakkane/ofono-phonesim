@@ -3221,6 +3221,14 @@ OK</response>
     00 FF FF 02
 </file>
 
+<file name="EFli">
+    00 01 02 03 04 05
+</file>
+
+<file name="EFpl">
+    FF FF FF FF FF FF
+</file>
+
 <file name="EFsdn" recordsize="28">
     2E 65 44 65 73 6B FF FF FF FF FF FF FF FF
     04 FF 1A 01 FB FF FF FF FF FF FF FF FF FF
