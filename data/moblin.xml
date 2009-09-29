@@ -291,6 +291,12 @@
     <!-- current band.  0 means automatic and 1,"name" means manually select "name" -->
     <set name="BAND" value="0"/>
 
+    <!-- Loudspeaker Volume Level -->
+    <set name="LVL" value="45"/>
+
+    <!-- Muting control -->
+    <set name="MUT" value="0"/>
+
 <!-- Time -->
 <!-- Enable for testing
 <unsolicited delay="3000" once="true">*TTZ: 2, "11/25/2007, 12:12:12+40", 0</unsolicited>
@@ -2717,6 +2723,44 @@
 </chat>
 
 <!-- GSM 07.07: Voice-related commands -->
+
+<chat>
+    <!-- Set sound level -->
+    <command>AT+CLVL=*</command>
+    <response>OK</response>
+    <set name="LVL" value="*"/>
+</chat>
+
+<chat>
+    <!-- Read sound level -->
+    <command>AT+CLVL?</command>
+    <response>+CLVL: ${LVL}\n\nOK</response>
+</chat>
+
+<chat>
+    <!-- Query supported levels -->
+    <command>AT+CLVL=?</command>
+    <response>+CLVL: (0-10)\n\nOK</response>
+</chat>
+
+<chat>
+    <!-- Set sound level -->
+    <command>AT+CMUT=*</command>
+    <response>OK</response>
+    <set name="MUT" value="*"/>
+</chat>
+
+<chat>
+    <!-- Read sound level -->
+    <command>AT+CMUT?</command>
+    <response>+CMUT: ${MUT}\n\nOK</response>
+</chat>
+
+<chat>
+    <!-- Query supported levels -->
+    <command>AT+CMUT=?</command>
+    <response>+CMUT: (0,1)\n\nOK</response>
+</chat>
 
 <chat>
     <!-- Select operation class (ignored) -->
