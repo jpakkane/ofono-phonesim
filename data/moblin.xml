@@ -292,7 +292,7 @@
     <set name="BAND" value="0"/>
 
     <!-- Loudspeaker Volume Level -->
-    <set name="LVL" value="45"/>
+    <set name="LVL" value="125"/>
 
     <!-- Muting control -->
     <set name="MUT" value="0"/>
@@ -2725,6 +2725,12 @@
 <!-- GSM 07.07: Voice-related commands -->
 
 <chat>
+    <!-- Query supported levels -->
+    <command>AT+CLVL=?</command>
+    <response>+CLVL: (100-150)\n\nOK</response>
+</chat>
+
+<chat>
     <!-- Set sound level -->
     <command>AT+CLVL=*</command>
     <response>OK</response>
@@ -2739,8 +2745,8 @@
 
 <chat>
     <!-- Query supported levels -->
-    <command>AT+CLVL=?</command>
-    <response>+CLVL: (0-10)\n\nOK</response>
+    <command>AT+CMUT=?</command>
+    <response>+CMUT: (0,1)\n\nOK</response>
 </chat>
 
 <chat>
@@ -2754,12 +2760,6 @@
     <!-- Read sound level -->
     <command>AT+CMUT?</command>
     <response>+CMUT: ${MUT}\n\nOK</response>
-</chat>
-
-<chat>
-    <!-- Query supported levels -->
-    <command>AT+CMUT=?</command>
-    <response>+CMUT: (0,1)\n\nOK</response>
 </chat>
 
 <chat>
