@@ -32,6 +32,7 @@
 #include <QFileInfo>
 #include <QFile>
 #include <QDir>
+#include <QtGui/QHeaderView>
 #include "attranslator.h"
 
 #define TWO_BYTE_MAX 65535
