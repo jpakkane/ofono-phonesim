@@ -1934,7 +1934,7 @@
 <chat>
     <!-- Query unstructured supplementary service presentation mode -->
     <command>AT+CUSD?</command>
-    <response>+CUSD: 0\n\nOK</response>
+    <response>+CUSD: ${USD}\n\nOK</response>
 </chat>
 
 <chat>
@@ -1944,15 +1944,29 @@
 </chat>
 
 <chat>
+    <!-- Initiate USSD query that is supported by the network -->
+    <command>AT+CUSD=1,"*225#",15</command>
+    <response>+CUSD: 0,"Thank you, your request is being processed. A message will be sent to your phone.",15\n\nOK</response>
+    <set name="USD" value="1"/>
+</chat>
+
+<chat>
+    <!-- Initiate USSD query that is not supported b the network -->
+    <command>AT+CUSD=1,*</command>
+    <response>+CUSD: 4\n\nOK</response>
+    <set name="USD" value="1"/>
+</chat>
+
+<chat>
     <!-- Enable unstructured supplementary service presentation mode -->
-    <command>AT+CUSD=1*</command>
+    <command>AT+CUSD=1</command>
     <response>OK</response>
     <set name="USD" value="1"/>
 </chat>
 
 <chat>
     <!-- Disable unstructured supplementary service presentation mode -->
-    <command>AT+CUSD=0*</command>
+    <command>AT+CUSD=0</command>
     <response>OK</response>
     <set name="USD" value="0"/>
 </chat>
