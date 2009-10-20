@@ -1,5 +1,6 @@
 *.o
 *.a
+*.moc
 moc_*.*
 ui_*.*
 Makefile
