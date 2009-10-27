@@ -2,7 +2,7 @@ CONFIG += ordered release
 
 TEMPLATE = subdirs
 
-SUBDIRS = lib src
+SUBDIRS = src
 
 DATA_FILES = moblin.xml
 
