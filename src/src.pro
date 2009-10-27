@@ -12,11 +12,11 @@ HEADERS *= control.h attranslator.h gsmspec.h gsmitem.h \
                   callmanager.h \
                   simfilesystem.h \
                   simapplication.h \
-                  serial/qgsmcodec.h \
-                  serial/qatutils.h \
-                  serial/qatresultparser.h \
-                  serial/qatresult.h \
-                  wap/qwsppdu.h \
+                  qgsmcodec.h \
+                  qatutils.h \
+                  qatresultparser.h \
+                  qatresult.h \
+                  qwsppdu.h \
                   qsimcommand.h \
                   qsimenvelope.h \
                   qsimterminalresponse.h \
@@ -30,11 +30,11 @@ SOURCES *= main.cpp control.cpp attranslator.cpp gsmspec.cpp gsmitem.cpp \
                   callmanager.cpp \
                   simfilesystem.cpp \
                   simapplication.cpp \
-                  serial/qgsmcodec.cpp \
-                  serial/qatutils.cpp \
-                  serial/qatresultparser.cpp \
-                  serial/qatresult.cpp \
-                  wap/qwsppdu.cpp \
+                  qgsmcodec.cpp \
+                  qatutils.cpp \
+                  qatresultparser.cpp \
+                  qatresult.cpp \
+                  qwsppdu.cpp \
                   qsimcommand.cpp \
                   qsimenvelope.cpp \
                   qsimterminalresponse.cpp \
@@ -43,8 +43,6 @@ SOURCES *= main.cpp control.cpp attranslator.cpp gsmspec.cpp gsmitem.cpp \
 TEMPLATE = app
 
 QT *= core gui xml network
-
-INCLUDEPATH += serial wap
 
 CONFIG += debug
 
