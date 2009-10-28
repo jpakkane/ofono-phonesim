@@ -86,13 +86,9 @@ public:
     QByteArray toPdu() const;
 
     QSimEnvelope& operator=( const QSimEnvelope & );
-    template <typename Stream> void serialize(Stream &stream) const;
-    template <typename Stream> void deserialize(Stream &stream);
 
 private:
     QSimEnvelopePrivate *d;
 };
-
-Q_DECLARE_USER_METATYPE(QSimEnvelope)
 
 #endif

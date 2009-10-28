@@ -25,10 +25,7 @@
 #include <qdatastream.h>
 #include <qlist.h>
 #include <quuid.h>
-#ifndef PHONESIM
-#include <qtopiaipcadaptor.h>
-#endif
-#include <qtopiaipcmarshal.h>
+#include <qtopiaglobal.h>
 
 class QSMSMessagePartPrivate;
 class QSMSMessagePrivate;
@@ -53,14 +50,9 @@ public:
     const QByteArray& data() const;
     uint position() const;
 
-    template <typename Stream> void serialize(Stream &stream) const;
-    template <typename Stream> void deserialize(Stream &stream);
-
 private:
     QSMSMessagePartPrivate *d;
 };
-
-Q_DECLARE_USER_METATYPE(QSMSMessagePart)
 
 enum QSMSDataCodingScheme {
     QSMS_Compressed      = 0x0020,
@@ -161,9 +153,6 @@ public:
     static int pduAddressLength( const QByteArray& pdu );
     static void appendAddress( QByteArray &buffer, const QString &strin, bool SCAddress );
 
-    template <typename Stream> void serialize(Stream &stream) const;
-    template <typename Stream> void deserialize(Stream &stream);
-
 protected:
     void setMessageType(MessageType);
 
@@ -178,7 +167,5 @@ private:
                             QSMSDataCodingScheme scheme );
     void unpackHeaderParts();
 };
-
-Q_DECLARE_USER_METATYPE(QSMSMessage)
 
 #endif

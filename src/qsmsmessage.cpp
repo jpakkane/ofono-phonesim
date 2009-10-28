@@ -138,61 +138,6 @@ public:
             mValidity = (value - 192) * 7 * 24 * 60;
     }
 
-    template <typename Stream> void readFromStream( Stream &s )
-    {
-        QString codec;
-        s >> codec;
-        if ( codec.length() > 0)
-            mCodec = QTextCodec::codecForName( codec.toLatin1() );
-        else
-            mCodec = 0;
-        s >> mServiceCenter;
-        s >> mRecipient;
-        s >> mSender;
-        s >> mTimestamp;
-        s >> mValidity;
-        int val;
-        s >> val;
-        mReplyRequest = (val != 0);
-        s >> val;
-        mStatusReportRequested = (val != 0);
-        s >> val;
-        mForceGsm = (val != 0);
-        s >> val;
-        mMessageType = (QSMSMessage::MessageType)val;
-        s >> val;
-        mBestScheme = (QSMSDataCodingScheme)val;
-        s >> mHeaders;
-        s >> mParts;
-        mCachedBody = QString();
-        s >> mDataCodingScheme;
-        s >> mMessageClass;
-        s >> mProtocol;
-    }
-
-    template <typename Stream> void writeToStream( Stream &s )
-    {
-        if ( mCodec )
-            s << QString( mCodec->name() );
-        else
-            s << QString( "" );
-        s << mServiceCenter;
-        s << mRecipient;
-        s << mSender;
-        s << mTimestamp;
-        s << mValidity;
-        s << (int)mReplyRequest;
-        s << (int)mStatusReportRequested;
-        s << (int)mForceGsm;
-        s << (int)mMessageType;
-        s << (int)mBestScheme;
-        s << mHeaders;
-        s << mParts;
-        s << mDataCodingScheme;
-        s << mMessageClass;
-        s << mProtocol;
-    }
-
     void copy( QSMSMessagePrivate *from )
     {
         *this = *from;
@@ -362,34 +307,6 @@ const QByteArray& QSMSMessagePart::data() const
 uint QSMSMessagePart::position() const
 {
     return d->position;
-}
-
-/*!
-    \internal
-    \fn void QSMSMessagePart::deserialize(Stream &stream)
-*/
-template <typename Stream> void QSMSMessagePart::deserialize(Stream &stream)
-{
-    int flag;
-    stream >> flag;
-    d->isText = (flag != 0);
-    stream >> d->text;
-    stream >> d->mimeType;
-    stream >> d->data;
-    stream >> d->position;
-}
-
-/*!
-    \internal
-    \fn void QSMSMessagePart::serialize(Stream &stream) const
-*/
-template <typename Stream> void QSMSMessagePart::serialize(Stream &stream) const
-{
-    stream << (int)(d->isText);
-    stream << d->text;
-    stream << d->mimeType;
-    stream << d->data;
-    stream << d->position;
 }
 
 /*!
@@ -1566,24 +1483,6 @@ void QSMSMessage::unpackHeaderParts()
     }
 }
 
-/*!
-    \internal
-    \fn void QSMSMessage::deserialize(Stream &stream)
-*/
-template <typename Stream> void QSMSMessage::deserialize(Stream &stream)
-{
-    dwrite()->readFromStream( stream );
-}
-
-/*!
-    \internal
-    \fn void QSMSMessage::serialize(Stream &stream) const
-*/
-template <typename Stream> void QSMSMessage::serialize(Stream &stream) const
-{
-    d->writeToStream( stream );
-}
-
 QPDUMessage::QPDUMessage()
 {
     mPosn = 0;
@@ -2651,6 +2550,3 @@ void QCBSDeliverMessage::pack(const QCBSMessage &m, QSMSDataCodingScheme scheme)
 
     setUserData(paddedText, scheme, codec, header,true);
 }
-
-Q_IMPLEMENT_USER_METATYPE(QSMSMessage)
-Q_IMPLEMENT_USER_METATYPE(QSMSMessagePart)

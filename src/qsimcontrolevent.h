@@ -19,7 +19,7 @@
 #ifndef QSIMCONTROLEVENT_H
 #define QSIMCONTROLEVENT_H
 
-#include <qtopiaipcmarshal.h>
+#include <qtopiaglobal.h>
 
 class QSimControlEventPrivate;
 
@@ -62,13 +62,9 @@ public:
     QByteArray toPdu() const;
 
     QSimControlEvent& operator=( const QSimControlEvent & );
-    template <typename Stream> void serialize(Stream &stream) const;
-    template <typename Stream> void deserialize(Stream &stream);
 
 private:
     QSimControlEventPrivate *d;
 };
-
-Q_DECLARE_USER_METATYPE(QSimControlEvent)
 
 #endif

@@ -101,75 +101,6 @@ public:
         extensionData = other->extensionData;
     }
 
-    template <typename Stream> int readInt( Stream &stream )
-    {
-        int value;
-        stream >> value;
-        return value;
-    }
-
-    template <typename Stream>  void read( Stream &stream )
-    {
-        commandNumber = readInt( stream );
-        type = (QSimCommand::Type)readInt( stream );
-        sourceDevice = (QSimCommand::Device)readInt( stream );
-        destinationDevice = (QSimCommand::Device)readInt( stream );
-        flags = readInt( stream );
-        stream >> text;
-        stream >> textAttribute;
-        stream >> otherText;
-        stream >> otherTextAttribute;
-        stream >> defaultText;
-        stream >> minimumLength;
-        stream >> maximumLength;
-        stream >> number;
-        stream >> subAddress;
-        callClass = (QSimCommand::CallClass)readInt( stream );
-        tone = (QSimCommand::Tone)readInt( stream );
-        stream >> duration;
-        stream >> title;
-        stream >> titleAttribute;
-        stream >> defaultItem;
-        stream >> menuItems;
-        stream >> url;
-        stream >> iconId;
-        stream >> otherIconId;
-        stream >> device;
-        stream >> qualifier;
-        stream >> extensionData;
-    }
-
-    template <typename Stream> void write( Stream &stream )
-    {
-        stream << commandNumber;
-        stream << (int)type;
-        stream << (int)sourceDevice;
-        stream << (int)destinationDevice;
-        stream << flags;
-        stream << text;
-        stream << textAttribute;
-        stream << otherText;
-        stream << otherTextAttribute;
-        stream << defaultText;
-        stream << minimumLength;
-        stream << maximumLength;
-        stream << number;
-        stream << subAddress;
-        stream << (int)callClass;
-        stream << (int)tone;
-        stream << duration;
-        stream << title;
-        stream << titleAttribute;
-        stream << defaultItem;
-        stream << menuItems;
-        stream << url;
-        stream << iconId;
-        stream << otherIconId;
-        stream << device;
-        stream << qualifier;
-        stream << extensionData;
-    }
-
     bool flag( int bit ) const
     {
         return ( ( flags & bit ) != 0 );
@@ -471,50 +402,6 @@ QSimMenuItem& QSimMenuItem::operator=( const QSimMenuItem & value )
     d->iconSelfExplanatory = value.d->iconSelfExplanatory;
     d->nextAction = value.d->nextAction;
     return *this;
-}
-
-
-/*!
-    \fn void QSimMenuItem::deserialize(Stream &value)
-
-    \internal
-
-    Deserializes the QSimMenuItem instance out to a template
-    type \c{Stream} \a stream.
- */
-
-template <typename Stream> void QSimMenuItem::deserialize(Stream &stream)
-{
-    stream >> d->identifier;
-    stream >> d->label;
-    stream >> d->labelAttribute;
-    stream >> d->iconId;
-    int value;
-    stream >> value;
-    d->hasHelp = (value != 0);
-    stream >> value;
-    d->iconSelfExplanatory = (value != 0);
-    stream >> d->nextAction;
-}
-
-/*!
-    \fn void QSimMenuItem::serialize(Stream &value) const
-
-    \internal
-
-    Serializes the QSimMenuItem instance out to a template
-    type \c{Stream} \a stream.
- */
-
-template <typename Stream> void QSimMenuItem::serialize(Stream &stream) const
-{
-    stream << d->identifier;
-    stream << d->label;
-    stream << d->labelAttribute;
-    stream << d->iconId;
-    stream << (int)(d->hasHelp);
-    stream << (int)(d->iconSelfExplanatory);
-    stream << d->nextAction;
 }
 
 /*!
@@ -3520,35 +3407,6 @@ void QSimCommand::addExtensionField( int tag, const QByteArray& value )
     d->extensionData += value;
 }
 
-/*!
-    \fn void QSimCommand::deserialize(Stream &value)
-
-    \internal
-
-    Deserializes the QSimCommand instance out to a template
-    type \c{Stream} \a stream.
- */
-
-template <typename Stream> void QSimCommand::deserialize(Stream &stream)
-{
-    dwrite()->read( stream );
-}
-
-
-/*!
-    \fn void QSimCommand::serialize(Stream &value) const
-
-    \internal
-
-    Serializes the QSimCommand instance out to a template
-    type \c{Stream} \a stream.
- */
-
-template <typename Stream> void QSimCommand::serialize(Stream &stream) const
-{
-    d->write( stream );
-}
-
 // Get a writable copy of the shared data storage.
 QSimCommandPrivate *QSimCommand::dwrite()
 {
@@ -3749,7 +3607,3 @@ static QString textToHtml(const QString& text, const QByteArray& attrs)
 
     return result;
 }
-
-Q_IMPLEMENT_USER_METATYPE_ENUM(QSimCommand::Type)
-Q_IMPLEMENT_USER_METATYPE(QSimCommand)
-Q_IMPLEMENT_USER_METATYPE(QSimMenuItem)

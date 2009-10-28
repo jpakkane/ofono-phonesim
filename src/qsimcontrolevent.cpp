@@ -81,29 +81,6 @@ public:
         extensionData = other->extensionData;
     }
 
-    template <typename Stream> int readInt( Stream &stream )
-    {
-        int value;
-        stream >> value;
-        return value;
-    }
-
-    template <typename Stream>  void read( Stream &stream )
-    {
-        type = (QSimControlEvent::Type)readInt( stream );
-        result = (QSimControlEvent::Result)readInt( stream );
-        stream >> text;
-        stream >> extensionData;
-    }
-
-    template <typename Stream> void write( Stream &stream )
-    {
-        stream << (int)type;
-        stream << (int)result;
-        stream << text;
-        stream << extensionData;
-    }
-
     QSimControlEvent::Type type;
     QSimControlEvent::Result result;
     QString text;
@@ -378,31 +355,3 @@ QSimControlEvent& QSimControlEvent::operator=( const QSimControlEvent &value )
     d = new QSimControlEventPrivate( value.d );
     return *this;
 }
-
-/*!
-    \fn void QSimControlEvent::deserialize(Stream &value)
-
-    \internal
-
-    Deserializes the QSimControlEvent instance out to a template
-    type \c{Stream} \a stream.
- */
-template <typename Stream> void QSimControlEvent::deserialize(Stream &stream)
-{
-    d->read( stream );
-}
-
-/*!
-    \fn void QSimControlEvent::serialize(Stream &value) const
-
-    \internal
-
-    Serializes the QSimControlEvent instance out to a template
-    type \c{Stream} \a stream.
- */
-template <typename Stream> void QSimControlEvent::serialize(Stream &stream) const
-{
-    d->write( stream );
-}
-
-Q_IMPLEMENT_USER_METATYPE(QSimControlEvent)

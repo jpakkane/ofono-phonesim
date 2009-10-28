@@ -67,35 +67,6 @@ public:
         extensionData = other->extensionData;
     }
 
-    template <typename Stream> int readInt( Stream &stream )
-    {
-        int value;
-        stream >> value;
-        return value;
-    }
-
-    template <typename Stream>  void read( Stream &stream )
-    {
-        type = (QSimEnvelope::Type)readInt( stream );
-        event = (QSimEnvelope::Event)readInt( stream );
-        sourceDevice = (QSimCommand::Device)readInt( stream );
-        destinationDevice = (QSimCommand::Device)readInt( stream );
-        stream >> menuItem;
-        requestHelp = ( readInt( stream ) != 0 );
-        stream >> extensionData;
-    }
-
-    template <typename Stream> void write( Stream &stream )
-    {
-        stream << (int)type;
-        stream << (int)event;
-        stream << (int)sourceDevice;
-        stream << (int)destinationDevice;
-        stream << menuItem;
-        stream << (int)requestHelp;
-        stream << extensionData;
-    }
-
     QSimEnvelope::Type type;
     QSimEnvelope::Event event;
     QSimCommand::Device sourceDevice;
@@ -524,33 +495,3 @@ QSimEnvelope& QSimEnvelope::operator=( const QSimEnvelope &value )
     }
     return *this;
 }
-
-/*!
-    \fn void QSimEnvelope::deserialize(Stream &value)
-
-    \internal
-
-    Deserializes the QSimEnvelope instance out to a template
-    type \c{Stream} \a stream.
- */
-
-template <typename Stream> void QSimEnvelope::deserialize(Stream &stream)
-{
-    d->read( stream );
-}
-
-/*!
-    \fn void QSimEnvelope::serialize(Stream &value) const
-
-    \internal
-
-    Serializes the QSimEnvelope instance out to a template
-    type \c{Stream} \a stream.
- */
-
-template <typename Stream> void QSimEnvelope::serialize(Stream &stream) const
-{
-    d->write( stream );
-}
-
-Q_IMPLEMENT_USER_METATYPE(QSimEnvelope)

@@ -50,33 +50,6 @@ public:
     {
     }
 
-    template <typename Stream> void readFromStream( Stream &s )
-    {
-        int val;
-        s >> mMessageCode;
-        s >> val;
-        mScope = (QCBSMessage::GeographicalScope)val;
-        s >> mUpdateNumber;
-        s >> mChannel;
-        s >> val;
-        mLanguage = (QCBSMessage::Language)val;
-        s >> mPage;
-        s >> mNumPages;
-        s >> mText;
-    }
-
-    template <typename Stream> void writeToStream( Stream &s )
-    {
-        s << mMessageCode;
-        s << (int)mScope;
-        s << mUpdateNumber;
-        s << mChannel;
-        s << (int)mLanguage;
-        s << mPage;
-        s << mNumPages;
-        s << mText;
-    }
-
     uint mMessageCode;
     QCBSMessage::GeographicalScope mScope;
     uint mUpdateNumber;
@@ -360,24 +333,6 @@ QString QCBSMessage::text() const
 }
 
 /*!
-    \internal
-    \fn void QCBSMessage::deserialize(Stream &stream)
-*/
-template <typename Stream> void QCBSMessage::deserialize(Stream &stream)
-{
-    d->readFromStream( stream );
-}
-
-/*!
-    \internal
-    \fn void QCBSMessage::serialize(Stream &stream) const
-*/
-template <typename Stream> void QCBSMessage::serialize(Stream &stream) const
-{
-    d->writeToStream( stream );
-}
-
-/*!
     Returns true if this cell broadcast message object is equal to \a other; otherwise returns false.
 */
 bool QCBSMessage::operator==( const QCBSMessage& other ) const
@@ -461,5 +416,3 @@ QCBSMessage QCBSMessage::fromPdu( const QByteArray& pdu )
     QCBSDeliverMessage deliver( pdu );
     return deliver.unpack();
 }
-
-Q_IMPLEMENT_USER_METATYPE(QCBSMessage)

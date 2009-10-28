@@ -21,8 +21,7 @@
 #define QCBSMESSAGE_H
 
 #include <qstring.h>
-#include <qdatastream.h>
-#include <qtopiaipcmarshal.h>
+#include <qtopiaglobal.h>
 
 class QCBSMessagePrivate;
 
@@ -87,9 +86,6 @@ public:
     void setText(const QString &);
     QString text() const;
 
-    template <typename Stream> void serialize(Stream &stream) const;
-    template <typename Stream> void deserialize(Stream &stream);
-
     bool operator==( const QCBSMessage& other ) const;
     bool operator!=( const QCBSMessage& other ) const;
 
@@ -101,7 +97,5 @@ public:
 private:
     QCBSMessagePrivate *d;
 };
-
-Q_DECLARE_USER_METATYPE(QCBSMessage)
 
 #endif

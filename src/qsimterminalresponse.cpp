@@ -145,43 +145,6 @@ public:
         extensionData = other->extensionData;
     }
 
-    template <typename Stream> int readInt( Stream &stream )
-    {
-        int value;
-        stream >> value;
-        return value;
-    }
-
-    template <typename Stream>  void read( Stream &stream )
-    {
-        stream >> command;
-        stream >> commandPdu;
-        sourceDevice = (QSimCommand::Device)readInt( stream );
-        destinationDevice = (QSimCommand::Device)readInt( stream );
-        result = (QSimTerminalResponse::Result)readInt( stream );
-        stream >> causeData;
-        stream >> text;
-        stream >> duration;
-        stream >> menuItem;
-        stream >> dataCodingScheme;
-        stream >> extensionData;
-    }
-
-    template <typename Stream> void write( Stream &stream )
-    {
-        stream << command;
-        stream << commandPdu;
-        stream << (int)sourceDevice;
-        stream << (int)destinationDevice;
-        stream << (int)result;
-        stream << causeData;
-        stream << text;
-        stream << duration;
-        stream << menuItem;
-        stream << dataCodingScheme;
-        stream << extensionData;
-    }
-
     QSimCommand command;
     QByteArray commandPdu;
     QSimCommand::Device sourceDevice;
@@ -843,34 +806,3 @@ QSimTerminalResponse& QSimTerminalResponse::operator=( const QSimTerminalRespons
     }
     return *this;
 }
-
-/*!
-    \fn void QSimTerminalResponse::deserialize(Stream &value)
-
-    \internal
-
-    Deserializes the QSimTerminalResponse instance out to a template
-    type \c{Stream} \a stream.
- */
-
-template <typename Stream> void QSimTerminalResponse::deserialize(Stream &stream)
-{
-    d->read( stream );
-}
-
-
-/*!
-    \fn void QSimTerminalResponse::serialize(Stream &value) const
-
-    \internal
-
-    Serializes the QSimTerminalResponse instance out to a template
-    type \c{Stream} \a stream.
- */
-
-template <typename Stream> void QSimTerminalResponse::serialize(Stream &stream) const
-{
-    d->write( stream );
-}
-
-Q_IMPLEMENT_USER_METATYPE(QSimTerminalResponse)

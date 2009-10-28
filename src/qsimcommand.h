@@ -19,14 +19,12 @@
 #ifndef QSIMCOMMAND_H
 #define QSIMCOMMAND_H
 
-
-#include <qtopiaipcmarshal.h>
 #include <qlist.h>
 #include <qdatastream.h>
+#include <qtopiaglobal.h>
 
 class QSimMenuItemPrivate;
 class QSimCommandPrivate;
-
 
 class QTOPIAPHONE_EXPORT QSimMenuItem
 {
@@ -59,8 +57,6 @@ public:
     void setNextAction( uint value );
 
     QSimMenuItem& operator=( const QSimMenuItem & );
-    template <typename Stream> void serialize(Stream &stream) const;
-    template <typename Stream> void deserialize(Stream &stream);
 
 private:
     QSimMenuItemPrivate *d;
@@ -380,17 +376,11 @@ public:
     QByteArray toPdu( QSimCommand::ToPduOptions options = NoPduOptions ) const;
 
     QSimCommand& operator=( const QSimCommand & );
-    template <typename Stream> void serialize(Stream &stream) const;
-    template <typename Stream> void deserialize(Stream &stream);
 
 private:
     QSimCommandPrivate *d;
 
     QSimCommandPrivate *dwrite();
 };
-
-Q_DECLARE_USER_METATYPE(QSimMenuItem)
-Q_DECLARE_USER_METATYPE_ENUM(QSimCommand::Type)
-Q_DECLARE_USER_METATYPE(QSimCommand)
 
 #endif

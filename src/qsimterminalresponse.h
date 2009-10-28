@@ -155,13 +155,9 @@ public:
     QByteArray toPdu() const;
 
     QSimTerminalResponse& operator=( const QSimTerminalResponse & );
-    template <typename Stream> void serialize(Stream &stream) const;
-    template <typename Stream> void deserialize(Stream &stream);
 
 private:
     QSimTerminalResponsePrivate *d;
 };
-
-Q_DECLARE_USER_METATYPE(QSimTerminalResponse)
 
 #endif

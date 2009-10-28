@@ -67,7 +67,6 @@ SimXmlNode::~SimXmlNode()
     }
 }
 
-
 void SimXmlNode::addChild( SimXmlNode *child )
 {
     SimXmlNode *current = children;
