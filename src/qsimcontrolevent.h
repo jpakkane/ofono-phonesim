@@ -19,11 +19,11 @@
 #ifndef QSIMCONTROLEVENT_H
 #define QSIMCONTROLEVENT_H
 
-#include <qtopiaglobal.h>
+#include <QString>
 
 class QSimControlEventPrivate;
 
-class QTOPIAPHONE_EXPORT QSimControlEvent
+class QSimControlEvent
 {
 public:
     QSimControlEvent();

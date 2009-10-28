@@ -21,11 +21,10 @@
 #define QCBSMESSAGE_H
 
 #include <qstring.h>
-#include <qtopiaglobal.h>
 
 class QCBSMessagePrivate;
 
-class QTOPIAPHONE_EXPORT QCBSMessage
+class QCBSMessage
 {
 public:
     QCBSMessage();

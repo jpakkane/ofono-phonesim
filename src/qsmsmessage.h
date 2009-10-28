@@ -25,14 +25,13 @@
 #include <qdatastream.h>
 #include <qlist.h>
 #include <quuid.h>
-#include <qtopiaglobal.h>
 
 class QSMSMessagePartPrivate;
 class QSMSMessagePrivate;
 class QTextCodec;
 
 
-class QTOPIAPHONE_EXPORT QSMSMessagePart
+class QSMSMessagePart
 {
 public:
     QSMSMessagePart();
@@ -63,7 +62,7 @@ enum QSMSDataCodingScheme {
     QSMS_ReservedAlphabet= 0x000C
 };
 
-class QTOPIAPHONE_EXPORT QSMSMessage
+class QSMSMessage
 {
     friend class QSMSSubmitMessage;
     friend class QSMSDeliverMessage;

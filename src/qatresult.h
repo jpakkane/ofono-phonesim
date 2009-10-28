@@ -23,11 +23,9 @@
 #include <qobject.h>
 #include <qstring.h>
 
-#include <qtopiaglobal.h>
-
 class QAtResultPrivate;
 
-class QTOPIACOMM_EXPORT QAtResult
+class QAtResult
 {
 public:
     enum ResultCode

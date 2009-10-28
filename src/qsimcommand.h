@@ -21,12 +21,11 @@
 
 #include <qlist.h>
 #include <qdatastream.h>
-#include <qtopiaglobal.h>
 
 class QSimMenuItemPrivate;
 class QSimCommandPrivate;
 
-class QTOPIAPHONE_EXPORT QSimMenuItem
+class QSimMenuItem
 {
 public:
     QSimMenuItem();
@@ -62,7 +61,7 @@ private:
     QSimMenuItemPrivate *d;
 };
 
-class QTOPIAPHONE_EXPORT QSimCommand
+class QSimCommand
 {
 public:
     QSimCommand();

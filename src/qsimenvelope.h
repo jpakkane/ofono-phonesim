@@ -23,7 +23,7 @@
 
 class QSimEnvelopePrivate;
 
-class QTOPIAPHONE_EXPORT QSimEnvelope
+class QSimEnvelope
 {
 public:
     QSimEnvelope();

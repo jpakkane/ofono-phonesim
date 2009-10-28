@@ -20,12 +20,10 @@
 #ifndef QGSMCODEC_H
 #define QGSMCODEC_H
 
-#include <qtopiaglobal.h>
-
 #include <qstring.h>
 #include <qtextcodec.h>
 
-class QTOPIACOMM_EXPORT QGsmCodec : public QTextCodec
+class QGsmCodec : public QTextCodec
 {
 public:
     explicit QGsmCodec( bool noLoss=false );

@@ -23,7 +23,7 @@
 
 class QSimTerminalResponsePrivate;
 
-class QTOPIAPHONE_EXPORT QSimTerminalResponse
+class QSimTerminalResponse
 {
 public:
     QSimTerminalResponse();

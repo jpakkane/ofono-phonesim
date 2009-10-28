@@ -24,11 +24,9 @@
 #include <qobject.h>
 #include <qdatetime.h>
 
-#include <qtopiaglobal.h>
-
 class QIODevice;
 
-class QTOPIAPHONE_EXPORT QWspField
+class QWspField
 {
 public:
     QWspField();
@@ -41,7 +39,7 @@ public:
     QString value;
 };
 
-class QTOPIAPHONE_EXPORT QWspDateTime
+class QWspDateTime
 {
 public:
     static QDateTime parseDate(QString in);
@@ -54,7 +52,7 @@ public:
 class QWspPduDecoder;
 class QWspPduEncoder;
 
-class QTOPIAPHONE_EXPORT QWspHeaderCodec
+class QWspHeaderCodec
 {
 public:
     virtual ~QWspHeaderCodec();
@@ -63,7 +61,7 @@ public:
     virtual quint8 codePage() const = 0;
 };
 
-class QTOPIAPHONE_EXPORT QWspPart
+class QWspPart
 {
 public:
     QWspPart();
@@ -87,7 +85,7 @@ private:
     QByteArray ba;
 };
 
-class QTOPIAPHONE_EXPORT QWspMultipart
+class QWspMultipart
 {
 public:
     QWspMultipart();
@@ -104,7 +102,7 @@ private:
     QList<QWspPart> parts;
 };
 
-class QTOPIAPHONE_EXPORT QWspPush : public QWspPart
+class QWspPush : public QWspPart
 {
 public:
     QWspPush();
@@ -126,7 +124,7 @@ private:
     int pdu;
 };
 
-class QTOPIAPHONE_EXPORT QWspPduDecoder : public QObject
+class QWspPduDecoder : public QObject
 {
     Q_OBJECT
 public:
@@ -181,7 +179,7 @@ private:
     Status stat;
 };
 
-class QTOPIAPHONE_EXPORT QWspPduEncoder : public QObject
+class QWspPduEncoder : public QObject
 {
     Q_OBJECT
 public:

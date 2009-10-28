@@ -24,19 +24,18 @@
 #include <qstring.h>
 #include <qstringlist.h>
 #include <qlist.h>
-#include <qtopiaglobal.h>
 
 class QAtResultParserPrivate;
 class QAtResult;
 
-class QTOPIACOMM_EXPORT QAtResultParser
+class QAtResultParser
 {
 public:
     QAtResultParser( const QAtResult& result );
     QAtResultParser( const QString& notification );
     ~QAtResultParser();
 
-    class QTOPIACOMM_EXPORT Node
+    class Node
     {
         friend class QAtResultParser;
     private:

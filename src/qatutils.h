@@ -20,8 +20,6 @@
 #ifndef QATUTILS_H
 #define QATUTILS_H
 
-#include <qtopiaglobal.h>
-
 #include <qobject.h>
 #include <qstring.h>
 #include <qbytearray.h>
@@ -29,7 +27,7 @@
 class QAtResultParser;
 class QTextCodec;
 
-class QTOPIACOMM_EXPORT QAtUtils
+class QAtUtils
 {
 private:
     QAtUtils() {}
