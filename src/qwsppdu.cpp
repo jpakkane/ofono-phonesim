@@ -18,11 +18,17 @@
 ****************************************************************************/
 
 #include <qwsppdu.h>
+#ifndef PHONESIM
 #include <qmimetype.h>
+#else
+#include <qstringlist.h>
+#endif
 #include <qtextcodec.h>
 #include <qdatetime.h>
 #include <qiodevice.h>
+#ifndef PHONESIM
 #include <qtimezone.h>
+#endif
 #include <qbuffer.h>
 #include <netinet/in.h>
 #include <stdlib.h>
