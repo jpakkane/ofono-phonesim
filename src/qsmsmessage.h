@@ -25,7 +25,9 @@
 #include <qdatastream.h>
 #include <qlist.h>
 #include <quuid.h>
+#ifndef PHONESIM
 #include <qtopiaipcadaptor.h>
+#endif
 #include <qtopiaipcmarshal.h>
 
 class QSMSMessagePartPrivate;
