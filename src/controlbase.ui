@@ -795,7 +795,7 @@
         <number>9</number>
        </property>
        <item>
-        <widget class="QGroupBox" name="gbMessage" >
+        <widget class="QGroupBox" name="gbMessage1" >
          <property name="title" >
           <string>Message</string>
          </property>
@@ -1229,7 +1229,7 @@ p, li { white-space: pre-wrap; }
         </widget>
        </item>
        <item>
-        <widget class="QGroupBox" name="gbMessage" >
+        <widget class="QGroupBox" name="gbMessage2" >
          <property name="title" >
           <string>Message</string>
          </property>
