@@ -19,11 +19,7 @@
 
 #include <qcbsmessage.h>
 #include <qatutils.h>
-#ifdef PHONESIM
 #include "qsmsmessage_p.h"
-#else
-#include "qsmsmessage_p.h"
-#endif
 #ifdef Q_WS_QWS
 #include <qtopialog.h>
 #else
