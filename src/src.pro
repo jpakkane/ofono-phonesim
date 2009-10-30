@@ -2,8 +2,6 @@ TARGET = phonesim
 
 FORMS *= controlbase.ui
 
-DEFINES += PHONESIM
-
 HEADERS *= control.h attranslator.h gsmspec.h gsmitem.h \
                   phonesim.h server.h hardwaremanipulator.h \
                   qsmsmessagelist.h \
