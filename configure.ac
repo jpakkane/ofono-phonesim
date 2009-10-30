@@ -9,24 +9,24 @@ AM_MAINTAINER_MODE
 
 AC_PREFIX_DEFAULT(/usr/local)
 
+PKG_PROG_PKG_CONFIG
+
 AC_PROG_CXX
 AC_PROG_INSTALL
 
-AC_MSG_CHECKING(Qt directory)
-QTDIR=""
-AC_ARG_WITH([qtdir],
-	AC_HELP_STRING([--with-qtdir=PATH], [path to the Qt directory]),
-		[QTDIRLIST="$withval"],
-		[QTDIRLIST="/usr/lib/qt4 /usr/lib64/qt4 /usr/lib32/qt4"])
-for x in $QTDIRLIST; do
-	if test -d $x ; then
-		QTDIR="$x"
-	fi
-done
-if test -z $QTDIR ; then
-	AC_MSG_ERROR(could not locate Qt directory)
-fi
-AC_MSG_RESULT($QTDIR)
-AC_SUBST(QTDIR)
+PKG_CHECK_MODULES(QT, QtCore QtGui QtXml QtNetwork, dummy=yes,
+						AC_MSG_ERROR(Qt is required))
+AC_SUBST(QT_CFLAGS)
+AC_SUBST(QT_LIBS)
+
+AC_MSG_CHECKING(for moc)
+MOC="`$PKG_CONFIG --variable=moc_location QtCore`"
+AC_SUBST(MOC)
+AC_MSG_RESULT($MOC)
+
+AC_MSG_CHECKING(for uic)
+UIC="`$PKG_CONFIG --variable=uic_location QtCore`"
+AC_SUBST(UIC)
+AC_MSG_RESULT($UIC)
 
 AC_OUTPUT(Makefile)

@@ -37,16 +37,11 @@ nodist_src_phonesim_SOURCES = src/ui_controlbase.h \
 				src/moc_simapplication.cpp \
 				src/moc_qwsppdu.cpp
 
-src_phonesim_LDADD = -lQtXml -lQtGui -lQtNetwork -lQtCore -lpthread
+src_phonesim_LDADD = $(QT_LIBS)
 
-QT_CXXFLAGS = -DQT_XML_LIB -DQT_GUI_LIB -DQT_NETWORK_LIB -DQT_CORE_LIB
+AM_CXXFLAGS = -pipe -g -fPIC -Wall -W -D_REENTRANT $(QT_CFLAGS)
 
-AM_CXXFLAGS = -pipe -g -fPIC -Wall -W -D_REENTRANT $(QT_CXXFLAGS)
-
-INCLUDES = -I$(top_srcdir)/src -I$(top_builddir)/src \
-			-I$(QTDIR)/mkspecs/linux-g++-64 \
-			-I/usr/include/QtCore -I/usr/include/QtNetwork \
-			-I/usr/include/QtGui -I/usr/include/QtXml
+INCLUDES = -I$(top_srcdir)/src -I$(top_builddir)/src
 
 CLEANFILES = src/control.moc $(nodist_src_phonesim_SOURCES)
 
@@ -63,14 +58,14 @@ QT_V_MOC_  = $(QT_V_MOC_$(AM_DEFAULT_VERBOSITY))
 QT_V_MOC_0 = @echo "  MOC   " $@;
 
 src/control.moc: src/control.cpp
-	$(QT_V_MOC)$(QTDIR)/bin/moc $(QT_CXXFLAGS) $(INCLUDES) $< -o $@
+	$(QT_V_MOC)$(MOC) $(QT_CFLAGS) $(INCLUDES) $< -o $@
 
 src/moc_%.cpp: src/%.h
-	$(QT_V_MOC)$(QTDIR)/bin/moc $< -o $@
+	$(QT_V_MOC)$(MOC) $< -o $@
 
 QT_V_UIC   = $(QT_V_UIC_$(V))
 QT_V_UIC_  = $(QT_V_UIC_$(AM_DEFAULT_VERBOSITY))
 QT_V_UIC_0 = @echo "  UIC   " $@;
 
 src/ui_%.h: src/%.ui
-	$(QT_V_UIC)$(QTDIR)/bin/uic $< -o $@
+	$(QT_V_UIC)$(UIC) $< -o $@
