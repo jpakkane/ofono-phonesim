@@ -58,11 +58,19 @@ MAINTAINERCLEANFILES = Makefile.in \
 
 $(src_phonesim_OBJECTS): src/control.moc src/ui_controlbase.h
 
+QT_V_MOC   = $(QT_V_MOC_$(V))
+QT_V_MOC_  = $(QT_V_MOC_$(AM_DEFAULT_VERBOSITY))
+QT_V_MOC_0 = @echo "  MOC   " $@;
+
 src/control.moc: src/control.cpp
-	$(AM_V_GEN)$(QTDIR)/bin/moc $(QT_CXXFLAGS) $(INCLUDES) $< -o $@
+	$(QT_V_MOC)$(QTDIR)/bin/moc $(QT_CXXFLAGS) $(INCLUDES) $< -o $@
 
 src/moc_%.cpp: src/%.h
-	$(AM_V_GEN)$(QTDIR)/bin/moc $< -o $@
+	$(QT_V_MOC)$(QTDIR)/bin/moc $< -o $@
+
+QT_V_UIC   = $(QT_V_UIC_$(V))
+QT_V_UIC_  = $(QT_V_UIC_$(AM_DEFAULT_VERBOSITY))
+QT_V_UIC_0 = @echo "  UIC   " $@;
 
 src/ui_%.h: src/%.ui
-	$(AM_V_GEN)$(QTDIR)/bin/uic $< -o $@
+	$(QT_V_UIC)$(QTDIR)/bin/uic $< -o $@
