@@ -22,9 +22,6 @@
 #include <qtextcodec.h>
 #include <qdatetime.h>
 #include <qiodevice.h>
-#ifndef PHONESIM
-#include <qtimezone.h>
-#endif
 #include <qbuffer.h>
 #include <netinet/in.h>
 #include <stdlib.h>
@@ -275,12 +272,7 @@ static int timeZoneDiff()
 {
     if ( utcTimeZoneDiff == -1 ) {
         QDateTime gmt, current = QDateTime::currentDateTime();
-        QString tz =
-#ifndef PHONESIM
-         QTimeZone::current().id();
-#else
-         getenv("TZ");
-#endif
+        QString tz = getenv("TZ");
         if ( !tz.isEmpty() && (setenv("TZ", "GMT", true) == 0) ) {
             gmt = QDateTime::currentDateTime();
         } else return 0;
