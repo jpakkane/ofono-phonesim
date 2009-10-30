@@ -18,11 +18,7 @@
 ****************************************************************************/
 
 #include <qwsppdu.h>
-#ifndef PHONESIM
-#include <qmimetype.h>
-#else
 #include <qstringlist.h>
-#endif
 #include <qtextcodec.h>
 #include <qdatetime.h>
 #include <qiodevice.h>
@@ -1578,16 +1574,8 @@ void QWspPduEncoder::encodePart(const QWspPart &part)
     const QWspField *f = part.header("Content-Type");
     if (f) {
         bufEnc.encodeContentType(f->value);
-#ifndef PHONESIM
     } else {
-        f = part.header("Content-Location");
-        if (f) {
-            QMimeType mime(f->value);
-            bufEnc.encodeContentType(mime.id());
-        } else {
-            bufEnc.encodeContentType("*/*");    // last resort
-        }
-#endif
+        bufEnc.encodeContentType("*/*");    // last resort
     }
 
     QList<QWspField>::ConstIterator it;
@@ -1619,16 +1607,8 @@ void QWspPduEncoder::encodePush(const QWspPush &part)
     const QWspField *f = part.header("Content-Type");
     if (f) {
         bufEnc.encodeContentType(f->value);
-#ifndef PHONESIM
     } else {
-        f = part.header("Content-Location");
-        if (f) {
-            QMimeType mime(f->value);
-            bufEnc.encodeContentType(mime.id());
-        } else {
-            bufEnc.encodeContentType("*/*");    // last resort
-        }
-#endif
+        bufEnc.encodeContentType("*/*");    // last resort
     }
 
     QList<QWspField>::ConstIterator it;
