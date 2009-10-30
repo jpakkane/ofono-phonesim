@@ -50,7 +50,7 @@ INCLUDES = -I$(top_srcdir)/src -I$(top_builddir)/src \
 
 CLEANFILES = src/control.moc $(nodist_src_phonesim_SOURCES)
 
-EXTRA_DIST = src/controlbase.ui
+EXTRA_DIST = src/controlbase.ui src/moblin.xml
 
 MAINTAINERCLEANFILES = Makefile.in \
 	aclocal.m4 configure depcomp missing install-sh
