@@ -39,7 +39,7 @@ nodist_src_phonesim_SOURCES = src/ui_controlbase.h \
 
 src_phonesim_LDADD = $(QT_LIBS)
 
-AM_CXXFLAGS = -pipe -g -fPIC -Wall -W -D_REENTRANT $(QT_CFLAGS)
+AM_CXXFLAGS = -Wall $(QT_CFLAGS)
 
 INCLUDES = -I$(top_srcdir)/src -I$(top_builddir)/src
 
