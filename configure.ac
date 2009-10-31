@@ -1,5 +1,5 @@
 AC_PREREQ(2.60)
-AC_INIT(phonesim, 0.0)
+AC_INIT(phonesim, 1.0)
 
 AM_INIT_AUTOMAKE([foreign subdir-objects])
 
