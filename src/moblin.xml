@@ -2674,6 +2674,12 @@
 </chat>
 
 <chat>
+    <!-- Query CGDCONT support -->
+    <command>AT+CGDCONT=?</command>
+    <response>+CGDCONT: (1-10),("IP"),,,(0-1),(0-1)\n+CGDCONT: (1-10),("IPV6"),,,(0-1),(0-1)\n\nOK</response>
+</chat>
+
+<chat>
     <!-- Query CNMI support -->
     <command>AT+CNMI=?</command>
     <response>+CNMI: (0,1,2,3),(0,1),(0,1,2),(0),(0,1)\n\nOK</response>
