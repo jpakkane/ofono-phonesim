@@ -2676,7 +2676,7 @@
 <chat>
     <!-- Query CGDCONT support -->
     <command>AT+CGDCONT=?</command>
-    <response>+CGDCONT: (1-10),("IP"),,,(0-1),(0-1)\n+CGDCONT: (1-10),("IPV6"),,,(0-1),(0-1)\n\nOK</response>
+    <response>+CGDCONT: (5-10),("IP"),,,(0-1),(0-1)\n+CGDCONT: (5-10),("IPV6"),,,(0-1),(0-1)\n\nOK</response>
 </chat>
 
 <chat>
@@ -3344,6 +3344,20 @@ OK</response>
     07 91 84 06 11 40 44 F4 FF FF FF FF FF FF
     FF FF FF FF FF FF FF FF FF FF FF FF FF FF
     FF FF FF FF FF FF FF FF FF FF FF FF FF FF
+</file>
+
+<file name="EFcphs_info">
+    02 3C 03 00
+</file>
+
+<file name="EFcphs_mbdn" recordsize="48">
+    FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF
+    FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF
+    FF FF 03 81 76 90 FF FF FF FF FF FF FF FF FF FF
+</file>
+
+<file name="EFcphs_mwis">
+    5A 55
 </file>
 
 </filesystem>

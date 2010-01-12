@@ -117,6 +117,10 @@ static SimFileInfo const knownFiles[] =
     {"4F04",        "5F50",     "EFimg4",      0x14ff44,  FILE_TYPE_TRANSPARENT},
     {"4F05",        "5F50",     "EFimg5",      0x14ff44,  FILE_TYPE_TRANSPARENT},
 
+    // CPHS 4.2
+    {"6F16",        "7F20",     "EFcphs_info", 0x14ff44,  FILE_TYPE_TRANSPARENT},
+    {"6F17",        "7F20",     "EFcphs_mbdn", 0x11ff44,  FILE_TYPE_LINEAR_FIXED},
+    {"6F11",        "7F20",     "EFcphs_mwis", 0x11ff44,  FILE_TYPE_TRANSPARENT},
     {0,             0,          0,             0,         FILE_TYPE_TRANSPARENT}
 };
 
