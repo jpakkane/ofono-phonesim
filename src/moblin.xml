@@ -2710,6 +2710,12 @@
 </chat>
 
 <chat>
+    <!-- Query Cell broadcast service presentation mode -->
+    <command>AT+CSCB=?</command>
+    <response>+CSCB: (0-1)\n\nOK</response>
+</chat>
+
+<chat>
     <!-- Set cell broadcast channels -->
     <command>AT+CSCB=0,*</command>
     <response>OK</response>
