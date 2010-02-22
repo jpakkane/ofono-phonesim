@@ -3273,7 +3273,7 @@ OK</response>
 </file>
 
 <file name="EFspdi">
-    A3 00 80 03 42 F6 18
+    A3 05 80 03 42 F6 18
 </file>
 
 <file name="EFopl" recordsize="8">
