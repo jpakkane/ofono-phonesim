@@ -66,7 +66,8 @@ class HardwareManipulatorFactory
 {
 public:
     virtual ~HardwareManipulatorFactory() {};
-    inline virtual HardwareManipulator *create(QObject *p) { Q_UNUSED(p); return 0; }
+    inline virtual HardwareManipulator *create(QObject *p)
+	    { return new HardwareManipulator(p); }
 
     QString ruleFile() const { return ruleFilename; }
     void setRuleFile(const QString& filename) { ruleFilename = filename; }

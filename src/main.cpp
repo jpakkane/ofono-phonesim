@@ -72,6 +72,8 @@ int main(int argc, char **argv)
 
     if (with_gui)
         pss->setHardwareManipulator(new ControlFactory);
+    else
+        pss->setHardwareManipulator(new HardwareManipulatorFactory);
 
     return app.exec();
 }
