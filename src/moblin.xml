@@ -43,7 +43,7 @@
     <set name="SQ" value="99,99"/>
 
     <!-- Manufacturer -->
-    <set name="GMI" value="Moblin-Intel"/>
+    <set name="GMI" value="Meego"/>
 
     <!-- Model -->
     <set name="GMM" value="Synthetic Device"/>
@@ -58,7 +58,7 @@
     <set name="IMSI" value="246813579"/>
 
     <!-- Identifier for ATI command -->
-    <set name="ID" value="Moblin-Intel Synthetic Phone"/>
+    <set name="ID" value="Meego Synthetic Phone"/>
 
     <!-- Character set -->
     <set name="SCS" value="IRA"/>
@@ -88,7 +88,7 @@
     <set name="OPFORMAT" value="0"/>
 
     <!-- GCF Operator List, format <status(1:available,2:current,3:forbidden)>,"<alphanum.operator name>","<short operator name>","<MCC/MNC num>"-->
-    <set name="OP1" value="T-Moblin"/>
+    <set name="OP1" value="T-Meego"/>
     <set name="OP1PLMN" value="23401"/>
     <set name="OP1STATE" value="2"/>
 
