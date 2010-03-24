@@ -1,2 +1,9 @@
+ver 1.1:
+	Update configuration as result of MeeGo merger.
+	Install default.xml configuration file.
+	Fix incorrect format of EFspdi files.
+	Add support for CPHS 4.2 version of EF files.
+	Add support for CGDCONT query.
+
 ver 1.0:
 	Initial public release.
