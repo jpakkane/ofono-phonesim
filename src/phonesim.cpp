@@ -544,10 +544,11 @@ SimRules::SimRules( int fd, QObject *p,  const QString& filename, HardwareManipu
     currentChannel = 1;
     incomingUsed = 0;
     lineUsed = 0;
-    defaultToolkitApp = toolkitApp = new DemoSimApplication( this );
-    toolkitApp->setSimRules( this );
+    defaultToolkitApp = toolkitApp = new DemoSimApplication( this, this );
     connect( _callManager, SIGNAL(controlEvent(QSimControlEvent)),
              toolkitApp, SLOT(controlEvent(QSimControlEvent)) );
+    if ( machine )
+        machine->handleNewApp();
 
     // Load the simulator rules into memory as a DOM-like tree.
     SimXmlHandler *handler = new SimXmlHandler();
@@ -857,8 +858,10 @@ void SimRules::setSimApplication( SimApplication *app )
     if ( toolkitApp != defaultToolkitApp )
         delete toolkitApp;
     toolkitApp = ( app ? app : defaultToolkitApp );
-    toolkitApp->setSimRules( this );
     toolkitApp->start();
+
+    if ( getMachine() )
+        getMachine()->handleNewApp();
 }
 
 void SimRules::switchTo(const QString& name)
@@ -890,23 +893,111 @@ SimState *SimRules::state( const QString& name ) const
     return 0;
 }
 
+bool SimRules::simCsimOk( const QByteArray& payload )
+{
+    unsigned char sw1 = 0x90;
+    unsigned char sw2 = 0x00;
+    QByteArray resp = payload;
+
+    if ( toolkitApp ) {
+        QByteArray cmd = toolkitApp->fetch();
+        if ( !cmd.isEmpty() )
+            sw1 = 0x91;
+            sw2 = cmd.size();
+    }
+
+    resp += sw1;
+    resp += sw2;
+    respond( "+CSIM: " + QString::number( resp.size() * 2 ) + "," +
+                           QAtUtils::toHex( resp ) + "\\n\\nOK" );
+
+    return true;
+}
 
 bool SimRules::simCommand( const QString& cmd )
 {
+    /* Process SIM toolkit begin and end commands by forcing the
+     * app back to the main menu.  */
+    if ( cmd == "AT*TSTB" || cmd == "AT*TSTE" ) {
+        if ( !toolkitApp ) {
+            respond( "ERROR" );
+            return true;
+        }
+
+        respond( "OK" );
+        toolkitApp->abort();
+        return true;
+    }
+
     // If not AT+CSIM, then this is not a SIM toolkit command.
     if ( !cmd.startsWith( "AT+CSIM=" ) )
         return false;
+
+    if ( getMachine() && !getMachine()->getSimPresent() )
+        return true;
 
     // Extract the binary payload of the AT+CSIM command.
     int comma = cmd.indexOf( QChar(',') );
     if ( comma < 0 )
         return false;
     QByteArray param = QAtUtils::fromHex( cmd.mid(comma + 1) );
-    if ( param.length() < 5 || param[0] != (char)0xA0 )
+
+    if ( param.length() < 4 ) {
+        /* Wrong length */
+        respond( "+CSIM: 4,6700\\n\\nOK" );
         return false;
+    }
+
+    if ( param[0] != (char)0xA0 ) {
+        /* CLA not supported */
+        respond( "+CSIM: 4,6800\\n\\nOK" );
+        return false;
+    }
 
     // Determine what kind of command we are dealing with.
-    if ( param[1] == (char)0x2C && param[4] == (char)0x10 && param.size() >= 21 ) {
+    // Check for TERMINAL PROFILE, FETCH, TERMINAL RESPONSE,
+    // ENVELOPE and UNBLOCK CHV packets.
+    if ( param[1] == (char)0x10 ) {
+        /* Abort the SIM application and force it to return to the main menu. */
+        if ( toolkitApp )
+            toolkitApp->abort();
+
+        /* Download of a TERMINAL PROFILE.  We respond with a simple OK,
+         * on the assumption that what we were sent was valid.  */
+        return simCsimOk( QByteArray() );
+    } else if ( param[1] == (char)0x12 ) {
+        if ( !toolkitApp ) {
+            respond( "+CSIM: 4,6F00\\n\\nOK" );
+            return true;
+        }
+
+        /* Fetch the current command contents. */
+        QByteArray resp = toolkitApp->fetch( true );
+        if ( resp.isEmpty() ) {
+            /* We weren't expecting a FETCH. */
+            respond( "+CSIM: 4,6F00\\n\\nOK" );
+            return true;
+        }
+
+        return simCsimOk( resp );
+    } else if ( param.length() >= 5 && param[1] == (char)0x14 ) {
+        if ( !toolkitApp ) {
+            respond( "+CSIM: 4,6F00\\n\\nOK" );
+            return true;
+        }
+
+        /* Process a TERMINAL RESPONSE message. */
+        QSimTerminalResponse resp =
+            QSimTerminalResponse::fromPdu( param.mid(5) );
+
+        if ( toolkitApp->response( resp ) )
+            return simCsimOk( QByteArray() );
+
+        /* Response to the wrong type of command. */
+        respond( "+CSIM: 4,6F00\\n\\nOK" );
+        return true;
+    } else if ( param.length() >= 5 && param[1] == (char)0x2c &&
+                    param[4] == (char)0x10 && param.size() >= 21 ) {
         // UNBLOCK CHV command, for resetting a PIN using a PUK.
         QString pinName = "PINVALUE";
         QString pukName = "PUKVALUE";
@@ -924,13 +1015,32 @@ bool SimRules::simCommand( const QString& cmd )
             respond( "+CSIM: 4,9804\\n\\nOK" );
         } else {
             setVariable( pinName, QString::fromUtf8( pinValue ) );
-            respond( "+CSIM: 4,9000\\n\\nOK" );
+            simCsimOk( QByteArray() );
         }
+
         return true;
+    } else if ( param.length() >= 5 && param[1] == (char)0xC2 ) {
+        /* ENVELOPE */
+        if ( !toolkitApp ) {
+            respond( "+CSIM: 4,6F00\\n\\nOK" );
+            return true;
+        }
+
+        QSimEnvelope env = QSimEnvelope::fromPdu( param.mid(5) );
+        if ( toolkitApp->envelope( env ) )
+            return simCsimOk( QByteArray() );
+
+        /* Envelope not supported or current command doesn't allow envelopes. */
+        respond( "+CSIM: 4,6F00\\n\\nOK" );
+        return true;
+    } else if ( param[1] == (char)0xf2 ) {
+        /* STATUS command, for now ignore the parameters */
+        return simCsimOk( QByteArray() );
     }
 
     // Don't know this SIM command.
-    return false;
+    respond( "+CSIM: 4,6D00\\n\\nOK" );
+    return true;
 }
 
 void SimRules::command( const QString& cmd )
@@ -943,10 +1053,6 @@ void SimRules::command( const QString& cmd )
         return;
 
     // Process SIM toolkit related commands with the current SIM application.
-    if ( toolkitApp && toolkitApp->execute( cmd ) )
-        return;
-
-    // Process other SIM commands sent via AT+CSIM.
     if ( simCommand( cmd ) )
         return;
 
@@ -1458,6 +1564,16 @@ void SimRules::respond( const QString& resp, int delay, bool eol )
         getMachine()->handleFromData(QString(escaped));
 }
 
+void SimRules::proactiveCommandNotify( const QByteArray& cmd )
+{
+    unsolicited( "*TCMD: " + QString::number( cmd.size() ) );
+}
+
+void SimRules::callControlEventNotify( const QSimControlEvent& evt )
+{
+    unsolicited( "*TCC: " + QString::number( (int) (evt.type()) ) +
+              "," + QAtUtils::toHex( evt.toPdu() ) );
+}
 
 void SimRules::delayTimeout()
 {

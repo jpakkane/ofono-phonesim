@@ -49,6 +49,7 @@ public:
 
     void handleFromData( const QString& );
     void handleToData( const QString& );
+    void handleNewApp();
 
 private slots:
     void sendSQ();
@@ -70,6 +71,9 @@ private slots:
     void sendEVMNotify();
     void sendUSSD();
     void cancelUSSD();
+    void simInsertRemove();
+    void simAppStart();
+    void simAppAbort();
 
 signals:
     void unsolicitedCommand(const QString &);
@@ -134,11 +138,16 @@ ControlWidget::ControlWidget(const QString &ruleFile, Control *parent)
     connect(ui->pbNotifyUDHEnhanced, SIGNAL(clicked()), this, SLOT(sendEVMNotify()));
     connect(ui->pbSendUSSD, SIGNAL(clicked()), this, SLOT(sendUSSD()));
     connect(ui->pbCancelUSSD, SIGNAL(clicked()), this, SLOT(cancelUSSD()));
+    connect(ui->cbSimInserted, SIGNAL(clicked()), this, SLOT(simInsertRemove()));
+    connect(ui->pbStart, SIGNAL(clicked()), this, SLOT(simAppStart()));
+    connect(ui->pbAbort, SIGNAL(clicked()), this, SLOT(simAppAbort()));
 
     QStringList headers;
     headers << "Sender" << "Priority" << "Notification Status";
     ui->twMessageList->setHorizontalHeaderLabels( headers );
     ui->twMessageList->verticalHeader()->hide();
+
+    handleNewApp();
 
     show();
 }
@@ -472,4 +481,30 @@ void ControlWidget::cancelUSSD()
 
     ui->lblResponse->setText( "" );
     ui->leUSSDString->setText( "" );
+}
+
+void ControlWidget::simInsertRemove()
+{
+    p->setSimPresent( ui->cbSimInserted->isChecked() );
+}
+
+void ControlWidget::handleNewApp()
+{
+    ui->lblApplicationName->setText( "Current application: " +
+            p->getSimAppName() );
+}
+
+void Control::handleNewApp()
+{
+    widget->handleNewApp();
+}
+
+void ControlWidget::simAppStart()
+{
+    p->simAppStart();
+}
+
+void ControlWidget::simAppAbort()
+{
+    p->simAppAbort();
 }

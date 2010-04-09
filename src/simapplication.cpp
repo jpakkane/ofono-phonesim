@@ -26,7 +26,6 @@ class SimApplicationPrivate
 public:
     SimApplicationPrivate()
     {
-        rules = 0;
         expectedType = QSimCommand::NoCommand;
         target = 0;
         slot = 0;
@@ -41,10 +40,11 @@ public:
     bool inResponse;
 };
 
-SimApplication::SimApplication( QObject *parent )
+SimApplication::SimApplication( SimRules *rules, QObject *parent )
     : QObject( parent )
 {
     d = new SimApplicationPrivate();
+    d->rules = rules;
 }
 
 SimApplication::~SimApplication()
@@ -80,8 +80,7 @@ void SimApplication::command( const QSimCommand& cmd,
     // the middle of processing a TERMINAL RESPONSE or ENVELOPE,
     // then delay the unsolicited notification until later.
     if ( d->rules && !d->inResponse ) {
-        d->rules->unsolicited
-            ( "*TCMD: " + QString::number( d->currentCommand.size() ) );
+        d->rules->proactiveCommandNotify( d->currentCommand );
     }
 }
 
@@ -90,11 +89,8 @@ void SimApplication::command( const QSimCommand& cmd,
 */
 void SimApplication::controlEvent( const QSimControlEvent& event )
 {
-    if ( d->rules ) {
-        d->rules->unsolicited
-            ( "*TCC: " + QString::number( (int)(event.type()) ) +
-              "," + QAtUtils::toHex( event.toPdu() ) );
-    }
+    if ( d->rules )
+        d->rules->callControlEventNotify( event );
 }
 
 /*!
@@ -160,99 +156,49 @@ void SimApplication::mainMenuHelpRequest( int id )
     mainMenu();
 }
 
-void SimApplication::setSimRules( SimRules *rules )
+bool SimApplication::envelope( const QSimEnvelope& env )
 {
-    d->rules = rules;
-}
-
-bool SimApplication::execute( const QString& cmd )
-{
-    // Process SIM toolkit begin and end commands by forcing the app back to the main menu.
-    if ( cmd == "AT*TSTB" || cmd == "AT*TSTE") {
-        d->rules->respond( "OK" );
-        abort();
+    /* Process a menu selection ENVELOPE message.  We turn it into a
+     * QSimTerminalResponse to make it easier to process.  */
+    if ( env.type() == QSimEnvelope::EventDownload )
         return true;
-    }
 
-    // If not AT+CSIM, then this is not a SIM toolkit command.
-    if ( !cmd.startsWith( "AT+CSIM=" ) )
+    if ( env.type() != QSimEnvelope::MenuSelection )
+        /* Not supported */
         return false;
 
-    // Extract the binary payload of the AT+CSIM command.
-    int comma = cmd.indexOf( QChar(',') );
-    if ( comma < 0 )
-        return false;
-    QByteArray param = QAtUtils::fromHex( cmd.mid(comma + 1) );
-    if ( param.length() < 5 || param[0] != (char)0xA0 )
+    if ( d->expectedType != QSimCommand::SetupMenu )
+        /* Envelope sent for the wrong type of command. */
         return false;
 
-    // Check for TERMINAL PROFILE, FETCH, TERMINAL RESPONSE,
-    // and ENVELOPE packets.
-    if ( param[1] == (char)0x10 ) {
-        // Download of a TERMINAL PROFILE.  We respond with a simple OK,
-        // on the assumption that what we were sent was valid.
-        d->rules->respond( "+CSIM: 4,9000\\n\\nOK" );
-
-        // Abort the SIM application and force it to return to the main menu.
-        abort();
-    } else if ( param[1] == (char)0x12 ) {
-        // Fetch the current command contents.
-        QByteArray resp = d->currentCommand;
-        if ( resp.isEmpty() ) {
-            // We weren't expecting a FETCH.
-            d->rules->respond( "+CSIM: 4,6F00\\n\\nOK" );
-            return true;
-        }
-        resp += (char)0x90;
-        resp += (char)0x00;
-        d->rules->respond( "+CSIM: " + QString::number( resp.size() * 2 ) + "," +
-                           QAtUtils::toHex( resp ) + "\\n\\nOK" );
-    } else if ( param[1] == (char)0x14 ) {
-        // Process a TERMINAL RESPONSE message.
-        QSimTerminalResponse resp;
-        resp = QSimTerminalResponse::fromPdu( param.mid(5) );
-        if ( resp.command().type() != QSimCommand::NoCommand &&
-             resp.command().type() != d->expectedType ) {
-            // Response to the wrong type of command.
-            d->rules->respond( "+CSIM: 4,6F00\\n\\nOK" );
-            return true;
-        }
-        response( resp );
-    } else if ( param[1] == (char)0xC2 ) {
-        // Process a menu selection ENVELOPE message.  We turn it into a
-        // QSimTerminalResponse to make it easier to process.
-        QSimEnvelope env;
-        env = QSimEnvelope::fromPdu( param.mid(5) );
-        if ( env.type() == QSimEnvelope::EventDownload ) {
-            d->rules->respond( "+CSIM: 4,9000\\n\\nOK" );
-            return true;
-        }
-        if ( env.type() != QSimEnvelope::MenuSelection )
-            return false;
-        if ( d->expectedType != QSimCommand::SetupMenu ) {
-            // Envelope sent for the wrong type of command.
-            d->rules->respond( "+CSIM: 4,6F00\\n\\nOK" );
-            return true;
-        }
-        d->rules->respond( "+CSIM: 4,9000\\n\\nOK" );
-        d->expectedType = QSimCommand::NoCommand;
-        d->currentCommand = QByteArray();
-        d->target = 0;
-        d->slot = 0;
-        if ( env.requestHelp() )
-            mainMenuHelpRequest( env.menuItem() );
-        else
-            mainMenuSelection( env.menuItem() );
-    } else {
-        // This SIM command is not related to SIM toolkit - ignore it.
-        return false;
-    }
+    d->expectedType = QSimCommand::NoCommand;
+    d->currentCommand = QByteArray();
+    d->target = 0;
+    d->slot = 0;
+    if ( env.requestHelp() )
+        mainMenuHelpRequest( env.menuItem() );
+    else
+        mainMenuSelection( env.menuItem() );
 
     return true;
 }
 
-void SimApplication::response( const QSimTerminalResponse& resp )
+QByteArray SimApplication::fetch( bool clear )
 {
+    QByteArray resp = d->currentCommand;
+
+    if ( clear )
+        d->currentCommand = QByteArray();
+
+    return resp;
+}
+
+bool SimApplication::response( const QSimTerminalResponse& resp )
+{
+    if ( resp.command().type() != QSimCommand::NoCommand &&
+         resp.command().type() != d->expectedType )
+        return false;
+
     // Save the target information.
     QObject *target = d->target;
     const char *slot = d->slot;
@@ -284,7 +230,7 @@ void SimApplication::response( const QSimTerminalResponse& resp )
 
     // Answer the AT+CSIM command and send notification of the new command.
     if ( !d->rules )
-        return;
+        return false;////
     if ( d->currentCommand.isEmpty() || resp.command().type() == QSimCommand::SetupMenu ) {
         // No new command, so respond with a simple OK.
         d->rules->respond( "+CSIM: 4,9000\\n\\nOK" );
@@ -300,15 +246,22 @@ void SimApplication::response( const QSimTerminalResponse& resp )
         d->rules->unsolicited
             ( "*TCMD: " + QString::number( d->currentCommand.size() ) );
     }
+
+    return true;
 }
 
-DemoSimApplication::DemoSimApplication( QObject *parent )
-    : SimApplication( parent )
+DemoSimApplication::DemoSimApplication( SimRules *rules, QObject *parent )
+    : SimApplication( rules, parent )
 {
 }
 
 DemoSimApplication::~DemoSimApplication()
 {
+}
+
+const QString DemoSimApplication::getName()
+{
+    return "Demo SIM Application";
 }
 
 #define MainMenu_News       1

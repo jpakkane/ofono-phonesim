@@ -28,6 +28,7 @@
 #include <qwsppdu.h>
 #include <qatutils.h>
 #include <phonesim.h>
+#include <simapplication.h>
 
 #define NIBBLE_MAX 15
 #define TWO_BYTE_MAX 65535
@@ -56,6 +57,7 @@ void HardwareManipulator::warning( const QString &title, const QString &message)
 
 void HardwareManipulator::setPhoneNumber( const QString& )
 {
+    simPresent = true;
 }
 
 QString PS_toHex( const QByteArray& binary );
@@ -289,4 +291,44 @@ void HardwareManipulator::sendUSSD( bool cancel, bool response,
         emit unsolicitedCommand( "+CUSD: " +
                         QString::number( response ? 1 : 0 ) + ",\"" +
                         QAtUtils::quote( content, codec ) + "\",0" );
+}
+
+bool HardwareManipulator::getSimPresent()
+{
+    return simPresent;
+}
+
+void HardwareManipulator::setSimPresent( bool present )
+{
+    simPresent = present;
+}
+
+QString HardwareManipulator::getSimAppName()
+{
+    SimApplication *app = rules->simApplication();
+
+    if (app)
+        return app->getName();
+
+    return "None";
+}
+
+void HardwareManipulator::handleNewApp()
+{
+}
+
+void HardwareManipulator::simAppStart()
+{
+    SimApplication *app = rules->simApplication();
+
+    if (app)
+        return app->start();
+}
+
+void HardwareManipulator::simAppAbort()
+{
+    SimApplication *app = rules->simApplication();
+
+    if (app)
+        return app->abort();
 }

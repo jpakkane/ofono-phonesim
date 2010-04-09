@@ -34,6 +34,8 @@ Q_OBJECT
 public:
     HardwareManipulator(SimRules *sr, QObject *parent=0);
     QSMSMessageList & getSMSList();
+    bool getSimPresent();
+    QString getSimAppName();
 
 public slots:
     virtual void handleFromData( const QString& );
@@ -43,6 +45,10 @@ public slots:
     virtual void sendSMS( const QSMSMessage& m );
     virtual void sendVMNotify( int type, int count, const QList<QVMMessage> &received, const QList<QVMMessage> &deleted, const QString &mailbox );
     virtual void sendUSSD( bool cancel, bool response, const QString &content );
+    virtual void setSimPresent( bool present );
+    virtual void simAppStart();
+    virtual void simAppAbort();
+    virtual void handleNewApp();
 
 signals:
     void unsolicitedCommand(const QString &cmd);
@@ -63,6 +69,7 @@ protected:
 private:
     QSMSMessageList SMSList;
     SimRules *rules;
+    bool simPresent;
 };
 
 class HardwareManipulatorFactory

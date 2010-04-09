@@ -31,40 +31,43 @@ class SimApplicationPrivate;
 class SimApplication : public QObject
 {
     Q_OBJECT
-    friend class SimRules;
 public:
-    SimApplication( QObject *parent = 0 );
+    SimApplication( SimRules *rules, QObject *parent = 0 );
     ~SimApplication();
 
-    void command( const QSimCommand& cmd,
-                  QObject *target, const char *slot,
-                  QSimCommand::ToPduOptions options
-                        = QSimCommand::NoPduOptions );
+    virtual bool envelope( const QSimEnvelope& env );
+    virtual bool response( const QSimTerminalResponse& resp );
+    virtual QByteArray fetch( bool clear = false );
+
+    virtual const QString getName() = 0;
 
 public slots:
-    void controlEvent( const QSimControlEvent& event );
     virtual void start();
     virtual void abort();
 
 protected slots:
+    void command( const QSimCommand& cmd,
+                  QObject *target, const char *slot,
+                  QSimCommand::ToPduOptions options
+                        = QSimCommand::NoPduOptions );
+    void controlEvent( const QSimControlEvent& event );
+
     virtual void mainMenu() = 0;
     virtual void mainMenuSelection( int id );
     virtual void mainMenuHelpRequest( int id );
 
 private:
     SimApplicationPrivate *d;
-
-    void setSimRules( SimRules *rules );
-    bool execute( const QString& cmd );
-    void response( const QSimTerminalResponse& resp );
 };
 
 class DemoSimApplication : public SimApplication
 {
     Q_OBJECT
 public:
-    DemoSimApplication( QObject *parent = 0 );
+    DemoSimApplication( SimRules *rules, QObject *parent = 0 );
     ~DemoSimApplication();
+
+    const QString getName();
 
 protected slots:
     void mainMenu();

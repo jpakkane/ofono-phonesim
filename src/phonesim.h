@@ -31,6 +31,7 @@
 #include <qmap.h>
 #include <qtimer.h>
 #include <qpointer.h>
+#include <qsimcontrolevent.h>
 
 #include <string.h>
 #include <stdlib.h>
@@ -307,6 +308,9 @@ public slots:
     // Send a response line.
     void respond( const QString& resp ) { respond( resp, 0 ); }
 
+    void proactiveCommandNotify( const QByteArray& cmd );
+    void callControlEventNotify( const QSimControlEvent& event );
+
 private slots:
     void tryReadCommand();
     void destruct();
@@ -352,6 +356,8 @@ private:
     QMap< QString, SimPhoneBook * > phoneBooks;
 
     CallManager *_callManager;
+
+    bool simCsimOk( const QByteArray& payload );
 };
 
 

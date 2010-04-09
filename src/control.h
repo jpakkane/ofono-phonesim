@@ -36,6 +36,7 @@ public slots:
     void handleFromData( const QString& );
     void handleToData( const QString& );
     void setPhoneNumber( const QString& );
+    void handleNewApp();
 
 protected:
     virtual void warning( const QString&, const QString& );
