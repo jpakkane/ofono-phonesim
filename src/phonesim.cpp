@@ -503,7 +503,7 @@ SimRules::SimRules( int fd, QObject *p,  const QString& filename, HardwareManipu
     machine = 0;
 
     if (hmf)
-        machine = hmf->create(0);
+        machine = hmf->create(this, 0);
 
     if (machine) {
         connect(machine, SIGNAL(unsolicitedCommand(QString)),

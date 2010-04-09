@@ -26,6 +26,8 @@
 #include <qcbsmessage.h>
 #include <qgsmcodec.h>
 #include <qwsppdu.h>
+#include <qatutils.h>
+#include <phonesim.h>
 
 #define NIBBLE_MAX 15
 #define TWO_BYTE_MAX 65535
@@ -36,8 +38,8 @@
 #define ONE_CHAR 1
 #define HEX_BASE 16
 
-HardwareManipulator::HardwareManipulator(QObject *parent)
-        : QObject(parent)
+HardwareManipulator::HardwareManipulator(SimRules *sr, QObject *parent)
+        : QObject(parent), rules(sr)
 {
 }
 
@@ -274,4 +276,17 @@ void HardwareManipulator::sendVMNotify( int type, int count, const QList<QVMMess
     m.setHeaders( mwiUdh );
 
     sendSMS( m );
+}
+
+void HardwareManipulator::sendUSSD( bool cancel, bool response,
+		const QString &content )
+{
+    QTextCodec *codec = QAtUtils::codec( rules->variable("SCS") );
+    /* TODO: if rules->variable("USD") == "0" then return */
+    if (cancel)
+        emit unsolicitedCommand( "+CUSD: 2" );
+    else
+        emit unsolicitedCommand( "+CUSD: " +
+                        QString::number( response ? 1 : 0 ) + ",\"" +
+                        QAtUtils::quote( content, codec ) + "\",0" );
 }

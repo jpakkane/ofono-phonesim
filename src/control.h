@@ -29,7 +29,7 @@ class Control: public HardwareManipulator
 Q_OBJECT
 
 public:
-    Control(const QString& ruleFile, QObject *parent=0);
+    Control(const QString& ruleFile, SimRules *sr, QObject *parent=0);
     virtual ~Control();
 
 public slots:
@@ -48,8 +48,8 @@ private:
 class ControlFactory : public HardwareManipulatorFactory
 {
 public:
-    inline virtual HardwareManipulator *create(QObject *parent)
-        { return new Control(ruleFile(), parent); }
+    inline virtual HardwareManipulator *create(SimRules *sr, QObject *parent)
+        { return new Control(ruleFile(), sr, parent); }
 };
 
 

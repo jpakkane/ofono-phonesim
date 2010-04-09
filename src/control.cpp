@@ -68,6 +68,8 @@ private slots:
     void delVoicemail();
     void sendVMNotify( int type = 0 );
     void sendEVMNotify();
+    void sendUSSD();
+    void cancelUSSD();
 
 signals:
     void unsolicitedCommand(const QString &);
@@ -130,6 +132,8 @@ ControlWidget::ControlWidget(const QString &ruleFile, Control *parent)
     connect(ui->pbRemoveMessage, SIGNAL(clicked()), this, SLOT(delVoicemail()));
     connect(ui->pbNotifyUDH, SIGNAL(clicked()), this, SLOT(sendVMNotify()));
     connect(ui->pbNotifyUDHEnhanced, SIGNAL(clicked()), this, SLOT(sendEVMNotify()));
+    connect(ui->pbSendUSSD, SIGNAL(clicked()), this, SLOT(sendUSSD()));
+    connect(ui->pbCancelUSSD, SIGNAL(clicked()), this, SLOT(cancelUSSD()));
 
     QStringList headers;
     headers << "Sender" << "Priority" << "Notification Status";
@@ -145,8 +149,9 @@ void ControlWidget::closeEvent(QCloseEvent *event)
     hide();
 }
 
-Control::Control(const QString& ruleFile, QObject *parent)
-        : HardwareManipulator(parent), widget(new ControlWidget(ruleFile, this))
+Control::Control(const QString& ruleFile, SimRules *sr, QObject *parent)
+        : HardwareManipulator(sr, parent),
+        widget(new ControlWidget(ruleFile, this))
 {
     QList<QByteArray> proxySignals;
     proxySignals
@@ -339,6 +344,18 @@ void ControlWidget::handleToData( const QString& cmd )
             ui->atViewer->append( dataItem + " : " + translator->translateCommand(dataItem) );
         }
     }
+
+    if ( cmd.startsWith("AT+CUSD=") ) {
+        int comma = cmd.indexOf( QChar(',') );
+        if ( comma >= 0 ) {
+            QString content = cmd.mid(comma + 1);
+            content.remove( QChar('"') );
+            ui->lblResponse->setText( content );
+        }
+
+        if ( cmd.startsWith("AT+CUSD=2") )
+            ui->lblResponse->setText( "" );
+    }
 }
 
 void Control::handleToData( const QString& cmd )
@@ -436,4 +453,23 @@ ControlWidget::VoicemailItem::VoicemailItem( const QString &from, bool urgent )
     notifyDeleted = false;
 
     id = nextId++;
+}
+
+void ControlWidget::sendUSSD()
+{
+    bool ask = ui->chkAskResponse->isChecked();
+    QString text = ui->leUSSDString->text();
+
+    p->sendUSSD( false, ask, text );
+
+    ui->lblResponse->setText( "" );
+    ui->leUSSDString->setText( "" );
+}
+
+void ControlWidget::cancelUSSD()
+{
+    p->sendUSSD( true, false, "" );
+
+    ui->lblResponse->setText( "" );
+    ui->leUSSDString->setText( "" );
 }

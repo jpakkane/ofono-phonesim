@@ -26,12 +26,13 @@
 
 class QSMSMessage;
 class QVMMessage;
+class SimRules;
 class HardwareManipulator : public QObject
 {
 Q_OBJECT
 
 public:
-    HardwareManipulator(QObject *parent=0);
+    HardwareManipulator(SimRules *sr, QObject *parent=0);
     QSMSMessageList & getSMSList();
 
 public slots:
@@ -41,6 +42,7 @@ public slots:
     virtual void constructSMSMessage(const int type, const QString &sender, const QString &serviceCenter, const QString &text);
     virtual void sendSMS( const QSMSMessage& m );
     virtual void sendVMNotify( int type, int count, const QList<QVMMessage> &received, const QList<QVMMessage> &deleted, const QString &mailbox );
+    virtual void sendUSSD( bool cancel, bool response, const QString &content );
 
 signals:
     void unsolicitedCommand(const QString &cmd);
@@ -60,14 +62,15 @@ protected:
 
 private:
     QSMSMessageList SMSList;
+    SimRules *rules;
 };
 
 class HardwareManipulatorFactory
 {
 public:
     virtual ~HardwareManipulatorFactory() {};
-    inline virtual HardwareManipulator *create(QObject *p)
-	    { return new HardwareManipulator(p); }
+    inline virtual HardwareManipulator *create(SimRules *sr, QObject *p)
+	    { return new HardwareManipulator(sr, p); }
 
     QString ruleFile() const { return ruleFilename; }
     void setRuleFile(const QString& filename) { ruleFilename = filename; }
