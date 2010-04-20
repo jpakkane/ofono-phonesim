@@ -501,6 +501,7 @@ SimRules::SimRules( int fd, QObject *p,  const QString& filename, HardwareManipu
 {
     setSocketDescriptor(fd);
     machine = 0;
+    toolkitApp = 0;
 
     if (hmf)
         machine = hmf->create(this, 0);
@@ -554,6 +555,7 @@ SimRules::SimRules( int fd, QObject *p,  const QString& filename, HardwareManipu
     SimXmlHandler *handler = new SimXmlHandler();
     if ( !readXmlFile( handler, filename ) ) {
         qWarning() << filename << ": could not parse simulator rule file";
+        delete handler;
         return;
     }
 
@@ -837,6 +839,26 @@ void SimRules::tryReadCommand()
 
 void SimRules::destruct()
 {
+    if ( toolkitApp != defaultToolkitApp )
+        delete toolkitApp;
+    delete defaultToolkitApp;
+    toolkitApp = NULL;
+
+    if ( getMachine() )
+        getMachine()->handleNewApp();
+
+    if ( defState )
+        delete defState;
+    defState = NULL;
+
+    if ( _callManager )
+        delete _callManager;
+    _callManager = NULL;
+
+    if ( fileSystem )
+        delete fileSystem;
+    fileSystem = NULL;
+
     if (machine) machine->deleteLater();
     deleteLater();
 }
