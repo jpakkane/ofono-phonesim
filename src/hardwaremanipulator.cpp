@@ -42,6 +42,7 @@
 HardwareManipulator::HardwareManipulator(SimRules *sr, QObject *parent)
         : QObject(parent), rules(sr)
 {
+    simPresent = true;
 }
 
 
@@ -57,7 +58,6 @@ void HardwareManipulator::warning( const QString &title, const QString &message)
 
 void HardwareManipulator::setPhoneNumber( const QString& )
 {
-    simPresent = true;
 }
 
 QString PS_toHex( const QByteArray& binary );
