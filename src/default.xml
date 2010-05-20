@@ -3150,6 +3150,10 @@ OK</response>
 
 <filesystem>
 
+<file name="EFiccid">
+    98 94 22 02 47 54 21 24 60 F6
+</file>
+
 <file name="EFimsi">
     08 09 10 10 10 32 54 76 98
 </file>
