@@ -1,3 +1,8 @@
+ver 1.2:
+	Add support for a simple USSD user interface.
+	Add support for better SIM Toolkit handling.
+	Add support for EFiccid entry.
+
 ver 1.1:
 	Update configuration as result of MeeGo merger.
 	Install default.xml configuration file.
