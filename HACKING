@@ -4,6 +4,7 @@ Hacking on phonesim
 phonesim is a soft modem that eliminates the need to have an actual AT
 modem connected to the system for testing and developing Ofono.
 
+
 Build tools requirements
 ========================
 
@@ -22,6 +23,7 @@ Debian's default is still an earlier version:
 QT development libraries (libqt4-dev) are also required for building
 phonesim. It is recommended to install the QT 4 development tools package
 (qt4-dev-tools) as an alternative if available with your distribution.
+
 
 Working with the source code repository
 =======================================
