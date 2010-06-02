@@ -84,7 +84,7 @@ to use "make install" when testing "phonesim". The "bootstrap-configure"
 automatically includes this option.
 
   Run phonesim in foreground using the following options
-    # ./src/phonesim -p 12345 -gui xml/default.xml
+    # ./src/phonesim -p 12345 -gui src/default.xml
 
 Check your modem.conf file and enable the phonesim configuration before
 executing the above command. Argument -p should be followed by the proper
