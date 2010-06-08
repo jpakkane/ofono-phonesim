@@ -40,7 +40,7 @@
     <set name="BC" value="0,100"/>
 
     <!-- Signal Quality -->
-    <set name="SQ" value="99,99"/>
+    <set name="SQ" value="31,99"/>
 
     <!-- Manufacturer -->
     <set name="GMI" value="MeeGo"/>
