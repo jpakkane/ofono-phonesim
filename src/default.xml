@@ -297,6 +297,9 @@
     <!-- Muting control -->
     <set name="MUT" value="0"/>
 
+    <!-- CGSMS Bearer control -->
+    <set name="CGSMS" value="3"/>
+
 <!-- Time -->
 <!-- Enable for testing
 <unsolicited delay="3000" once="true">*TTZ: 2, "11/25/2007, 12:12:12+40", 0</unsolicited>
@@ -2798,6 +2801,25 @@
     <!-- Read sound level -->
     <command>AT+CMUT?</command>
     <response>+CMUT: ${MUT}\n\nOK</response>
+</chat>
+
+<chat>
+    <!-- Query supported bearers -->
+    <command>AT+CGSMS=?</command>
+    <response>+CMUT: (0-3)\n\nOK</response>
+</chat>
+
+<chat>
+    <!-- Set bearer -->
+    <command>AT+CGSMS=*</command>
+    <response>OK</response>
+    <set name="CGSMS" value="*"/>
+</chat>
+
+<chat>
+    <!-- Read bearer -->
+    <command>AT+CGSMS?</command>
+    <response>+CGSMS: ${CGSMS}\n\nOK</response>
 </chat>
 
 <chat>
