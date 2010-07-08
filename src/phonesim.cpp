@@ -923,9 +923,10 @@ bool SimRules::simCsimOk( const QByteArray& payload )
 
     if ( toolkitApp ) {
         QByteArray cmd = toolkitApp->fetch();
-        if ( !cmd.isEmpty() )
+        if ( !cmd.isEmpty() ) {
             sw1 = 0x91;
             sw2 = cmd.size();
+        }
     }
 
     resp += sw1;
