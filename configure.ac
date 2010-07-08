@@ -14,6 +14,13 @@ PKG_PROG_PKG_CONFIG
 AC_PROG_CXX
 AC_PROG_INSTALL
 
+AC_ARG_ENABLE(optimization, AC_HELP_STRING([--disable-optimization],
+			[disable code optimization through compiler]), [
+	if (test "${enableval}" = "no"); then
+		CXXFLAGS="$CXXFLAGS -O0"
+	fi
+])
+
 PKG_CHECK_MODULES(QT, QtCore QtGui QtXml QtNetwork, dummy=yes,
 						AC_MSG_ERROR(Qt is required))
 AC_SUBST(QT_CFLAGS)
