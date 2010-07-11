@@ -1,3 +1,8 @@
+ver 1.3:
+	Add support for +CGSMS settings.
+	Add support for starting with 100% signal strength.
+	Add extra documentation for developers.
+
 ver 1.2:
 	Add support for a simple USSD user interface.
 	Add support for better SIM Toolkit handling.
