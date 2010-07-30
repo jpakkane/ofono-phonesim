@@ -119,7 +119,7 @@ void SimApplication::abort()
     d->currentCommand = QByteArray();
     d->target = 0;
     d->slot = 0;
-    mainMenu();
+    endSession();
 }
 
 /*!
@@ -140,7 +140,7 @@ void SimApplication::abort()
 void SimApplication::mainMenuSelection( int id )
 {
     Q_UNUSED(id);
-    mainMenu();
+    endSession();
 }
 
 /*!
@@ -153,7 +153,7 @@ void SimApplication::mainMenuSelection( int id )
 void SimApplication::mainMenuHelpRequest( int id )
 {
     Q_UNUSED(id);
-    mainMenu();
+    endSession();
 }
 
 bool SimApplication::envelope( const QSimEnvelope& env )
@@ -248,6 +248,12 @@ bool SimApplication::response( const QSimTerminalResponse& resp )
     }
 
     return true;
+}
+
+void SimApplication::endSession()
+{
+    d->expectedType = QSimCommand::SetupMenu;
+    d->rules->unsolicited("*TEND");
 }
 
 DemoSimApplication::DemoSimApplication( SimRules *rules, QObject *parent )
@@ -369,7 +375,7 @@ void DemoSimApplication::mainMenuSelection( int id )
             cmd.setType( QSimCommand::SetupCall );
             cmd.setNumber( "1194" );
             cmd.setText( "Dialing the Time Guy ..." );
-            command( cmd, this, SLOT(mainMenu()) );
+            command( cmd, this, SLOT(endSession()) );
         }
         break;
 
@@ -417,7 +423,7 @@ void DemoSimApplication::mainMenuSelection( int id )
         default:
         {
             // Don't know what this item is, so just re-display the main menu.
-            mainMenu();
+            endSession();
         }
         break;
     }
@@ -489,14 +495,16 @@ void DemoSimApplication::sportsMenu( const QSimTerminalResponse& resp )
             }
             break;
 
-            default:    mainMenu(); break;
+            default:
+                endSession();
+                break;
         }
     } else if ( resp.result() == QSimTerminalResponse::BackwardMove ) {
         // Request to move backward.
-        mainMenu();
+        sendSportsMenu();
     } else {
         // Unknown response - just go back to the main menu.
-        mainMenu();
+        endSession();
     }
 }
 
@@ -559,7 +567,7 @@ void DemoSimApplication::sticksGameLoop( const QSimTerminalResponse& resp )
         command( cmd, this, SLOT(startSticksGame()) );
     } else {
         // Probably aborted.
-        mainMenu();
+        endSession();
     }
 }
 
@@ -568,7 +576,7 @@ void DemoSimApplication::sticksGamePlayAgain( const QSimTerminalResponse& resp )
     if ( resp.text() == "Yes" )
         startSticksGame();
     else
-        mainMenu();
+        endSession();
 }
 
 void DemoSimApplication::getInputLoop( const QSimTerminalResponse& resp )
@@ -579,9 +587,9 @@ void DemoSimApplication::getInputLoop( const QSimTerminalResponse& resp )
         cmd.setType( QSimCommand::DisplayText );
         cmd.setDestinationDevice( QSimCommand::Display );
         cmd.setText("Enter code of the company." );
-        command( cmd, this, SLOT(mainMenu()) );
+        command( cmd, this, SLOT(endSession()) );
     } else {
-        mainMenu();
+        endSession();
     }
 }
 
@@ -659,10 +667,10 @@ void DemoSimApplication::toneMenu( const QSimTerminalResponse& resp )
         command( cmd, this, SLOT(sendToneMenu()) );
     } else if ( resp.result() == QSimTerminalResponse::BackwardMove ) {
         // Request to move backward.
-        mainMenu();
+        endSession();
     } else {
         // Unknown response - just go back to the main menu.
-        mainMenu();
+        endSession();
     }
 }
 
@@ -732,7 +740,7 @@ void DemoSimApplication::iconMenu( const QSimTerminalResponse& resp )
     if ( resp.result() == QSimTerminalResponse::Success )
         sendIconMenu();
     else
-        mainMenu();
+        endSession();
 }
 
 void DemoSimApplication::iconSEMenu( const QSimTerminalResponse& resp )
@@ -740,7 +748,7 @@ void DemoSimApplication::iconSEMenu( const QSimTerminalResponse& resp )
     if ( resp.result() == QSimTerminalResponse::Success )
         sendIconSEMenu();
     else
-        mainMenu();
+        endSession();
 }
 
 void DemoSimApplication::displayTextResponse( const QSimTerminalResponse& resp )
@@ -748,15 +756,13 @@ void DemoSimApplication::displayTextResponse( const QSimTerminalResponse& resp )
     QSimCommand cmd;
 
     if ( resp.result() == QSimTerminalResponse::Success ) {
-        if ( immediateResponse )
-            return;
-        mainMenu();
+        endSession();
     } else if ( resp.result() == QSimTerminalResponse::BackwardMove ) {
         // Request to move backward.
-        mainMenu();
+        endSession();
     } else {
         // Unknown response - just go back to the main menu.
-        mainMenu();
+        endSession();
     }
 }
 
@@ -852,13 +858,15 @@ void DemoSimApplication::browserMenu( const QSimTerminalResponse& resp )
             }
             break;
 
-            default:    mainMenu(); break;
+            default:
+                endSession();
+                break;
         }
     } else if ( resp.result() == QSimTerminalResponse::BackwardMove ) {
         // Request to move backward.
-        mainMenu();
+        endSession();
     } else {
         // Unknown response - just go back to the main menu.
-        mainMenu();
+        endSession();
     }
 }

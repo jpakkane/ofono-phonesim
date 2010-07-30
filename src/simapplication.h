@@ -55,6 +55,7 @@ protected slots:
     virtual void mainMenu() = 0;
     virtual void mainMenuSelection( int id );
     virtual void mainMenuHelpRequest( int id );
+    virtual void endSession();
 
 private:
     SimApplicationPrivate *d;
