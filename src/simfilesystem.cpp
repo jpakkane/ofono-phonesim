@@ -110,7 +110,7 @@ static SimFileInfo const knownFiles[] =
     {"2F05",        "3F00",     "EFpl",        0x11ff44,  FILE_TYPE_TRANSPARENT},
 
     {"5F50",        "7F10",     "DFgraphics",  0,         FILE_TYPE_TRANSPARENT},
-    {"4F20",        "5F50",     "EFimg",       0x14ff44,  FILE_TYPE_TRANSPARENT},
+    {"4F20",        "5F50",     "EFimg",       0x14ff44,  FILE_TYPE_LINEAR_FIXED},
     {"4F01",        "5F50",     "EFimg1",      0x14ff44,  FILE_TYPE_TRANSPARENT},
     {"4F02",        "5F50",     "EFimg2",      0x14ff44,  FILE_TYPE_TRANSPARENT},
     {"4F03",        "5F50",     "EFimg3",      0x14ff44,  FILE_TYPE_TRANSPARENT},
