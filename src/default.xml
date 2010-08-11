@@ -3243,6 +3243,10 @@ OK</response>
     3C 00 FC 0C 00 00 7F DF 00 31 0F C0
 </file>
 
+<file name="EFest">
+    07
+</file>
+
 <file name="EFcbmi">
     03 E7 FF FF FF FF FF FF FF FF FF FF FF FF
 </file>
