@@ -195,7 +195,7 @@
     <set name="PAS" value="0"/>
 
     <!-- Phone functionality power consumption level (minimal = 0, full = 1) -->
-    <set name="FUN" value="0"/>
+    <set name="FUN" value="4"/>
 
     <!-- Mobile equipment control modes -->
     <set name="MEC" value="0,0,0"/>
@@ -2115,14 +2115,21 @@
 <chat>
     <!-- Query supported phone functionality settings -->
     <command>AT+CFUN=?</command>
-    <response>+CFUN: (0-4)\n\nOK</response>
+    <response>+CFUN: (1,4)\n\nOK</response>
 </chat>
 
 <chat>
-    <!-- Set phone functionality -->
-    <command>AT+CFUN=*</command>
+    <!-- Set phone functionality Full -->
+    <command>AT+CFUN=1</command>
     <response>OK</response>
-    <set name="FUN" value="*"/>
+    <set name="FUN" value="0"/>
+</chat>
+
+<chat>
+    <!-- Set phone functionality Transmit & Receive off -->
+    <command>AT+CFUN=4</command>
+    <response>OK\n\n+CREG: 0\n\n+CGREG: 0</response>
+    <set name="FUN" value="4"/>
 </chat>
 
 <chat>
