@@ -226,7 +226,7 @@ void SimFileSystem::crsm( const QString& args )
                     sw2 = 0x02;
                 } else if ( length ) {
                     sw1 = 0x9f;
-                    sw2 = length - offset;
+                    sw2 = length;
                     response =
                         QAtUtils::toHex( contents.mid( offset, length ) );
                 } else {
