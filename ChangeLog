@@ -1,3 +1,9 @@
+ver 1.5:
+	Fix EFimg to be a linear fixed file type.
+	Add an additional EFpnn info string.
+	Add support for EFest entry.
+	Add support for offline state.
+
 ver 1.4:
 	Add support for SIM Toolkit End Session handling.
 
