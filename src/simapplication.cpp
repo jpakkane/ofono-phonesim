@@ -373,6 +373,7 @@ void DemoSimApplication::mainMenuSelection( int id )
         case MainMenu_Time:
         {
             cmd.setType( QSimCommand::SetupCall );
+            cmd.setDestinationDevice( QSimCommand::Network );
             cmd.setNumber( "1194" );
             cmd.setText( "Dialing the Time Guy ..." );
             command( cmd, this, SLOT(endSession()) );
