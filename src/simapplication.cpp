@@ -272,7 +272,7 @@ const QString DemoSimApplication::getName()
 
 #define MainMenu_News       1
 #define MainMenu_Sports     2
-#define MainMenu_Time       3
+#define MainMenu_Calls      3
 #define MainMenu_SticksGame 4
 #define MainMenu_Tones      5
 #define MainMenu_Icons      6
@@ -284,6 +284,10 @@ const QString DemoSimApplication::getName()
 #define SportsMenu_Painting     2
 #define SportsMenu_Snakes       3
 #define SportsMenu_Main         4
+
+#define CallsMenu_Normal        1
+#define CallsMenu_Disconnect    2
+#define CallsMenu_Hold          3
 
 void DemoSimApplication::mainMenu()
 {
@@ -301,8 +305,8 @@ void DemoSimApplication::mainMenu()
     item.setLabel( "Sports" );
     items += item;
 
-    item.setIdentifier( MainMenu_Time );
-    item.setLabel( "Time" );
+    item.setIdentifier( MainMenu_Calls );
+    item.setLabel( "Calls" );
     items += item;
 
     item.setIdentifier( MainMenu_SticksGame );
@@ -370,13 +374,9 @@ void DemoSimApplication::mainMenuSelection( int id )
         }
         break;
 
-        case MainMenu_Time:
+        case MainMenu_Calls:
         {
-            cmd.setType( QSimCommand::SetupCall );
-            cmd.setDestinationDevice( QSimCommand::Network );
-            cmd.setNumber( "1194" );
-            cmd.setText( "Dialing the Time Guy ..." );
-            command( cmd, this, SLOT(endSession()) );
+            sendCallsMenu();
         }
         break;
 
@@ -500,9 +500,85 @@ void DemoSimApplication::sportsMenu( const QSimTerminalResponse& resp )
                 endSession();
                 break;
         }
-    } else if ( resp.result() == QSimTerminalResponse::BackwardMove ) {
-        // Request to move backward.
-        sendSportsMenu();
+    } else {
+        // Unknown response - just go back to the main menu.
+        endSession();
+    }
+}
+
+void DemoSimApplication::sendCallsMenu()
+{
+    QSimCommand cmd;
+    QSimMenuItem item;
+    QList<QSimMenuItem> items;
+
+    cmd.setType( QSimCommand::SelectItem );
+    cmd.setTitle( "Setup Call Menu" );
+
+    item.setIdentifier( CallsMenu_Normal );
+    item.setLabel( "Normal" );
+    items += item;
+
+    item.setIdentifier( CallsMenu_Disconnect );
+    item.setLabel( "Disconnect other calls first" );
+    items += item;
+
+    item.setIdentifier( CallsMenu_Hold );
+    item.setLabel( "Hold other calls first" );
+    items += item;
+
+    cmd.setMenuItems( items );
+
+    command( cmd, this, SLOT(callsMenu(QSimTerminalResponse)) );
+}
+
+void DemoSimApplication::callsMenu( const QSimTerminalResponse& resp )
+{
+    QSimCommand cmd;
+
+    if ( resp.result() == QSimTerminalResponse::Success ) {
+        // Item selected.
+        switch ( resp.menuItem() ) {
+
+            case CallsMenu_Normal:
+            {
+                cmd.setType( QSimCommand::SetupCall );
+                cmd.setDestinationDevice( QSimCommand::Network );
+                cmd.setNumber( "1194" );
+                cmd.setText( "Call 1194?" );
+		cmd.setOtherText( "Normal call" );
+                command( cmd, this, SLOT(endSession()) );
+            }
+            break;
+
+            case CallsMenu_Disconnect:
+            {
+                cmd.setType( QSimCommand::SetupCall );
+                cmd.setDestinationDevice( QSimCommand::Network );
+                cmd.setNumber( "1194" );
+                cmd.setText( "Call 1194?" );
+		cmd.setOtherText( "Disconnect others, then call" );
+		cmd.setDisposition( QSimCommand::Disconnect );
+                command( cmd, this, SLOT(endSession()) );
+            }
+            break;
+
+            case CallsMenu_Hold:
+            {
+                cmd.setType( QSimCommand::SetupCall );
+                cmd.setDestinationDevice( QSimCommand::Network );
+                cmd.setNumber( "1194" );
+                cmd.setText( "Call 1194?" );
+		cmd.setOtherText( "Hold others, then call" );
+		cmd.setDisposition( QSimCommand::PutOnHold );
+                command( cmd, this, SLOT(endSession()) );
+            }
+            break;
+
+            default:
+                endSession();
+                break;
+        }
     } else {
         // Unknown response - just go back to the main menu.
         endSession();

@@ -75,6 +75,8 @@ protected slots:
     void mainMenuSelection( int id );
     void sendSportsMenu();
     void sportsMenu( const QSimTerminalResponse& resp );
+    void sendCallsMenu();
+    void callsMenu( const QSimTerminalResponse& resp );
     void startSticksGame();
     void sticksGameShow();
     void sticksGameLoop( const QSimTerminalResponse& resp );
