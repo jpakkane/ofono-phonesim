@@ -1,3 +1,8 @@
+ver 1.6:
+	Fix sw2 SIM filesystem response for binary read.
+	Fix missing Network destination for SIM Toolkit cases.
+	Add support for various types of SIM Toolkit Setup call.
+
 ver 1.5:
 	Fix EFimg to be a linear fixed file type.
 	Add an additional EFpnn info string.
