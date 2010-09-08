@@ -815,7 +815,8 @@ void QSimCommand::setHasHelp( bool value )
 
     Applies to: \c DisplayText, \c GetInkey, \c GetInput, \c SendSS, \c SendSMS,
     \c SendUSSD, \c PlayTone, \c ServiceSearch, \c GetServiceInformation,
-    \c RetrieveMultimediaMessage, \c SubmitMultimediaMessage.
+    \c RetrieveMultimediaMessage, \c SubmitMultimediaMessage, \c RunATCommand,
+    \c SendDTMF, \c LaunchBrowser, \c SetupIdleModeText, \c SetupCall.
 
     \sa setText()
 */
@@ -830,7 +831,8 @@ QString QSimCommand::text() const
 
     Applies to: \c DisplayText, \c GetInkey, \c GetInput, \c SendSS, \c SendSMS,
     \c SendUSSD, \c PlayTone, \c ServiceSearch, \c GetServiceInformation,
-    \c RetrieveMultimediaMessage, \c SubmitMultimediaMessage.
+    \c RetrieveMultimediaMessage, \c SubmitMultimediaMessage, \c RunATCommand,
+    \c SendDTMF, \c LaunchBrowser, \c SetupIdleModeText, \c SetupCall.
 
     \sa text()
 */

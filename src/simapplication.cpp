@@ -279,6 +279,7 @@ const QString DemoSimApplication::getName()
 #define MainMenu_IconsSE    7
 #define MainMenu_Finance    8
 #define MainMenu_Browser    9
+#define MainMenu_DTMF       10
 
 #define SportsMenu_Chess        1
 #define SportsMenu_Painting     2
@@ -331,6 +332,10 @@ void DemoSimApplication::mainMenu()
 
     item.setIdentifier( MainMenu_Browser );
     item.setLabel( "Web Browser" );
+    items += item;
+
+    item.setIdentifier( MainMenu_DTMF );
+    item.setLabel( "DialTones" );
     items += item;
 
     cmd.setMenuItems( items );
@@ -418,6 +423,12 @@ void DemoSimApplication::mainMenuSelection( int id )
         case MainMenu_Browser:
         {
             sendBrowserMenu();
+        }
+        break;
+
+        case MainMenu_DTMF:
+        {
+            sendDTMF();
         }
         break;
 
@@ -749,6 +760,18 @@ void DemoSimApplication::toneMenu( const QSimTerminalResponse& resp )
         // Unknown response - just go back to the main menu.
         endSession();
     }
+}
+
+void DemoSimApplication::sendDTMF()
+{
+    QSimCommand cmd;
+
+    cmd.setType( QSimCommand::SendDTMF );
+    cmd.setDestinationDevice( QSimCommand::Network );
+    cmd.setNumber( "1p234ppp5" );
+    cmd.setText( "Sending DTMFs to network" );
+
+    command( cmd, this, SLOT(endSession()) );
 }
 
 void DemoSimApplication::sendIconMenu()

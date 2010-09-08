@@ -92,6 +92,7 @@ protected slots:
     void displayTextResponse( const QSimTerminalResponse& resp );
     void sendBrowserMenu();
     void browserMenu( const QSimTerminalResponse& resp );
+    void sendDTMF();
 
 private:
     int sticksLeft;
