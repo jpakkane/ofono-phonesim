@@ -93,6 +93,22 @@ protected slots:
     void sendBrowserMenu();
     void browserMenu( const QSimTerminalResponse& resp );
     void sendDTMF();
+    void sendSendSSMenu();
+    void sendSSMenu( const QSimTerminalResponse& resp );
+    void sendCBMenu();
+    void CBMenu( const QSimTerminalResponse& resp );
+    void sendCFMenu();
+    void CFMenu( const QSimTerminalResponse& resp );
+    void sendCWMenu();
+    void CWMenu( const QSimTerminalResponse& resp );
+    void sendCLIPMenu();
+    void CLIPMenu( const QSimTerminalResponse& resp );
+    void sendCLIRMenu();
+    void CLIRMenu( const QSimTerminalResponse& resp );
+    void sendCoLPMenu();
+    void CoLPMenu( const QSimTerminalResponse& resp );
+    void sendCoLRMenu();
+    void CoLRMenu( const QSimTerminalResponse& resp );
 
 private:
     int sticksLeft;
