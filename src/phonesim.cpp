@@ -1013,11 +1013,13 @@ bool SimRules::simCommand( const QString& cmd )
         QSimTerminalResponse resp =
             QSimTerminalResponse::fromPdu( param.mid(5) );
 
-        if ( toolkitApp->response( resp ) )
-            return simCsimOk( QByteArray() );
+        /* Incase of successful case, response is sent inside
+         * the SimApplication::response function. response function
+         * also handles the notification of new command
+         */
+        if ( !toolkitApp->response( resp ) )
+            respond( "+CSIM: 4,6F00\\n\\nOK" );
 
-        /* Response to the wrong type of command. */
-        respond( "+CSIM: 4,6F00\\n\\nOK" );
         return true;
     } else if ( param.length() >= 5 && param[1] == (char)0x2c &&
                     param[4] == (char)0x10 && param.size() >= 21 ) {
