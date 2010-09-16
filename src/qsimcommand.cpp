@@ -94,6 +94,7 @@ public:
         defaultItem = other->defaultItem;
         menuItems = other->menuItems;
         url = other->url;
+        language = other->language;
         iconId = other->iconId;
         otherIconId = other->otherIconId;
         device = other->device;
@@ -155,6 +156,7 @@ public:
     uint defaultItem;
     QList<QSimMenuItem> menuItems;
     QString url;
+    QString language;
     uint iconId;
     uint otherIconId;
     int device;
@@ -1980,6 +1982,32 @@ void QSimCommand::setUrl( const QString& value )
 }
 
 /*!
+    Returns the language that will be used for any text string within
+    proactive commands or envelope command responses.
+
+    Applies to: \c LanguageNotification.
+
+    \sa setLanguage()
+*/
+QString QSimCommand::language() const
+{
+    return d->language;
+}
+
+/*!
+    Sets the language that will be used for any text string within
+    proactive commands or envelope command responses to \a value.
+
+    Applies to: \c LanguageNotification.
+
+    \sa language()
+*/
+void QSimCommand::setLanguage( const QString& value )
+{
+    dwrite()->language = value;
+}
+
+/*!
     Returns the icon identifier associated with this command.
     Returns zero if there is no icon.
 
@@ -3276,6 +3304,16 @@ QByteArray QSimCommand::toPdu( QSimCommand::ToPduOptions options ) const
             if ( immediateResponse() ) {
                 data += (char)0xAB;
                 data += (char)0x00;
+            }
+        }
+        break;
+
+        case LanguageNotification:
+        {
+            if ( !language().isEmpty() && language().length() == 2 ) {
+                data += (char)0xAD;
+                data += (char)0x02;
+                data += language();
             }
         }
         break;

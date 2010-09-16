@@ -281,6 +281,7 @@ const QString DemoSimApplication::getName()
 #define MainMenu_Browser    9
 #define MainMenu_DTMF       10
 #define MainMenu_SendSS     11
+#define MainMenu_Language   12
 
 #define SportsMenu_Chess        1
 #define SportsMenu_Painting     2
@@ -328,6 +329,10 @@ const QString DemoSimApplication::getName()
 #define CoLRMenu_Activation       1
 #define CoLRMenu_Interrogation    2
 #define CoLRMenu_Deactivation     3
+
+#define Language_Specific       1
+#define Language_Non_Specific   2
+#define Language_Main           3
 
 void DemoSimApplication::mainMenu()
 {
@@ -379,6 +384,10 @@ void DemoSimApplication::mainMenu()
 
     item.setIdentifier( MainMenu_SendSS );
     item.setLabel( "Send SS" );
+    items += item;
+
+    item.setIdentifier( MainMenu_Language );
+    item.setLabel( "Language Notification" );
     items += item;
 
     cmd.setMenuItems( items );
@@ -478,6 +487,12 @@ void DemoSimApplication::mainMenuSelection( int id )
         case MainMenu_SendSS:
         {
             sendSendSSMenu();
+        }
+        break;
+
+        case MainMenu_Language:
+        {
+            sendLanguageMenu();
         }
         break;
 
@@ -1639,6 +1654,67 @@ void DemoSimApplication::CoLRMenu( const QSimTerminalResponse& resp )
     } else if ( resp.result() == QSimTerminalResponse::BackwardMove ) {
         sendSendSSMenu();
     } else {
+        endSession();
+    }
+}
+
+void DemoSimApplication::sendLanguageMenu()
+{
+    QSimCommand cmd;
+    QSimMenuItem item;
+    QList<QSimMenuItem> items;
+
+    cmd.setType( QSimCommand::SelectItem );
+    cmd.setTitle( "Language Notification" );
+
+    item.setIdentifier( Language_Specific );
+    item.setLabel( "Specific Language" );
+    items += item;
+
+    item.setIdentifier( Language_Non_Specific );
+    item.setLabel( "Non-Specific Language" );
+    items += item;
+
+    item.setIdentifier( Language_Main );
+    item.setLabel( "Return to main menu" );
+    items += item;
+
+    cmd.setMenuItems( items );
+
+    command( cmd, this, SLOT(languageMenu(QSimTerminalResponse)) );
+}
+
+void DemoSimApplication::languageMenu( const QSimTerminalResponse& resp )
+{
+    QSimCommand cmd;
+
+    if ( resp.result() == QSimTerminalResponse::Success ) {
+
+        // Item selected.
+        switch ( resp.menuItem() ) {
+            case Language_Specific:
+            {
+                cmd.setType( QSimCommand::LanguageNotification );
+                cmd.setQualifier( 1 );
+                cmd.setLanguage( "se" );
+                command( cmd, this, SLOT(sendLanguageMenu()) );
+            }
+            break;
+
+            case Language_Non_Specific:
+            {
+                cmd.setType( QSimCommand::LanguageNotification );
+                cmd.setQualifier( 0 );
+                command( cmd, this, SLOT(sendLanguageMenu()) );
+            }
+            break;
+
+            default:
+                endSession();
+                break;
+        }
+    } else {
+        // Unknown response - just go back to the main menu.
         endSession();
     }
 }

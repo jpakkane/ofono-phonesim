@@ -338,6 +338,9 @@ public:
     QString url() const;
     void setUrl( const QString& value );
 
+    QString language() const;
+    void setLanguage( const QString& value );
+
     uint iconId() const;
     void setIconId( uint value );
 
