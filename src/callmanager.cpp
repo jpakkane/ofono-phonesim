@@ -643,6 +643,17 @@ void CallManager::dialingToConnected()
     // Transition the call to its new state.
     callList[index].state = CallState_Active;
     sendState( callList[index] );
+    // If the dialed number starts with 05123, disconnect the
+    // call after xx seconds, where xx is part of the dial string
+    // as 05123xx
+    if( callList[index].number.startsWith( "05123" ) ) {
+        bool ok;
+        QString temp = callList[index].number;
+        temp = temp.replace( "05123" , "" );
+        int timeout = temp.toInt( &ok, 10 );
+        timeout = ok ? timeout * 1000: 10000;
+        QTimer::singleShot( timeout, this, SLOT(hangup()) );
+    }
 }
 
 void CallManager::dialingToAlerting()
@@ -684,6 +695,12 @@ void CallManager::hangupTimeout()
             break;
         }
     }
+}
+
+void CallManager::hangup()
+{
+    send ( "NO CARRIER" );
+    hangupConnected();
 }
 
 void CallManager::sendNextRing()

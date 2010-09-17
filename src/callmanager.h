@@ -128,6 +128,9 @@ private slots:
     // Send the next RING indication for incoming calls.
     void sendNextRing();
 
+    // Hangup the connected call after xx seconds
+    void hangup();
+
 private:
     QList<CallInfo> callList;
     QTimer *connectTimer;
