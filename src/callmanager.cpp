@@ -651,7 +651,7 @@ void CallManager::dialingToConnected()
         QString temp = callList[index].number;
         temp = temp.replace( "05123" , "" );
         int timeout = temp.toInt( &ok, 10 );
-        timeout = ok ? timeout * 1000: 10000;
+        timeout = ok ? timeout * 1000 : 10000;
         QTimer::singleShot( timeout, this, SLOT(hangup()) );
     }
 }
