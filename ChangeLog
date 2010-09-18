@@ -1,3 +1,10 @@
+ver 1.7:
+	Fix issue with multiple proactive command indications.
+	Add support for simulating language notification.
+	Add support for simulating Send DTMF command.
+	Add support for simulating Send SS command.
+	Add support for simulating MT release of call.
+
 ver 1.6:
 	Fix sw2 SIM filesystem response for binary read.
 	Fix missing Network destination for SIM Toolkit cases.
