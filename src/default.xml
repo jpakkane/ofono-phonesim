@@ -1955,7 +1955,28 @@
 </chat>
 
 <chat>
-    <!-- Initiate USSD query that is not supported b the network -->
+    <!-- SAT initiated 7-Bit USSD query that is supported by the network -->
+    <command>AT+CUSD=1,"ABCD",240</command>
+    <response>+CUSD: 0,"USSD string received from SS",240\n\nOK</response>
+    <set name="USD" value="1"/>
+</chat>
+
+<chat>
+    <!-- SAT initiated 8-Bit USSD query that is supported by the network -->
+    <command>AT+CUSD=1,"41424344",68</command>
+    <response>+CUSD: 0,"5553534420737472696E672072656365697665642066726F6D205353",68\n\nOK</response>
+    <set name="USD" value="1"/>
+</chat>
+
+<chat>
+    <!-- SAT initiated UCS2 USSD query that is supported by the network -->
+    <command>AT+CUSD=1,"041704140420041004120421042204120423041904220415",72</command>
+    <response>+CUSD: 0,"005500530053004400200073007400720069006E0067002000720065006300650069007600650064002000660072006F006D002000530053",72\n\nOK</response>
+    <set name="USD" value="1"/>
+</chat>
+
+<chat>
+    <!-- Initiate USSD query that is not supported by the network -->
     <command>AT+CUSD=1,*</command>
     <response>+CUSD: 4\n\nOK</response>
     <set name="USD" value="1"/>

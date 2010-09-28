@@ -3162,8 +3162,10 @@ QByteArray QSimCommand::toPdu( QSimCommand::ToPduOptions options ) const
                 writeEFADN( data, text(), QSimCommand::NoPduOptions );
             if ( ( options & QSimCommand::PackedStrings ) != 0 )
                 writeTextString( data, number(), options, 0xF08A );
-            else
-                writeTextString( data, number(), options, 0x408A );
+            else if ( ( options & QSimCommand::UCS2Strings ) != 0 )
+                writeTextString( data, number(), options, 0x488A );
+            else // 8-Bit USSD
+                writeTextString( data, number(), options, 0x448A );
             writeIcon( data, iconId(), iconSelfExplanatory(), true );
             writeTextAttribute( data, textAttribute() );
         }

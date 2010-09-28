@@ -111,6 +111,8 @@ protected slots:
     void CoLRMenu( const QSimTerminalResponse& resp );
     void sendLanguageMenu();
     void languageMenu( const QSimTerminalResponse& resp );
+    void sendUSSDMenu();
+    void USSDMenu( const QSimTerminalResponse& resp );
 
 private:
     int sticksLeft;

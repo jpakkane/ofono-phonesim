@@ -20,6 +20,7 @@
 #include "simapplication.h"
 #include <qatutils.h>
 #include <qdebug.h>
+#include <QTextCodec>
 
 class SimApplicationPrivate
 {
@@ -282,6 +283,7 @@ const QString DemoSimApplication::getName()
 #define MainMenu_DTMF       10
 #define MainMenu_SendSS     11
 #define MainMenu_Language   12
+#define MainMenu_SendUSSD   13
 
 #define SportsMenu_Chess        1
 #define SportsMenu_Painting     2
@@ -333,6 +335,12 @@ const QString DemoSimApplication::getName()
 #define Language_Specific       1
 #define Language_Non_Specific   2
 #define Language_Main           3
+
+#define SendUSSD_7Bit       1
+#define SendUSSD_8Bit       2
+#define SendUSSD_UCS2       3
+#define SendUSSD_Error      4
+#define SendUSSD_Main       5
 
 void DemoSimApplication::mainMenu()
 {
@@ -388,6 +396,10 @@ void DemoSimApplication::mainMenu()
 
     item.setIdentifier( MainMenu_Language );
     item.setLabel( "Language Notification" );
+    items += item;
+
+    item.setIdentifier( MainMenu_SendUSSD );
+    item.setLabel( "Send USSD" );
     items += item;
 
     cmd.setMenuItems( items );
@@ -493,6 +505,12 @@ void DemoSimApplication::mainMenuSelection( int id )
         case MainMenu_Language:
         {
             sendLanguageMenu();
+        }
+        break;
+
+        case MainMenu_SendUSSD:
+        {
+            sendUSSDMenu();
         }
         break;
 
@@ -1706,6 +1724,102 @@ void DemoSimApplication::languageMenu( const QSimTerminalResponse& resp )
                 cmd.setType( QSimCommand::LanguageNotification );
                 cmd.setQualifier( 0 );
                 command( cmd, this, SLOT(sendLanguageMenu()) );
+            }
+            break;
+
+            default:
+                endSession();
+                break;
+        }
+    } else {
+        // Unknown response - just go back to the main menu.
+        endSession();
+    }
+}
+
+void DemoSimApplication::sendUSSDMenu()
+{
+    QSimCommand cmd;
+    QSimMenuItem item;
+    QList<QSimMenuItem> items;
+
+    cmd.setType( QSimCommand::SelectItem );
+    cmd.setTitle( "Send USSD" );
+
+    item.setIdentifier( SendUSSD_7Bit );
+    item.setLabel( "Send USSD - 7-Bit" );
+    items += item;
+
+    item.setIdentifier( SendUSSD_8Bit );
+    item.setLabel( "Send USSD - 8-Bit" );
+    items += item;
+
+    item.setIdentifier( SendUSSD_UCS2 );
+    item.setLabel( "Send USSD - UCS2" );
+    items += item;
+
+    item.setIdentifier( SendUSSD_Error );
+    item.setLabel( "Send USSD - Return Error" );
+    items += item;
+
+    item.setIdentifier( SendUSSD_Main );
+    item.setLabel( "Return to main menu" );
+    items += item;
+
+    cmd.setMenuItems( items );
+
+    command( cmd, this, SLOT(USSDMenu(QSimTerminalResponse)) );
+}
+
+void DemoSimApplication::USSDMenu( const QSimTerminalResponse& resp )
+{
+    QSimCommand cmd;
+
+    if ( resp.result() == QSimTerminalResponse::Success ) {
+
+        // Item selected.
+        switch ( resp.menuItem() ) {
+            case SendUSSD_7Bit:
+            {
+                cmd.setType( QSimCommand::SendUSSD );
+                cmd.setDestinationDevice( QSimCommand::Network );
+                cmd.setText( "7-bit USSD" );
+                cmd.setNumber( "ABCD" );
+                command( cmd, this, SLOT(sendUSSDMenu()),
+                         QSimCommand::PackedStrings );
+            }
+            break;
+
+            case SendUSSD_8Bit:
+            {
+                cmd.setType( QSimCommand::SendUSSD );
+                cmd.setDestinationDevice( QSimCommand::Network );
+                cmd.setText( "8-bit USSD" );
+                cmd.setNumber( "ABCD" );
+                command( cmd, this, SLOT(sendUSSDMenu()) );
+            }
+            break;
+
+            case SendUSSD_UCS2:
+            {
+                cmd.setType( QSimCommand::SendUSSD );
+                cmd.setDestinationDevice( QSimCommand::Network );
+                cmd.setText( "UCS2 USSD" );
+                QTextCodec *codec = QTextCodec::codecForName( "utf8" );
+                cmd.setNumber( codec->toUnicode( "ЗДРАВСТВУЙТЕ" ) );
+                command( cmd, this, SLOT(sendUSSDMenu()),
+                         QSimCommand::UCS2Strings );
+            }
+            break;
+
+            case SendUSSD_Error:
+            {
+                cmd.setType( QSimCommand::SendUSSD );
+                cmd.setDestinationDevice( QSimCommand::Network );
+                cmd.setText( "7-bit USSD" );
+                cmd.setNumber( "*100#" );
+                command( cmd, this, SLOT(sendUSSDMenu()),
+                         QSimCommand::PackedStrings );
             }
             break;
 
