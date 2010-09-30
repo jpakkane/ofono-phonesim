@@ -53,14 +53,11 @@ MAINTAINERCLEANFILES = Makefile.in \
 	aclocal.m4 configure depcomp missing install-sh
 
 
-$(src_phonesim_OBJECTS): src/control.moc src/ui_controlbase.h
+$(src_phonesim_OBJECTS): src/ui_controlbase.h
 
 QT_V_MOC   = $(QT_V_MOC_$(V))
 QT_V_MOC_  = $(QT_V_MOC_$(AM_DEFAULT_VERBOSITY))
 QT_V_MOC_0 = @echo "  MOC   " $@;
-
-src/control.moc: src/control.cpp
-	$(QT_V_MOC)$(MOC) $(QT_CFLAGS) $(INCLUDES) $< -o $@
 
 src/moc_%.cpp: src/%.h
 	$(QT_V_MOC)$(MOC) $< -o $@

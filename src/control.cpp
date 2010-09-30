@@ -18,7 +18,6 @@
 ****************************************************************************/
 
 #include "control.h"
-#include "ui_controlbase.h"
 #include <qpushbutton.h>
 #include <qslider.h>
 #include <qcheckbox.h>
@@ -33,80 +32,12 @@
 #include <QFile>
 #include <QDir>
 #include <QtGui/QHeaderView>
-#include "attranslator.h"
 
 #define TWO_BYTE_MAX 65535
 #define FOUR_CHAR 4
 #define FOUR_BYTE_MAX 0x7FFFFFFF
 #define EIGHT_CHAR 8
 #define HEX_BASE 16
-
-class ControlWidget : public QWidget
-{
-Q_OBJECT
-public:
-    ControlWidget( const QString&, Control*);
-
-    void handleFromData( const QString& );
-    void handleToData( const QString& );
-    void handleNewApp();
-
-private slots:
-    void sendSQ();
-    void sendBC();
-    void chargingChanged(int state);
-    void sendOPS();
-    void sendREG();
-    void sendCBM();
-    void sendSMSMessage();
-    void sendMGD();
-    void selectFile();
-    void sendSMSDatagram();
-    void sendCall();
-    void atChanged();
-    void resetTranslator();
-    void addVoicemail();
-    void delVoicemail();
-    void sendVMNotify( int type = 0 );
-    void sendEVMNotify();
-    void sendUSSD();
-    void cancelUSSD();
-    void simInsertRemove();
-    void simAppStart();
-    void simAppAbort();
-
-signals:
-    void unsolicitedCommand(const QString &);
-    void command(const QString &);
-    void variableChanged(const QString &, const QString &);
-    void switchTo(const QString &);
-    void startIncomingCall(const QString &);
-
-protected:
-    void closeEvent(QCloseEvent *event);
-
-private:
-    Ui_ControlBase *ui;
-    Control *p;
-    AtTranslator *translator;
-
-    class VoicemailItem {
-    public:
-        VoicemailItem( const QString &sender, bool urgent );
-
-        QTableWidgetItem sender;
-        QTableWidgetItem priority;
-        QTableWidgetItem pending;
-
-        bool notifyReceived;
-        bool notifyDeleted;
-        int id;
-
-        static int nextId;
-    };
-    QList<VoicemailItem> mailbox;
-};
-#include "control.moc"
 
 ControlWidget::ControlWidget(const QString &ruleFile, Control *parent)
     : QWidget(), p(parent)
