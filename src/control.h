@@ -31,6 +31,7 @@ class ControlWidget : public QWidget
 Q_OBJECT
 public:
     ControlWidget( const QString&, Control*);
+    ~ControlWidget();
 
     void handleFromData( const QString& );
     void handleToData( const QString& );

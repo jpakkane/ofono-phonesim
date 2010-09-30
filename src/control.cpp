@@ -89,6 +89,12 @@ void ControlWidget::closeEvent(QCloseEvent *event)
     hide();
 }
 
+ControlWidget::~ControlWidget()
+{
+    delete ui;
+    delete translator;
+}
+
 Control::Control(const QString& ruleFile, SimRules *sr, QObject *parent)
         : HardwareManipulator(sr, parent),
         widget(new ControlWidget(ruleFile, this))
