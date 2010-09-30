@@ -21,10 +21,44 @@
 #define CONTROL_H
 
 #include <hardwaremanipulator.h>
+#include <QtDBus/QtDBus>
+#include <QtScript>
 #include "ui_controlbase.h"
 #include "attranslator.h"
 
 class Control;
+
+class Script: public QDBusAbstractAdaptor
+{
+Q_OBJECT
+    Q_CLASSINFO("D-Bus Interface", "org.phonesim.Script")
+    Q_CLASSINFO("D-Bus Introspection", ""
+"  <interface name=\"org.phonesim.Script\">\n"
+"    <method name=\"SetPath\">\n"
+"      <arg direction=\"in\" type=\"s\" name=\"path\"/>\n"
+"    </method>\n"
+"    <method name=\"GetPath\">\n"
+"      <arg direction=\"out\" type=\"s\" name=\"path\"/>\n"
+"    </method>\n"
+"    <method name=\"Run\">\n"
+"      <arg direction=\"in\" type=\"s\" name=\"name\"/>\n"
+"      <arg direction=\"out\" type=\"s\" name=\"result\"/>\n"
+"    </method>\n"
+"  </interface>\n"
+        "")
+
+public:
+    Script(QObject *obj, Ui_ControlBase *ui);
+
+public slots:
+    void SetPath(const QString &path, const QDBusMessage &msg);
+    QString GetPath();
+    QString Run(const QString &name, const QDBusMessage &msg);
+
+private:
+    QString dirPath;
+    QScriptEngine engine;
+};
 
 class ControlWidget : public QWidget
 {
@@ -73,6 +107,7 @@ protected:
 
 private:
     Ui_ControlBase *ui;
+    Script *script;
     Control *p;
     AtTranslator *translator;
 
