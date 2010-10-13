@@ -21,7 +21,7 @@ AC_ARG_ENABLE(optimization, AC_HELP_STRING([--disable-optimization],
 	fi
 ])
 
-PKG_CHECK_MODULES(QT, QtCore QtGui QtXml QtNetwork  QtScript, dummy=yes,
+PKG_CHECK_MODULES(QT, QtCore QtGui QtXml QtNetwork  QtScript QtDBus, dummy=yes,
 						AC_MSG_ERROR(Qt is required))
 AC_SUBST(QT_CFLAGS)
 AC_SUBST(QT_LIBS)
