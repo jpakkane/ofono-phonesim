@@ -42,6 +42,7 @@
 ControlWidget::ControlWidget(const QString &ruleFile, Control *parent)
     : QWidget(), p(parent)
 {
+    QDBusConnection bus = QDBusConnection::sessionBus();
     QFileInfo info( ruleFile );
     QString specFile = info.absolutePath() + "/GSMSpecification.xml";
     if (!QFile::exists(specFile))
@@ -53,12 +54,12 @@ ControlWidget::ControlWidget(const QString &ruleFile, Control *parent)
 
     script = new Script(this, ui);
 
-    if (!QDBusConnection::systemBus().registerService("org.phonesim")) {
-        qWarning() << QDBusConnection::systemBus().lastError().message();
+    if (!bus.registerService("org.phonesim")) {
+        qWarning() << bus.lastError().message();
         exit(-1);
     }
 
-    QDBusConnection::systemBus().registerObject("/", script, QDBusConnection::ExportAllSlots);
+    bus.registerObject("/", script, QDBusConnection::ExportAllSlots);
 
     connect(ui->hsSignalQuality, SIGNAL(valueChanged(int)), this, SLOT(sendSQ()));
     connect(ui->hsBatteryCharge, SIGNAL(valueChanged(int)), this, SLOT(sendBC()));
@@ -483,7 +484,7 @@ void Script::SetPath(const QString &path, const QDBusMessage &msg)
     QDir dir(path);
     if (!dir.exists()) {
         QDBusMessage reply = msg.createErrorReply("org.phonesim.Error.PathNotFound", "Path doesn't exist");
-        QDBusConnection::systemBus().send(reply);
+        QDBusConnection::sessionBus().send(reply);
         return;
     }
 
@@ -508,7 +509,7 @@ QString Script::Run(const QString &name, const QDBusMessage &msg)
 
     if (!scriptFile.open(QIODevice::ReadOnly)) {
         QDBusMessage reply = msg.createErrorReply("org.phonesim.Error.FileNotFound", "Script file doesn't exist");
-        QDBusConnection::systemBus().send(reply);
+        QDBusConnection::sessionBus().send(reply);
         return QString();
     }
 
@@ -521,7 +522,7 @@ QString Script::Run(const QString &name, const QDBusMessage &msg)
     if (qsScript.isError()) {
         QString info = fileName + ", line " + qsScript.property("lineNumber").toString() + ", " + qsScript.toString();
         QDBusMessage reply = msg.createErrorReply("org.phonesim.Error.ScriptExecError", info);
-        QDBusConnection::systemBus().send(reply);
+        QDBusConnection::sessionBus().send(reply);
         return QString();
     }
 
