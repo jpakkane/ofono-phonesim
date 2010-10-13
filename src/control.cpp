@@ -39,6 +39,8 @@
 #define EIGHT_CHAR 8
 #define HEX_BASE 16
 
+#define SERVICE "org.ofono.phonesim"
+
 ControlWidget::ControlWidget(const QString &ruleFile, Control *parent)
     : QWidget(), p(parent)
 {
@@ -54,7 +56,7 @@ ControlWidget::ControlWidget(const QString &ruleFile, Control *parent)
 
     script = new Script(this, ui);
 
-    if (!bus.registerService("org.phonesim")) {
+    if (!bus.registerService(SERVICE)) {
         qWarning() << bus.lastError().message();
         exit(-1);
     }
@@ -483,7 +485,7 @@ void Script::SetPath(const QString &path, const QDBusMessage &msg)
 {
     QDir dir(path);
     if (!dir.exists()) {
-        QDBusMessage reply = msg.createErrorReply("org.phonesim.Error.PathNotFound", "Path doesn't exist");
+        QDBusMessage reply = msg.createErrorReply(SERVICE "Error.PathNotFound", "Path doesn't exist");
         QDBusConnection::sessionBus().send(reply);
         return;
     }
@@ -508,7 +510,7 @@ QString Script::Run(const QString &name, const QDBusMessage &msg)
     QFile scriptFile(fileName);
 
     if (!scriptFile.open(QIODevice::ReadOnly)) {
-        QDBusMessage reply = msg.createErrorReply("org.phonesim.Error.FileNotFound", "Script file doesn't exist");
+        QDBusMessage reply = msg.createErrorReply(SERVICE ".Error.FileNotFound", "Script file doesn't exist");
         QDBusConnection::sessionBus().send(reply);
         return QString();
     }
@@ -521,7 +523,7 @@ QString Script::Run(const QString &name, const QDBusMessage &msg)
     QScriptValue qsScript = engine.evaluate(contents);
     if (qsScript.isError()) {
         QString info = fileName + ", line " + qsScript.property("lineNumber").toString() + ", " + qsScript.toString();
-        QDBusMessage reply = msg.createErrorReply("org.phonesim.Error.ScriptExecError", info);
+        QDBusMessage reply = msg.createErrorReply(SERVICE "Error.ScriptExecError", info);
         QDBusConnection::sessionBus().send(reply);
         return QString();
     }
