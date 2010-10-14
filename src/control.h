@@ -31,9 +31,9 @@ class Control;
 class Script: public QDBusAbstractAdaptor
 {
 Q_OBJECT
-    Q_CLASSINFO("D-Bus Interface", "org.phonesim.Script")
+    Q_CLASSINFO("D-Bus Interface", "org.ofono.phonesim.Script")
     Q_CLASSINFO("D-Bus Introspection", ""
-"  <interface name=\"org.phonesim.Script\">\n"
+"  <interface name=\"org.ofono.phonesim.Script\">\n"
 "    <method name=\"SetPath\">\n"
 "      <arg direction=\"in\" type=\"s\" name=\"path\"/>\n"
 "    </method>\n"
