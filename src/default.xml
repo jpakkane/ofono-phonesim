@@ -615,7 +615,7 @@
 <chat>
     <!-- Query GPRS network registration result code presentation -->
     <command>AT+CGREG?</command>
-    <response>+CGREG: ${GREG},0\n\nOK</response>
+    <response>+CGREG: ${GREG},1\n\nOK</response>
 </chat>
 
 <chat>
@@ -2709,6 +2709,18 @@
     <!-- Query CGDCONT support -->
     <command>AT+CGDCONT=?</command>
     <response>+CGDCONT: (5-10),("IP"),,,(0-1),(0-1)\n+CGDCONT: (5-10),("IPV6"),,,(0-1),(0-1)\n\nOK</response>
+</chat>
+
+<chat>
+    <!-- Fake CGDCONT -->
+    <command>AT+CGDCONT=*</command>
+    <response>OK</response>
+</chat>
+
+<chat>
+    <!-- Fake CGACT -->
+    <command>AT+CGACT=*</command>
+    <response>OK</response>
 </chat>
 
 <chat>
