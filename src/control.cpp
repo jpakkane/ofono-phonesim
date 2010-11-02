@@ -233,12 +233,19 @@ void ControlWidget::selectFile()
 
 void ControlWidget::sendSMSDatagram()
 {
-    QString portStr = ui->lePort->text();
-    if ( portStr.contains(QRegExp("\\D")) ) {
+    QString dstPortStr = ui->leDstPort->text();
+    if ( dstPortStr.contains(QRegExp("\\D")) ) {
         p->warning(tr("Invalid Port"), tr("Port number can contain only digits" ));
         return;
     }
-    int port = portStr.toInt();
+    int dst = dstPortStr.toInt();
+
+    QString srcPortStr = ui->leSrcPort->text();
+    if ( srcPortStr.contains(QRegExp("\\D")) ) {
+        p->warning(tr("Invalid Port"), tr("Port number can contain only digits" ));
+        return;
+    }
+    int src = srcPortStr.toInt();
 
     QString sender = ui->leDatagramSender->text();
 
@@ -268,7 +275,7 @@ void ControlWidget::sendSMSDatagram()
     }
 
     //construct and place SMS datagram in SMSList
-    p->constructSMSDatagram(port, sender, data, contentType);
+    p->constructSMSDatagram(src, dst, sender, data, contentType);
 }
 
 void ControlWidget::sendCall()

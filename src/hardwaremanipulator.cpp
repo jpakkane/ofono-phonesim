@@ -161,7 +161,9 @@ void HardwareManipulator::sendSMS( const QSMSMessage &m )
     }
 }
 
-void HardwareManipulator::constructSMSDatagram(int port, const QString &sender, const QByteArray &data,
+void HardwareManipulator::constructSMSDatagram(int src, int dst,
+                                               const QString &sender,
+                                               const QByteArray &data,
                                                const QByteArray &contentType)
 {
     QWspPush pdu;
@@ -184,7 +186,8 @@ void HardwareManipulator::constructSMSDatagram(int port, const QString &sender, 
     buffer.close();
 
     QSMSMessage m;
-    m.setDestinationPort(port);
+    m.setDestinationPort(dst);
+    m.setSourcePort(src);
     m.setSender(sender);
     m.setApplicationData(appData);
 
