@@ -190,6 +190,7 @@ void HardwareManipulator::constructSMSDatagram(int src, int dst,
     m.setSourcePort(src);
     m.setSender(sender);
     m.setApplicationData(appData);
+    m.setTimestamp( QDateTime::currentDateTime() );
 
     sendSMS(m);
 }
