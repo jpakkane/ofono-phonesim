@@ -28,7 +28,7 @@ static void usage()
 {
     qWarning() << "Usage:"
                << QFileInfo(QCoreApplication::instance()->applicationFilePath()).fileName().toLocal8Bit().constData()
-               << "[-p port] [-gui] filename";
+               << "[-v] [-p port] [-gui] filename";
     exit(-1);
 }
 
@@ -43,7 +43,10 @@ int main(int argc, char **argv)
     // Parse the command-line.
     index = 1;
     for (index = 1; index < argc; index++) {
-        if (strcmp(argv[index],"-p") == 0) {
+        if (strcmp(argv[index],"-v") == 0) {
+            qWarning() << VERSION;
+            exit(0);
+        } else if (strcmp(argv[index],"-p") == 0) {
             index++;
             if (index >= argc) {
                 qWarning() << "ERROR: Got -p but missing port number";
