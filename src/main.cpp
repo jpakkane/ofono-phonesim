@@ -35,7 +35,7 @@ static void usage()
 int main(int argc, char **argv)
 {
     QApplication app(argc, argv);
-    QString filename;
+    QString filename = NULL;
     int port = 12345;
     int index;
     bool with_gui = false;
@@ -69,6 +69,11 @@ int main(int argc, char **argv)
             filename = argv[index];
         }
 
+    }
+
+    if (filename == NULL) {
+        qWarning() << "ERROR: filename must be the last argument";
+        usage();
     }
 
     PhoneSimServer *pss = new PhoneSimServer(filename, port, 0);
