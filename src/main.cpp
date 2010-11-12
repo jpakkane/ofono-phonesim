@@ -78,9 +78,10 @@ int main(int argc, char **argv)
 
     PhoneSimServer *pss = new PhoneSimServer(filename, port, 0);
 
-    if (with_gui)
+    if (with_gui) {
+        app.setQuitOnLastWindowClosed(false);
         pss->setHardwareManipulator(new ControlFactory);
-    else
+    } else
         pss->setHardwareManipulator(new HardwareManipulatorFactory);
 
     return app.exec();
