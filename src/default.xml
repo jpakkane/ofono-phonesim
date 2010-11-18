@@ -301,6 +301,9 @@
     <!-- CGSMS Bearer control -->
     <set name="CGSMS" value="3"/>
 
+    <!-- TTY (hearing impared) state -->
+    <set name="PTTY" value="1" />
+
 <!-- Time -->
 <!-- Enable for testing
 <unsolicited delay="3000" once="true">*TTZ: 2, "11/25/2007, 12:12:12+40", 0</unsolicited>
@@ -3205,6 +3208,19 @@ Z
 &amp;F
 *
 OK</response>
+</chat>
+
+<chat>
+    <!-- Set TTY (hearing impaired) set -->
+    <command>AT+PTTY=*</command>
+    <response>OK</response>
+    <set name="PTTY" value="*"/>
+</chat>
+
+<chat>
+    <!-- Query TTY (hearing impaired) state -->
+    <command>AT+PTTY?</command>
+    <response>+PTTY: ${PTTY}\n\nOK</response>
 </chat>
 
 <!-- SIM filesystem definition, based on standard test strings
