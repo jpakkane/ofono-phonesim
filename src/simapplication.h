@@ -117,6 +117,8 @@ protected slots:
     void smsMenuResp( const QSimTerminalResponse& resp );
     void smsSetDestResp( const QSimTerminalResponse& resp );
     void smsSetTextResp( const QSimTerminalResponse& resp );
+    void sendPollingMenu();
+    void pollingMenuResp( const QSimTerminalResponse& resp );
 
 private:
     int sticksLeft;

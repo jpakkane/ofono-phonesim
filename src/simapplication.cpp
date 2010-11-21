@@ -287,6 +287,7 @@ const QString DemoSimApplication::getName()
 #define MainMenu_Language   12
 #define MainMenu_SendUSSD   13
 #define MainMenu_SendSMS    14
+#define MainMenu_Polling    15
 
 #define SportsMenu_Chess        1
 #define SportsMenu_Painting     2
@@ -352,6 +353,11 @@ enum SendSMSMenuItems {
 	SendSMS_SetContents,
 };
 
+enum PollingMenuItems {
+	Polling_Off = 1,
+	Polling_30s,
+};
+
 void DemoSimApplication::mainMenu()
 {
     QSimCommand cmd;
@@ -414,6 +420,10 @@ void DemoSimApplication::mainMenu()
 
     item.setIdentifier( MainMenu_SendSMS );
     item.setLabel( "Send SMS request" );
+    items += item;
+
+    item.setIdentifier( MainMenu_Polling );
+    item.setLabel( "SIM Polling" );
     items += item;
 
     cmd.setMenuItems( items );
@@ -531,6 +541,12 @@ void DemoSimApplication::mainMenuSelection( int id )
         case MainMenu_SendSMS:
         {
             sendSMSMenu();
+        }
+        break;
+
+        case MainMenu_Polling:
+        {
+            sendPollingMenu();
         }
         break;
 
@@ -1977,4 +1993,54 @@ void DemoSimApplication::smsSetTextResp( const QSimTerminalResponse& resp )
 
     smsText = resp.text();
     sendSMSMenu();
+}
+
+void DemoSimApplication::sendPollingMenu()
+{
+    QSimCommand cmd;
+    QSimMenuItem item;
+    QList<QSimMenuItem> items;
+
+    cmd.setType( QSimCommand::SelectItem );
+    cmd.setTitle( "Polling Menu" );
+
+    item.setIdentifier( Polling_Off );
+    item.setLabel( "Polling Off" );
+    items += item;
+
+    item.setIdentifier( Polling_30s );
+    item.setLabel( "Poll Interval of 30s" );
+    items += item;
+
+    cmd.setMenuItems( items );
+
+    command( cmd, this, SLOT(pollingMenuResp(QSimTerminalResponse)) );
+}
+
+void DemoSimApplication::pollingMenuResp( const QSimTerminalResponse& resp )
+{
+    QSimCommand cmd;
+
+    if ( resp.result() != QSimTerminalResponse::Success ) {
+        /* Unknown response - just go back to the main menu. */
+        endSession();
+
+        return;
+    }
+
+    /* Item selected. */
+    switch ( resp.menuItem() ) {
+    case Polling_Off:
+        cmd.setType( QSimCommand::PollingOff );
+        cmd.setDestinationDevice( QSimCommand::ME );
+        command( cmd, this, SLOT(endSession()) );
+        break;
+
+    case Polling_30s:
+        cmd.setType( QSimCommand::PollInterval );
+        cmd.setDuration( 30000 );
+        cmd.setDestinationDevice( QSimCommand::ME );
+        command( cmd, this, SLOT(endSession()) );
+        break;
+    }
 }
