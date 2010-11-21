@@ -113,10 +113,15 @@ protected slots:
     void languageMenu( const QSimTerminalResponse& resp );
     void sendUSSDMenu();
     void USSDMenu( const QSimTerminalResponse& resp );
+    void sendSMSMenu();
+    void smsMenuResp( const QSimTerminalResponse& resp );
+    void smsSetDestResp( const QSimTerminalResponse& resp );
+    void smsSetTextResp( const QSimTerminalResponse& resp );
 
 private:
     int sticksLeft;
     bool immediateResponse;
+    QString smsDestNumber, smsText;
 };
 
 #endif

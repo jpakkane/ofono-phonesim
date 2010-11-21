@@ -21,6 +21,7 @@
 #include <qatutils.h>
 #include <qdebug.h>
 #include <QTextCodec>
+#include "qsmsmessage.h"
 
 class SimApplicationPrivate
 {
@@ -258,7 +259,8 @@ void SimApplication::endSession()
 }
 
 DemoSimApplication::DemoSimApplication( SimRules *rules, QObject *parent )
-    : SimApplication( rules, parent )
+    : SimApplication( rules, parent ), smsDestNumber( "12345" ),
+    smsText( "Hello" )
 {
 }
 
@@ -284,6 +286,7 @@ const QString DemoSimApplication::getName()
 #define MainMenu_SendSS     11
 #define MainMenu_Language   12
 #define MainMenu_SendUSSD   13
+#define MainMenu_SendSMS    14
 
 #define SportsMenu_Chess        1
 #define SportsMenu_Painting     2
@@ -341,6 +344,13 @@ const QString DemoSimApplication::getName()
 #define SendUSSD_UCS2       3
 #define SendUSSD_Error      4
 #define SendUSSD_Main       5
+
+enum SendSMSMenuItems {
+	SendSMS_Unpacked = 1,
+	SendSMS_Packed,
+	SendSMS_SetDestination,
+	SendSMS_SetContents,
+};
 
 void DemoSimApplication::mainMenu()
 {
@@ -400,6 +410,10 @@ void DemoSimApplication::mainMenu()
 
     item.setIdentifier( MainMenu_SendUSSD );
     item.setLabel( "Send USSD" );
+    items += item;
+
+    item.setIdentifier( MainMenu_SendSMS );
+    item.setLabel( "Send SMS request" );
     items += item;
 
     cmd.setMenuItems( items );
@@ -511,6 +525,12 @@ void DemoSimApplication::mainMenuSelection( int id )
         case MainMenu_SendUSSD:
         {
             sendUSSDMenu();
+        }
+        break;
+
+        case MainMenu_SendSMS:
+        {
+            sendSMSMenu();
         }
         break;
 
@@ -1831,4 +1851,130 @@ void DemoSimApplication::USSDMenu( const QSimTerminalResponse& resp )
         // Unknown response - just go back to the main menu.
         endSession();
     }
+}
+
+void DemoSimApplication::sendSMSMenu()
+{
+    QSimCommand cmd;
+    QSimMenuItem item;
+    QList<QSimMenuItem> items;
+
+    cmd.setType( QSimCommand::SelectItem );
+    cmd.setTitle( "Send SMS" );
+
+    item.setIdentifier( SendSMS_Unpacked );
+    item.setLabel( "Unpacked" );
+    items += item;
+
+    item.setIdentifier( SendSMS_Packed );
+    item.setLabel( "Packed text" );
+    items += item;
+
+    item.setIdentifier( SendSMS_SetDestination );
+    item.setLabel( "Set destination (" + smsDestNumber + ")" );
+    items += item;
+
+    item.setIdentifier( SendSMS_SetContents );
+    item.setLabel( "Set content text" );
+    items += item;
+
+    cmd.setMenuItems( items );
+
+    command( cmd, this, SLOT(smsMenuResp(QSimTerminalResponse)) );
+}
+
+void DemoSimApplication::smsMenuResp( const QSimTerminalResponse& resp )
+{
+    QSimCommand cmd;
+
+    if ( resp.result() != QSimTerminalResponse::Success ) {
+        /* Unknown response - just go back to the main menu. */
+        endSession();
+
+        return;
+    }
+
+    /* Item selected. */
+    switch ( resp.menuItem() ) {
+    case SendSMS_Unpacked:
+        break;
+
+    case SendSMS_Packed:
+        cmd.setSmsPacking( true );
+        break;
+
+    case SendSMS_SetDestination:
+        cmd.setType( QSimCommand::GetInput );
+        cmd.setText( "Enter recipient number" );
+        cmd.setWantDigits( true );
+        cmd.setMinimumLength( 2 );
+        cmd.setMaximumLength( 20 );
+        cmd.setDefaultText( smsDestNumber );
+        command( cmd, this, SLOT(smsSetDestResp(QSimTerminalResponse)) );
+        return;
+
+    case SendSMS_SetContents:
+        cmd.setType( QSimCommand::GetInput );
+        cmd.setText( "Enter message text" );
+        cmd.setMaximumLength( 100 );
+        cmd.setDefaultText( smsText );
+        command( cmd, this, SLOT(smsSetTextResp(QSimTerminalResponse)) );
+        return;
+    }
+
+    QSMSMessage sms;
+    sms.setValidityPeriod( -1 );
+    sms.setMessageClass( 2 );
+    sms.setProtocol( 0 );
+    sms.setRecipient( smsDestNumber );
+    sms.setText( smsText );
+    sms.setForceGsm( false );
+    sms.setBestScheme( QSMS_8BitAlphabet );
+    sms.setDataCodingScheme( 0xf6 );
+
+    cmd.setType( QSimCommand::SendSMS );
+    cmd.setText( "Sending an SMS to our friends at " + smsDestNumber );
+    cmd.setNumber( "123" );
+    cmd.addExtensionField( 0x8b, sms.toPdu().mid( 1 ) );
+    cmd.setDestinationDevice( QSimCommand::Network );
+
+    command( cmd, this, SLOT(endSession()) );
+}
+
+void DemoSimApplication::smsSetDestResp( const QSimTerminalResponse& resp )
+{
+    if ( resp.result() == QSimTerminalResponse::BackwardMove ) {
+        sendSMSMenu();
+
+        return;
+    }
+
+    if ( resp.result() != QSimTerminalResponse::Success ) {
+        /* Unknown response - just go back to the main menu. */
+        endSession();
+
+        return;
+    }
+
+    smsDestNumber = resp.text();
+    sendSMSMenu();
+}
+
+void DemoSimApplication::smsSetTextResp( const QSimTerminalResponse& resp )
+{
+    if ( resp.result() == QSimTerminalResponse::BackwardMove ) {
+        sendSMSMenu();
+
+        return;
+    }
+
+    if ( resp.result() != QSimTerminalResponse::Success ) {
+        /* Unknown response - just go back to the main menu. */
+        endSession();
+
+        return;
+    }
+
+    smsText = resp.text();
+    sendSMSMenu();
 }
