@@ -84,6 +84,7 @@ ControlWidget::ControlWidget(const QString &ruleFile, Control *parent)
     connect(ui->cbSimInserted, SIGNAL(clicked()), this, SLOT(simInsertRemove()));
     connect(ui->pbStart, SIGNAL(clicked()), this, SLOT(simAppStart()));
     connect(ui->pbAbort, SIGNAL(clicked()), this, SLOT(simAppAbort()));
+    connect(ui->pbReset, SIGNAL(clicked()), this, SLOT(modemSilentReset()));
 
     QStringList headers;
     headers << "Sender" << "Priority" << "Notification Status";
@@ -464,6 +465,11 @@ void ControlWidget::simAppStart()
 void ControlWidget::simAppAbort()
 {
     p->simAppAbort();
+}
+
+void ControlWidget::modemSilentReset()
+{
+    emit unsolicitedCommand("+CRST:");
 }
 
 Script::Script(QObject *obj, Ui_ControlBase *ui) : QDBusAbstractAdaptor(obj)

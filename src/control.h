@@ -94,6 +94,7 @@ private slots:
     void simInsertRemove();
     void simAppStart();
     void simAppAbort();
+    void modemSilentReset();
 
 signals:
     void unsolicitedCommand(const QString &);
