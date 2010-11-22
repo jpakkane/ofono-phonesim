@@ -1411,6 +1411,17 @@
 </chat>
 
 <chat>
+    <!-- Query originating line identifier restriction mode -->
+    <command>AT+COLR</command>
+    <response>+COLR: 1\n\nOK</response>
+</chat>
+
+<chat>
+    <!-- Query supported originating line identifier restriction modes -->
+    <command>AT+COLR=?</command>
+    <response>OK</response>
+</chat>
+<chat>
     <!-- Query closed user group status (not supported yet) -->
     <command>AT+CCUG?</command>
     <response>+CCUG: 0,0,0\n\nOK</response>
