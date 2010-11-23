@@ -124,6 +124,8 @@ protected slots:
     void sendTimersMenu();
     void timersMenuResp( const QSimTerminalResponse& resp );
     void timersCmdResp( const QSimTerminalResponse& resp );
+    void sendRefreshMenu();
+    void refreshMenuResp( const QSimTerminalResponse& resp );
 
 private:
     int sticksLeft;

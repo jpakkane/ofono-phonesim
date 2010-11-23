@@ -289,6 +289,7 @@ const QString DemoSimApplication::getName()
 #define MainMenu_SendSMS    14
 #define MainMenu_Polling    15
 #define MainMenu_Timers     16
+#define MainMenu_Refresh    17
 
 #define SportsMenu_Chess        1
 #define SportsMenu_Painting     2
@@ -438,6 +439,10 @@ void DemoSimApplication::mainMenu()
     item.setLabel( "Timers" );
     items += item;
 
+    item.setIdentifier( MainMenu_Refresh );
+    item.setLabel( "SIM Refresh" );
+    items += item;
+
     cmd.setMenuItems( items );
 
     command( cmd, 0, 0 );
@@ -565,6 +570,12 @@ void DemoSimApplication::mainMenuSelection( int id )
         case MainMenu_Timers:
         {
             sendTimersMenu();
+        }
+        break;
+
+        case MainMenu_Refresh:
+        {
+            sendRefreshMenu();
         }
         break;
 
@@ -2214,4 +2225,97 @@ bool DemoSimApplication::envelope( const QSimEnvelope& env )
     command( cmd, this, SLOT(endSession()) );
 
     return true;
+}
+
+void DemoSimApplication::sendRefreshMenu()
+{
+    QSimCommand cmd;
+    QSimMenuItem item;
+    QList<QSimMenuItem> items;
+
+    cmd.setType( QSimCommand::SelectItem );
+    cmd.setTitle( "SIM Refresh menu" );
+
+    /* Use qualifier value + 1 for id */
+    item.setIdentifier( 1 );
+    item.setLabel( "NAA Initialization+Full File Change Notification" );
+    items += item;
+
+    item.setIdentifier( 2 );
+    item.setLabel( "File Change Notification (EFmsisdn,EFecc,EFfdn)" );
+    items += item;
+
+    item.setIdentifier( 3 );
+    item.setLabel( "NAA Initialization+File Change Notification" );
+    items += item;
+
+    item.setIdentifier( 4 );
+    item.setLabel( "NAA Initialization" );
+    items += item;
+
+    item.setIdentifier( 5 );
+    item.setLabel( "UICC Reset" );
+    items += item;
+
+    item.setIdentifier( 6 );
+    item.setLabel( "NAA Application Reset" );
+    items += item;
+
+    item.setIdentifier( 7 );
+    item.setLabel( "NAA Session Reset" );
+    items += item;
+
+    cmd.setMenuItems( items );
+
+    command( cmd, this, SLOT(refreshMenuResp(QSimTerminalResponse)) );
+}
+
+void DemoSimApplication::refreshMenuResp( const QSimTerminalResponse& resp )
+{
+    QSimCommand cmd;
+
+    if ( resp.result() != QSimTerminalResponse::Success ) {
+        /* Unknown response - just go back to the main menu. */
+        endSession();
+
+        return;
+    }
+
+    /* Item selected. */
+
+    cmd.setType( QSimCommand::Refresh );
+    cmd.setQualifier( resp.menuItem() - 1 );
+    cmd.setDestinationDevice( QSimCommand::ME );
+    cmd.setText( "" );
+
+    if ( cmd.refreshType() == QSimCommand::FileChange ||
+            cmd.refreshType() == QSimCommand::InitAndFileChange ||
+            cmd.refreshType() == QSimCommand::NaaSessionReset ) {
+        QByteArray files;
+        files += (char) 0x03;
+        /* EFmsisdn */
+        files += (char) 0x3f;
+        files += (char) 0x00;
+        files += (char) 0x7f;
+        files += (char) 0xff;
+        files += (char) 0x6f;
+        files += (char) 0x40;
+        /* EFecc */
+        files += (char) 0x3f;
+        files += (char) 0x00;
+        files += (char) 0x7f;
+        files += (char) 0xff;
+        files += (char) 0x6f;
+        files += (char) 0xb7;
+        /* EFfdn */
+        files += (char) 0x3f;
+        files += (char) 0x00;
+        files += (char) 0x7f;
+        files += (char) 0xff;
+        files += (char) 0x6f;
+        files += (char) 0x3b;
+        cmd.addExtensionField( 0x92, files );
+    }
+
+    command( cmd, this, SLOT(endSession()) );
 }
