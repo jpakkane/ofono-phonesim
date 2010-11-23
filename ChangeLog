@@ -1,3 +1,12 @@
+ver 1.9:
+	Add SIM Polling commands to SIM application menu.
+	Add Send Short Message commands to SIM application menu.
+	Add support for setting port on datagram messages.
+	Add support for timestamps for datagram messages.
+	Add support for +COLR according to R9 of 27.007.
+	Add support for modem silent reset button.
+	Fix issue with exiting after the UI has been removed.
+
 ver 1.8:
 	Fix issue with FDN being enabled by default.
 	Add support for handling dummy GPRS contexts.
