@@ -145,6 +145,9 @@ public:
     int dataCodingScheme() const;
     void setDataCodingScheme( int value );
 
+    int timerId() const;
+    void setTimerId( int id );
+
     QByteArray extensionData() const;
     void setExtensionData( QByteArray value );
 

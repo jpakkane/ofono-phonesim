@@ -70,6 +70,8 @@ public:
 
     const QString getName();
 
+    bool envelope( const QSimEnvelope& env );
+
 protected slots:
     void mainMenu();
     void mainMenuSelection( int id );
@@ -119,11 +121,15 @@ protected slots:
     void smsSetTextResp( const QSimTerminalResponse& resp );
     void sendPollingMenu();
     void pollingMenuResp( const QSimTerminalResponse& resp );
+    void sendTimersMenu();
+    void timersMenuResp( const QSimTerminalResponse& resp );
+    void timersCmdResp( const QSimTerminalResponse& resp );
 
 private:
     int sticksLeft;
     bool immediateResponse;
     QString smsDestNumber, smsText;
+    QString timerStatus;
 };
 
 #endif

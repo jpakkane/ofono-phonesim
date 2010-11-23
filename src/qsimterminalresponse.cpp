@@ -142,6 +142,7 @@ public:
         duration = other->duration;
         menuItem = other->menuItem;
         dataCodingScheme = other->dataCodingScheme;
+        timerId = other->timerId;
         extensionData = other->extensionData;
     }
 
@@ -155,6 +156,7 @@ public:
     uint duration;
     uint menuItem;
     int dataCodingScheme;
+    uint timerId;
     QByteArray extensionData;
 };
 
@@ -449,6 +451,31 @@ void QSimTerminalResponse::setDataCodingScheme( int value )
 }
 
 /*!
+    Returns the number of the timer to which a Timer Management command was
+    addressed.
+
+    Applies to: \c TimerManagement
+
+    \sa setTimerId()
+*/
+int QSimTerminalResponse::timerId() const
+{
+    return d->timerId;
+}
+
+/*!
+    Sets the identifier of the timer to which the Timer Management response
+    applies.  \a id should be between 1 and 8 to address one of the
+    eight timers available.
+
+    \sa timerId()
+*/
+void QSimTerminalResponse::setTimerId( int id )
+{
+    d->timerId = id;
+}
+
+/*!
     Returns the extension data for this terminal response.  The extension data is
     appended after all other fields, and consists of zero or more BER tag-length-value
     field specifications.
@@ -479,11 +506,15 @@ void _qtopiaphone_writeTextString( QByteArray& binary, const QString& str,
 QString _qtopiaphone_decodeCodedString( const QByteArray& binary, uint posn, uint length );
 void _qtopiaphone_writeDuration( QByteArray& data, uint time );
 void _qtopiaphone_writeBerLength( QByteArray& binary, int length );
+void _qtopiaphone_writeTimerId( QByteArray& data, uint id );
+void _qtopiaphone_writeTimerValue( QByteArray& data, uint value );
 #define readBer _qtopiaphone_readBer
 #define writeTextString _qtopiaphone_writeTextString
 #define decodeCodedString _qtopiaphone_decodeCodedString
 #define writeDuration _qtopiaphone_writeDuration
 #define writeBerLength _qtopiaphone_writeBerLength
+#define writeTimerId _qtopiaphone_writeTimerId
+#define writeTimerValue _qtopiaphone_writeTimerValue
 
 /*!
     Returns the contents of an extension field.  The \a tag is an 8-bit value,
@@ -618,6 +649,27 @@ QSimTerminalResponse QSimTerminalResponse::fromPdu( const QByteArray& pdu )
                 // Menu item identifier, GSM 11.14, section 12.10.
                 if ( length > 0 )
                     resp.setMenuItem( (uint)(pdu[posn] & 0xFF) );
+            }
+            break;
+
+            case 0x24:
+            {
+                // Timer identifier.
+                resp.setTimerId( pdu[posn] );
+            }
+            break;
+
+            case 0x25:
+            {
+                // Timer value.
+                int secs = 0;
+                secs += ((unsigned char) pdu[posn + 0] >> 4) * 3600;
+                secs += ((unsigned char) pdu[posn + 0] & 15) * 36000;
+                secs += ((unsigned char) pdu[posn + 1] >> 4) * 60;
+                secs += ((unsigned char) pdu[posn + 1] & 15) * 600;
+                secs += ((unsigned char) pdu[posn + 2] >> 4) * 1;
+                secs += ((unsigned char) pdu[posn + 2] & 15) * 10;
+                resp.setDuration( secs * 1000 );
             }
             break;
 
@@ -782,6 +834,13 @@ QByteArray QSimTerminalResponse::toPdu() const
                 scheme = 0;
             }
             writeTextString( data, text(), options, (scheme << 8) | 0x8D );
+        }
+        break;
+
+        case QSimCommand::TimerManagement:
+        {
+            writeTimerId( data, timerId() );
+            writeTimerValue( data, duration() / 1000 );
         }
         break;
 

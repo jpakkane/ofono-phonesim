@@ -288,6 +288,7 @@ const QString DemoSimApplication::getName()
 #define MainMenu_SendUSSD   13
 #define MainMenu_SendSMS    14
 #define MainMenu_Polling    15
+#define MainMenu_Timers     16
 
 #define SportsMenu_Chess        1
 #define SportsMenu_Painting     2
@@ -358,6 +359,13 @@ enum PollingMenuItems {
 	Polling_30s,
 };
 
+enum TimersMenuItems {
+	Timers_Start = 1,
+	Timers_Stop,
+	Timers_Sleep,
+	Timers_Query,
+};
+
 void DemoSimApplication::mainMenu()
 {
     QSimCommand cmd;
@@ -424,6 +432,10 @@ void DemoSimApplication::mainMenu()
 
     item.setIdentifier( MainMenu_Polling );
     item.setLabel( "SIM Polling" );
+    items += item;
+
+    item.setIdentifier( MainMenu_Timers );
+    item.setLabel( "Timers" );
     items += item;
 
     cmd.setMenuItems( items );
@@ -547,6 +559,12 @@ void DemoSimApplication::mainMenuSelection( int id )
         case MainMenu_Polling:
         {
             sendPollingMenu();
+        }
+        break;
+
+        case MainMenu_Timers:
+        {
+            sendTimersMenu();
         }
         break;
 
@@ -2043,4 +2061,157 @@ void DemoSimApplication::pollingMenuResp( const QSimTerminalResponse& resp )
         command( cmd, this, SLOT(endSession()) );
         break;
     }
+}
+
+void DemoSimApplication::sendTimersMenu()
+{
+    QSimCommand cmd;
+    QSimMenuItem item;
+    QList<QSimMenuItem> items;
+
+    cmd.setType( QSimCommand::SelectItem );
+    cmd.setTitle( "Timer ops" );
+
+    item.setIdentifier( Timers_Start );
+    item.setLabel( "Reset timer 1 to 1h" );
+    items += item;
+
+    item.setIdentifier( Timers_Stop );
+    item.setLabel( "Stop all timers" );
+    items += item;
+
+    item.setIdentifier( Timers_Sleep );
+    item.setLabel( "Sleep for 10s using timer 2" );
+    items += item;
+
+    item.setIdentifier( Timers_Query );
+    item.setLabel( "Show statuses" );
+    items += item;
+
+    cmd.setMenuItems( items );
+
+    command( cmd, this, SLOT(timersMenuResp(QSimTerminalResponse)) );
+}
+
+void DemoSimApplication::timersMenuResp( const QSimTerminalResponse& resp )
+{
+    QSimCommand cmd;
+
+    if ( resp.result() != QSimTerminalResponse::Success ) {
+        /* Unknown response - just go back to the main menu. */
+        endSession();
+
+        return;
+    }
+
+    /* Item selected. */
+    switch ( resp.menuItem() ) {
+    case Timers_Start:
+        cmd.setQualifier( 0 );
+        cmd.setType( QSimCommand::TimerManagement );
+        cmd.setTimerId( 1 );
+        cmd.setDuration( 3600000 );
+        cmd.setDestinationDevice( QSimCommand::ME );
+        command( cmd, this, SLOT(endSession()) );
+        break;
+
+    case Timers_Stop:
+        cmd.setQualifier( 1 );
+        cmd.setType( QSimCommand::TimerManagement );
+        cmd.setTimerId( 1 );
+        cmd.setDestinationDevice( QSimCommand::ME );
+        command( cmd, this, SLOT(timersCmdResp(QSimTerminalResponse)) );
+        break;
+
+    case Timers_Sleep:
+        cmd.setQualifier( 0 );
+        cmd.setType( QSimCommand::TimerManagement );
+        cmd.setTimerId( 2 );
+        cmd.setDuration( 10000 );
+        cmd.setDestinationDevice( QSimCommand::ME );
+        command( cmd, NULL, NULL );
+        break;
+
+    case Timers_Query:
+        cmd.setQualifier( 2 );
+        cmd.setType( QSimCommand::TimerManagement );
+        cmd.setTimerId( 1 );
+        cmd.setDestinationDevice( QSimCommand::ME );
+        command( cmd, this, SLOT(timersCmdResp(QSimTerminalResponse)) );
+	timerStatus = "";
+        break;
+    }
+}
+
+void DemoSimApplication::timersCmdResp( const QSimTerminalResponse& resp )
+{
+    QSimCommand cmd;
+
+    if ( resp.command().qualifier() == 1 ) {
+        if ( resp.command().timerId() < 1 ) {
+            endSession();
+            return;
+        }
+
+        /* Stop the next timer */
+        cmd.setQualifier( 1 );
+        cmd.setType( QSimCommand::TimerManagement );
+        cmd.setTimerId( resp.timerId() + 1 );
+        cmd.setDestinationDevice( QSimCommand::ME );
+
+        if ( cmd.timerId() >= 8 )
+            command( cmd, this, SLOT(endSession()) );
+        else
+            command( cmd, this, SLOT(timersCmdResp(QSimTerminalResponse)) );
+
+        return;
+    }
+
+    if ( resp.command().qualifier() == 2 ) {
+        if ( resp.result() == QSimTerminalResponse::Success ) {
+            QString status;
+            status.sprintf( "Timer %i expires in %i:%02i:%02i.\n",
+                    resp.timerId(), resp.duration() / 3600000,
+                    (resp.duration() / 60000) % 60,
+                    (resp.duration() / 1000) % 60 );
+
+            timerStatus += status;
+        }
+
+        if ( resp.timerId() == 8 || resp.timerId() < 1 ) {
+            /* All timers done */
+            if ( timerStatus.length() == 0 )
+                timerStatus = "All timers are stopped.";
+
+            cmd.setType( QSimCommand::DisplayText );
+            cmd.setDestinationDevice( QSimCommand::Display );
+            cmd.setText( timerStatus.left(220) );
+            command( cmd, this, SLOT(endSession()) );
+            return;
+        }
+
+        /* Interrogate the next timer */
+        cmd.setQualifier( 2 );
+        cmd.setType( QSimCommand::TimerManagement );
+        cmd.setTimerId( resp.timerId() + 1 );
+        cmd.setDestinationDevice( QSimCommand::ME );
+        command( cmd, this, SLOT(timersCmdResp(QSimTerminalResponse)) );
+
+        return;
+    }
+}
+
+bool DemoSimApplication::envelope( const QSimEnvelope& env )
+{
+    if ( env.type() != QSimEnvelope::TimerExpiration )
+        return SimApplication::envelope( env );
+
+    QSimCommand cmd;
+
+    cmd.setType( QSimCommand::DisplayText );
+    cmd.setDestinationDevice( QSimCommand::Display );
+    cmd.setText( "Timer expired." );
+    command( cmd, this, SLOT(endSession()) );
+
+    return true;
 }

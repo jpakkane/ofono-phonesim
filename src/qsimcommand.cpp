@@ -66,6 +66,7 @@ public:
         defaultItem = 0;
         iconId = 0;
         otherIconId = 0;
+        timerId = 0;
         device = -1;
         qualifier = 0;
     }
@@ -97,6 +98,7 @@ public:
         language = other->language;
         iconId = other->iconId;
         otherIconId = other->otherIconId;
+        timerId = other->timerId;
         device = other->device;
         qualifier = other->qualifier;
         extensionData = other->extensionData;
@@ -159,6 +161,7 @@ public:
     QString language;
     uint iconId;
     uint otherIconId;
+    uint timerId;
     int device;
     int qualifier;
     QByteArray extensionData;
@@ -2173,6 +2176,33 @@ void QSimCommand::setSmsPacking( bool value )
 }
 
 /*!
+    Returns the number of the timer to which a Timer Management command is
+    addressed.
+
+    Applies to: \c TimerManagement
+
+    \sa setTimerId()
+*/
+int QSimCommand::timerId() const
+{
+    return d->timerId;
+}
+
+/*!
+    Sets the identifier of the timer to which the Timer Management command
+    is being sent.  \a id should be between 1 and 8 to address one of the
+    eight timers available.
+
+    Applies to: \c TimerManagement
+
+    \sa timerId()
+*/
+void QSimCommand::setTimerId( int id )
+{
+    dwrite()->timerId = id;
+}
+
+/*!
     Copy the QSimCommand object \a value.
 */
 QSimCommand& QSimCommand::operator=( const QSimCommand & value )
@@ -2669,6 +2699,27 @@ QSimCommand QSimCommand::fromPdu( const QByteArray& pdu )
             }
             break;
 
+            case 0x24:
+            {
+                // Timer identifier.
+                sc.setTimerId( pdu[posn] );
+            }
+            break;
+
+            case 0x25:
+            {
+                // Timer value.
+                int secs = 0;
+                secs += ((unsigned char) pdu[posn + 0] >> 4) * 3600;
+                secs += ((unsigned char) pdu[posn + 0] & 15) * 36000;
+                secs += ((unsigned char) pdu[posn + 1] >> 4) * 60;
+                secs += ((unsigned char) pdu[posn + 1] & 15) * 600;
+                secs += ((unsigned char) pdu[posn + 2] >> 4) * 1;
+                secs += ((unsigned char) pdu[posn + 2] & 15) * 10;
+                sc.setDuration( secs * 1000 );
+            }
+            break;
+
             case 0x2B:
             {
                 // Immediate response block.
@@ -2963,6 +3014,31 @@ static void writeTextAttribute( QByteArray& data, const QByteArray& attr )
     }
 }
 
+// Write a Timer Id field.
+void _qtopiaphone_writeTimerId( QByteArray& data, uint timerId )
+{
+    data += 0xa4;
+    data += 0x01;
+    data += (char) timerId;
+}
+#define writeTimerId _qtopiaphone_writeTimerId
+
+// Write a Timer Value field.
+void _qtopiaphone_writeTimerValue( QByteArray& data, uint value )
+{
+    if (!value)
+        return;
+
+    data += 0xa5;
+    data += 0x03;
+#define TO_BCD(bin) (char) ((((bin) / 10) & 0xf) | (((bin) % 10) << 4))
+    data += TO_BCD(value / 3600);
+    data += TO_BCD((value / 60) % 60);
+    data += TO_BCD(value % 60);
+#undef TO_BCD
+}
+#define writeTimerValue _qtopiaphone_writeTimerValue
+
 /*!
     \enum QSimCommand::ToPduOptions
     This enum defines additional options to use when encoding SIM commands with QSimCommand::toPdu().
@@ -3186,6 +3262,13 @@ QByteArray QSimCommand::toPdu( QSimCommand::ToPduOptions options ) const
             writeIcon( data, otherIconId(), otherIconSelfExplanatory(), true );
             writeTextAttribute( data, textAttribute() );
             writeTextAttribute( data, otherTextAttribute() );
+        }
+        break;
+
+        case TimerManagement:
+        {
+            writeTimerId( data, timerId() );
+            writeTimerValue( data, duration() / 1000 );
         }
         break;
 

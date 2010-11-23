@@ -356,6 +356,9 @@ public:
     bool smsPacking() const;
     void setSmsPacking( bool value );
 
+    int timerId() const;
+    void setTimerId( int id );
+
     int qualifier() const;
     void setQualifier( int value );
 
