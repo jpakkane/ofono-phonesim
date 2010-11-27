@@ -3222,6 +3222,12 @@ OK</response>
 </chat>
 
 <chat>
+    <!-- Query supported TTY values -->
+    <command>AT+PTTY=?</command>
+    <response>+PTTY: (0-1)\n\nOK</response>
+</chat>
+
+<chat>
     <!-- Set TTY (hearing impaired) set -->
     <command>AT+PTTY=*</command>
     <response>OK</response>
