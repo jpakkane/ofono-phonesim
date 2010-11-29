@@ -1140,7 +1140,7 @@ void DemoSimApplication::sendSendSSMenu()
     items += item;
 
     item.setIdentifier( SendSSMenu_CLIP );
-    item.setLabel( "CLIP (Calling Line Idnetification Presentation)" );
+    item.setLabel( "CLIP (Calling Line Identification Presentation)" );
     items += item;
 
     item.setIdentifier( SendSSMenu_CLIR );
