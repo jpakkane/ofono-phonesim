@@ -308,6 +308,7 @@ const QString DemoSimApplication::getName()
 #define SendSSMenu_CLIR     5
 #define SendSSMenu_CoLP     6
 #define SendSSMenu_CoLR     7
+#define SendSSMenu_CNAP     8
 
 #define CBMenu_Activation       1
 #define CBMenu_Interrogation    2
@@ -338,6 +339,10 @@ const QString DemoSimApplication::getName()
 #define CoLRMenu_Activation       1
 #define CoLRMenu_Interrogation    2
 #define CoLRMenu_Deactivation     3
+
+#define CNAPMenu_Activation       1
+#define CNAPMenu_Interrogation    2
+#define CNAPMenu_Deactivation     3
 
 #define Language_Specific       1
 #define Language_Non_Specific   2
@@ -1157,6 +1162,10 @@ void DemoSimApplication::sendSendSSMenu()
     item.setLabel( "CLIP (Calling Line Identification Presentation)" );
     items += item;
 
+    item.setIdentifier( SendSSMenu_CNAP );
+    item.setLabel( "CNAP (Calling Name Identification Presentation)" );
+    items += item;
+
     item.setIdentifier( SendSSMenu_CLIR );
     item.setLabel( "CLIR (Calling Line Identification Restriction)" );
     items += item;
@@ -1741,6 +1750,77 @@ void DemoSimApplication::CoLRMenu( const QSimTerminalResponse& resp )
                 cmd.setDestinationDevice( QSimCommand::Network );
                 cmd.setNumber( "#77#" );
                 command( cmd, this, SLOT(sendCoLRMenu()) );
+            }
+            break;
+
+            default:
+                endSession();
+                break;
+        }
+    } else if ( resp.result() == QSimTerminalResponse::BackwardMove ) {
+        sendSendSSMenu();
+    } else {
+        endSession();
+    }
+}
+
+void DemoSimApplication::sendCNAPMenu()
+{
+    QSimCommand cmd;
+    QSimMenuItem item;
+    QList<QSimMenuItem> items;
+
+    cmd.setType( QSimCommand::SelectItem );
+    cmd.setTitle( "CNAP" );
+
+    item.setIdentifier( CNAPMenu_Activation );
+    item.setLabel( "Activation" );
+    items += item;
+
+    item.setIdentifier( CNAPMenu_Interrogation );
+    item.setLabel( "Interrogation" );
+    items += item;
+
+    item.setIdentifier( CNAPMenu_Deactivation );
+    item.setLabel( "Deactivation" );
+    items += item;
+
+    cmd.setMenuItems( items );
+
+    command( cmd, this, SLOT(CNAPMenu(QSimTerminalResponse)) );
+}
+
+void DemoSimApplication::CNAPMenu( const QSimTerminalResponse& resp )
+{
+    QSimCommand cmd;
+
+    if ( resp.result() == QSimTerminalResponse::Success ) {
+        switch ( resp.menuItem() ) {
+
+            case CNAPMenu_Activation:
+            {
+                cmd.setType( QSimCommand::SendSS );
+                cmd.setDestinationDevice( QSimCommand::Network );
+                cmd.setNumber( "*300#" );
+                command( cmd, this, SLOT(sendCNAPMenu()) );
+            }
+            break;
+
+            case CNAPMenu_Interrogation:
+            {
+                cmd.setType( QSimCommand::SendSS );
+                cmd.setDestinationDevice( QSimCommand::Network );
+                cmd.setNumber( "*#300#" );
+                command( cmd, this, SLOT(sendCNAPMenu()) );
+            }
+            break;
+
+            case CNAPMenu_Deactivation:
+            {
+                cmd.setType( QSimCommand::SendSS );
+                cmd.setDestinationDevice( QSimCommand::Network );
+                cmd.setNumber( "#300#" );
+                command( cmd, this, SLOT(sendCNAPMenu()) );
             }
             break;
 

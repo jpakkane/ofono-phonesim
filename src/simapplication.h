@@ -111,6 +111,8 @@ protected slots:
     void CoLPMenu( const QSimTerminalResponse& resp );
     void sendCoLRMenu();
     void CoLRMenu( const QSimTerminalResponse& resp );
+    void sendCNAPMenu();
+    void CNAPMenu( const QSimTerminalResponse& resp );
     void sendLanguageMenu();
     void languageMenu( const QSimTerminalResponse& resp );
     void sendUSSDMenu();
