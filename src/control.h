@@ -101,7 +101,7 @@ signals:
     void command(const QString &);
     void variableChanged(const QString &, const QString &);
     void switchTo(const QString &);
-    void startIncomingCall(const QString &);
+    void startIncomingCall(const QString &, const QString &);
 
 protected:
     void closeEvent(QCloseEvent *event);

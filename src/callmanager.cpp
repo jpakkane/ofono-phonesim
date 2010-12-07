@@ -302,7 +302,8 @@ bool CallManager::command( const QString& cmd )
     return true;
 }
 
-void CallManager::startIncomingCall( const QString& number, bool dialBack )
+void CallManager::startIncomingCall( const QString& number,
+				const QString& name, bool dialBack )
 {
     // Bail out if there is already an incoming call.
     if ( idForIncoming() >= 0 ) {
@@ -328,7 +329,8 @@ void CallManager::startIncomingCall( const QString& number, bool dialBack )
     if ( info.state == CallState_Waiting ) {
         emit unsolicited( "+CCWA: " + QAtUtils::encodeNumber( number ) + ",1" );
     } else {
-        emit unsolicited( "RING\\n\\n+CLIP: " + QAtUtils::encodeNumber( number ) );
+        emit unsolicited( "RING\\n\\n+CLIP: " + QAtUtils::encodeNumber( number )
+				+ "\\n\\n+CNAP: \"" + name + "\"" );
     }
 
     // Announce the incoming call using Ericsson-style state notifications.
@@ -339,9 +341,9 @@ void CallManager::startIncomingCall( const QString& number, bool dialBack )
     ringTimer->start(2000);
 }
 
-void CallManager::startIncomingCall( const QString& number )
+void CallManager::startIncomingCall( const QString& number , const QString& name )
 {
-    startIncomingCall( number, false );
+    startIncomingCall( number, name, false );
 }
 
 void CallManager::hangupAll()
@@ -670,18 +672,18 @@ void CallManager::dialingToAlerting()
 
 void CallManager::dialBack()
 {
-    startIncomingCall( "1234567", true );
+    startIncomingCall( "1234567", "Alice", true );
 }
 
 void CallManager::dialBackWithHangup5()
 {
-    startIncomingCall( "1234567", true );
+    startIncomingCall( "1234567", "Bob", true );
     hangupTimer->start( 5000 );
 }
 
 void CallManager::dialBackWithHangup4()
 {
-    startIncomingCall( "1234567", true );
+    startIncomingCall( "1234567", "Mallory", true );
     hangupTimer->start( 4000 );
 }
 

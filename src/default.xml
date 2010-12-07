@@ -1373,6 +1373,25 @@
 </chat>
 
 <chat>
+    <!-- Query calling line identifier presentation mode -->
+    <command>AT+CNAP?</command>
+    <response>+CNAP: ${NAP},1\n\nOK</response>
+</chat>
+
+<chat>
+    <!-- Query supported calling line identifier presentation modes -->
+    <command>AT+CNAP=?</command>
+    <response>+CNAP: (0,1)\n\nOK</response>
+</chat>
+
+<chat>
+    <!-- Set calling line identifier presentation mode -->
+    <command>AT+CNAP=*</command>
+    <response>OK</response>
+    <set name="NAP" value="*"/>
+</chat>
+
+<chat>
     <!-- Query calling line identication restriction mode -->
     <command>AT+CLIR?</command>
     <response>+CLIR: ${LIR},${LIR_STATUS}\n\nOK</response>

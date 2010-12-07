@@ -93,8 +93,9 @@ public:
 
 public slots:
     // Start an incoming call simulation.
-    void startIncomingCall( const QString& number, bool dialBack );
-    void startIncomingCall( const QString& number );
+    void startIncomingCall( const QString& number, const QString& name,
+						bool dialBack );
+    void startIncomingCall( const QString& number, const QString& name );
 
 signals:
     // Send a response to a command.

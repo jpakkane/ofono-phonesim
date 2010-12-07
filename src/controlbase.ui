@@ -141,6 +141,22 @@
              <widget class="QLineEdit" name="leCaller"/>
             </item>
             <item>
+             <widget class="QLabel" name="lblCallerName">
+              <property name="text">
+               <string>Caller Na&amp;me</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignBottom|Qt::AlignLeading|Qt::AlignLeft</set>
+              </property>
+              <property name="buddy">
+               <cstring>leCallerName</cstring>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLineEdit" name="leCallerName"/>
+            </item>
+            <item>
              <layout class="QHBoxLayout">
               <property name="spacing">
                <number>6</number>
