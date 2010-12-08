@@ -290,6 +290,7 @@ const QString DemoSimApplication::getName()
 #define MainMenu_Polling    15
 #define MainMenu_Timers     16
 #define MainMenu_Refresh    17
+#define MainMenu_LocalInfo  18
 
 #define SportsMenu_Chess        1
 #define SportsMenu_Painting     2
@@ -347,6 +348,9 @@ const QString DemoSimApplication::getName()
 #define SendUSSD_UCS2       3
 #define SendUSSD_Error      4
 #define SendUSSD_Main       5
+
+#define LocalInfoMenu_Time  1
+#define LocalInfoMenu_Lang  2
 
 enum SendSMSMenuItems {
 	SendSMS_Unpacked = 1,
@@ -441,6 +445,10 @@ void DemoSimApplication::mainMenu()
 
     item.setIdentifier( MainMenu_Refresh );
     item.setLabel( "SIM Refresh" );
+    items += item;
+
+    item.setIdentifier( MainMenu_LocalInfo );
+    item.setLabel( "Provide Local Information" );
     items += item;
 
     cmd.setMenuItems( items );
@@ -576,6 +584,12 @@ void DemoSimApplication::mainMenuSelection( int id )
         case MainMenu_Refresh:
         {
             sendRefreshMenu();
+        }
+        break;
+
+        case MainMenu_LocalInfo:
+        {
+            sendLocalInfoMenu();
         }
         break;
 
@@ -2318,4 +2332,58 @@ void DemoSimApplication::refreshMenuResp( const QSimTerminalResponse& resp )
     }
 
     command( cmd, this, SLOT(endSession()) );
+}
+
+void DemoSimApplication::sendLocalInfoMenu()
+{
+    QSimCommand cmd;
+    QSimMenuItem item;
+    QList<QSimMenuItem> items;
+
+    cmd.setType( QSimCommand::SelectItem );
+    cmd.setTitle( "Provide Local Information" );
+
+    item.setIdentifier( LocalInfoMenu_Time );
+    item.setLabel( "Date, time and time zone" );
+    items += item;
+
+    item.setIdentifier( LocalInfoMenu_Lang );
+    item.setLabel( "Language setting" );
+    items += item;
+
+    cmd.setMenuItems( items );
+
+    command( cmd, this, SLOT(localInfoMenu(QSimTerminalResponse)) );
+}
+
+void DemoSimApplication::localInfoMenu( const QSimTerminalResponse& resp )
+{
+    QSimCommand cmd;
+
+    if ( resp.result() == QSimTerminalResponse::Success ) {
+        switch ( resp.menuItem() ) {
+
+            case LocalInfoMenu_Time:
+            {
+                cmd.setType( QSimCommand::ProvideLocalInformation );
+                cmd.setQualifier( 0x03 );
+                command( cmd, this, SLOT(sendLocalInfoMenu()) );
+            }
+            break;
+
+            case LocalInfoMenu_Lang:
+            {
+                cmd.setType( QSimCommand::ProvideLocalInformation );
+                cmd.setQualifier( 0x04 );
+                command( cmd, this, SLOT(sendLocalInfoMenu()) );
+            }
+            break;
+
+            default:
+                endSession();
+                break;
+        }
+    } else {
+        endSession();
+    }
 }
