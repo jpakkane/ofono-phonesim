@@ -2253,14 +2253,14 @@
 <chat>
     <!-- Enter PIN (PUK failure when PINNAME was "SIM PUK" from start) -->
     <command>AT+CPIN="*","*"</command>
-    <response>+CPIN: SIM PUK\nERROR</response>
+    <response>+CPIN: SIM PUK\n\nERROR</response>
     <set name="PINNAME" value="SIM PUK"/>
 </chat>
 
 <chat>
     <!-- Enter PIN (failure) -->
     <command>AT+CPIN=*</command>
-    <response>+CPIN: SIM PIN\nERROR</response>
+    <response>+CPIN: SIM PIN\n\nERROR</response>
     <set name="PINNAME" value="SIM PIN"/>
     <switch name="pinretry1"/>
 </chat>
@@ -2287,7 +2287,7 @@
     <chat>
         <!-- Enter PIN (failure) -->
         <command>AT+CPIN=*</command>
-        <response>+CPIN: SIM PIN\nERROR</response>
+        <response>+CPIN: SIM PIN\n\nERROR</response>
         <set name="PINNAME" value="SIM PIN"/>
         <switch name="pinretry2"/>
     </chat>
@@ -2316,7 +2316,7 @@
     <chat>
         <!-- Enter PIN (failure) -->
         <command>AT+CPIN=*</command>
-        <response>+CPIN: SIM PUK\nERROR</response>
+        <response>+CPIN: SIM PUK\n\nERROR</response>
         <set name="PINNAME" value="SIM PUK"/>
     </chat>
 
