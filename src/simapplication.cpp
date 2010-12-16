@@ -324,25 +324,17 @@ const QString DemoSimApplication::getName()
 #define CWMenu_Interrogation    2
 #define CWMenu_Deactivation     3
 
-#define CLIPMenu_Activation       1
-#define CLIPMenu_Interrogation    2
-#define CLIPMenu_Deactivation     3
+#define CLIPMenu_Interrogation    1
 
 #define CLIRMenu_Activation       1
 #define CLIRMenu_Interrogation    2
 #define CLIRMenu_Deactivation     3
 
-#define CoLPMenu_Activation       1
-#define CoLPMenu_Interrogation    2
-#define CoLPMenu_Deactivation     3
+#define CoLPMenu_Interrogation    1
 
-#define CoLRMenu_Activation       1
-#define CoLRMenu_Interrogation    2
-#define CoLRMenu_Deactivation     3
+#define CoLRMenu_Interrogation    1
 
-#define CNAPMenu_Activation       1
-#define CNAPMenu_Interrogation    2
-#define CNAPMenu_Deactivation     3
+#define CNAPMenu_Interrogation    1
 
 #define Language_Specific       1
 #define Language_Non_Specific   2
@@ -1489,16 +1481,8 @@ void DemoSimApplication::sendCLIPMenu()
     cmd.setType( QSimCommand::SelectItem );
     cmd.setTitle( "CLIP" );
 
-    item.setIdentifier( CLIPMenu_Activation );
-    item.setLabel( "Activation" );
-    items += item;
-
     item.setIdentifier( CLIPMenu_Interrogation );
     item.setLabel( "Interrogation" );
-    items += item;
-
-    item.setIdentifier( CLIPMenu_Deactivation );
-    item.setLabel( "Deactivation" );
     items += item;
 
     cmd.setMenuItems( items );
@@ -1512,33 +1496,14 @@ void DemoSimApplication::CLIPMenu( const QSimTerminalResponse& resp )
 
     if ( resp.result() == QSimTerminalResponse::Success ) {
         switch ( resp.menuItem() ) {
-
-            case CLIPMenu_Activation:
-            {
-                cmd.setType( QSimCommand::SendSS );
-                cmd.setDestinationDevice( QSimCommand::Network );
-                cmd.setNumber( "*30#" );
-                command( cmd, this, SLOT(sendCLIPMenu()) );
-            }
-            break;
-
             case CLIPMenu_Interrogation:
             {
                 cmd.setType( QSimCommand::SendSS );
                 cmd.setDestinationDevice( QSimCommand::Network );
                 cmd.setNumber( "*#30#" );
                 command( cmd, this, SLOT(sendCLIPMenu()) );
+                break;
             }
-            break;
-
-            case CLIPMenu_Deactivation:
-            {
-                cmd.setType( QSimCommand::SendSS );
-                cmd.setDestinationDevice( QSimCommand::Network );
-                cmd.setNumber( "#30#" );
-                command( cmd, this, SLOT(sendCLIPMenu()) );
-            }
-            break;
 
             default:
                 endSession();
@@ -1631,16 +1596,8 @@ void DemoSimApplication::sendCoLPMenu()
     cmd.setType( QSimCommand::SelectItem );
     cmd.setTitle( "CoLP" );
 
-    item.setIdentifier( CoLPMenu_Activation );
-    item.setLabel( "Activation" );
-    items += item;
-
     item.setIdentifier( CoLPMenu_Interrogation );
     item.setLabel( "Interrogation" );
-    items += item;
-
-    item.setIdentifier( CoLPMenu_Deactivation );
-    item.setLabel( "Deactivation" );
     items += item;
 
     cmd.setMenuItems( items );
@@ -1654,33 +1611,14 @@ void DemoSimApplication::CoLPMenu( const QSimTerminalResponse& resp )
 
     if ( resp.result() == QSimTerminalResponse::Success ) {
         switch ( resp.menuItem() ) {
-
-            case CoLPMenu_Activation:
-            {
-                cmd.setType( QSimCommand::SendSS );
-                cmd.setDestinationDevice( QSimCommand::Network );
-                cmd.setNumber( "*76#" );
-                command( cmd, this, SLOT(sendCoLPMenu()) );
-            }
-            break;
-
             case CoLPMenu_Interrogation:
             {
                 cmd.setType( QSimCommand::SendSS );
                 cmd.setDestinationDevice( QSimCommand::Network );
                 cmd.setNumber( "*#76#" );
                 command( cmd, this, SLOT(sendCoLPMenu()) );
+                break;
             }
-            break;
-
-            case CoLPMenu_Deactivation:
-            {
-                cmd.setType( QSimCommand::SendSS );
-                cmd.setDestinationDevice( QSimCommand::Network );
-                cmd.setNumber( "#76#" );
-                command( cmd, this, SLOT(sendCoLPMenu()) );
-            }
-            break;
 
             default:
                 endSession();
@@ -1702,16 +1640,8 @@ void DemoSimApplication::sendCoLRMenu()
     cmd.setType( QSimCommand::SelectItem );
     cmd.setTitle( "CoLR" );
 
-    item.setIdentifier( CoLRMenu_Activation );
-    item.setLabel( "Activation" );
-    items += item;
-
     item.setIdentifier( CoLRMenu_Interrogation );
     item.setLabel( "Interrogation" );
-    items += item;
-
-    item.setIdentifier( CoLRMenu_Deactivation );
-    item.setLabel( "Deactivation" );
     items += item;
 
     cmd.setMenuItems( items );
@@ -1725,33 +1655,14 @@ void DemoSimApplication::CoLRMenu( const QSimTerminalResponse& resp )
 
     if ( resp.result() == QSimTerminalResponse::Success ) {
         switch ( resp.menuItem() ) {
-
-            case CoLRMenu_Activation:
-            {
-                cmd.setType( QSimCommand::SendSS );
-                cmd.setDestinationDevice( QSimCommand::Network );
-                cmd.setNumber( "*77#" );
-                command( cmd, this, SLOT(sendCoLRMenu()) );
-            }
-            break;
-
             case CoLRMenu_Interrogation:
             {
                 cmd.setType( QSimCommand::SendSS );
                 cmd.setDestinationDevice( QSimCommand::Network );
                 cmd.setNumber( "*#77#" );
                 command( cmd, this, SLOT(sendCoLRMenu()) );
+                break;
             }
-            break;
-
-            case CoLRMenu_Deactivation:
-            {
-                cmd.setType( QSimCommand::SendSS );
-                cmd.setDestinationDevice( QSimCommand::Network );
-                cmd.setNumber( "#77#" );
-                command( cmd, this, SLOT(sendCoLRMenu()) );
-            }
-            break;
 
             default:
                 endSession();
@@ -1773,16 +1684,8 @@ void DemoSimApplication::sendCNAPMenu()
     cmd.setType( QSimCommand::SelectItem );
     cmd.setTitle( "CNAP" );
 
-    item.setIdentifier( CNAPMenu_Activation );
-    item.setLabel( "Activation" );
-    items += item;
-
     item.setIdentifier( CNAPMenu_Interrogation );
     item.setLabel( "Interrogation" );
-    items += item;
-
-    item.setIdentifier( CNAPMenu_Deactivation );
-    item.setLabel( "Deactivation" );
     items += item;
 
     cmd.setMenuItems( items );
@@ -1796,33 +1699,14 @@ void DemoSimApplication::CNAPMenu( const QSimTerminalResponse& resp )
 
     if ( resp.result() == QSimTerminalResponse::Success ) {
         switch ( resp.menuItem() ) {
-
-            case CNAPMenu_Activation:
-            {
-                cmd.setType( QSimCommand::SendSS );
-                cmd.setDestinationDevice( QSimCommand::Network );
-                cmd.setNumber( "*300#" );
-                command( cmd, this, SLOT(sendCNAPMenu()) );
-            }
-            break;
-
             case CNAPMenu_Interrogation:
             {
                 cmd.setType( QSimCommand::SendSS );
                 cmd.setDestinationDevice( QSimCommand::Network );
                 cmd.setNumber( "*#300#" );
                 command( cmd, this, SLOT(sendCNAPMenu()) );
+                break;
             }
-            break;
-
-            case CNAPMenu_Deactivation:
-            {
-                cmd.setType( QSimCommand::SendSS );
-                cmd.setDestinationDevice( QSimCommand::Network );
-                cmd.setNumber( "#300#" );
-                command( cmd, this, SLOT(sendCNAPMenu()) );
-            }
-            break;
 
             default:
                 endSession();
