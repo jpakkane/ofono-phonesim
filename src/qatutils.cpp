@@ -161,6 +161,9 @@ QString QAtUtils::decodeNumber( QAtResultParser& parser )
 */
 QString QAtUtils::encodeNumber( const QString& value, bool keepPlus )
 {
+    if (value.isNull())
+        return "\"\",129";
+
     if ( value.length() > 0 && value[0] == '+' ) {
         if ( keepPlus )
             return "\"" + quote( value ) + "\",145";

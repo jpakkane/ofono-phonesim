@@ -41,6 +41,7 @@ struct CallInfo
     QString     number;
     bool        incoming;
     bool        dialBack;
+    QString     name;
 };
 
 class QSimControlEvent;
@@ -154,6 +155,7 @@ private:
     bool hasCall( CallState state );
     void changeGroup( CallState oldState, CallState newState );
     void sendState( const CallInfo& info );
+    void emitRing( const CallInfo &info );
 };
 
 #endif

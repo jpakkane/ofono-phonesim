@@ -302,6 +302,41 @@ bool CallManager::command( const QString& cmd )
     return true;
 }
 
+void CallManager::emitRing(const CallInfo &info)
+{
+    QString str;
+
+    // Annouce the incoming call using GSM 27.007 notifications.
+    if ( info.state == CallState_Waiting ) {
+        str = "+CCWA: " + QAtUtils::encodeNumber( info.number ) + ",1,";
+
+        if (info.number.isNull())
+            str += "2";
+        else if (info.number.isEmpty())
+            str += "1";
+        else
+            str += "0";
+    } else {
+        str = "+CRING: VOICE";
+
+        if (info.number.isNull())
+            ;
+	else if (info.number.isEmpty())
+            str += "\\n\\n+CLIP: " + QAtUtils::encodeNumber( info.number ) + ",,,,1";
+        else
+            str += "\\n\\n+CLIP: " + QAtUtils::encodeNumber( info.number ) + ",,,,0";
+
+        if (info.name.isNull())
+            ;
+	else if (info.name.isEmpty())
+            str += "\\n\\n+CNAP: \"" + info.name + "\",1";
+        else
+            str += "\\n\\n+CNAP: \"" + info.name + "\",0";
+    }
+
+    emit unsolicited(str);
+}
+
 void CallManager::startIncomingCall( const QString& number,
 				const QString& name, bool dialBack )
 {
@@ -323,15 +358,10 @@ void CallManager::startIncomingCall( const QString& number,
     info.number = number;
     info.incoming = true;
     info.dialBack = dialBack;
+    info.name = name;
     callList += info;
 
-    // Annouce the incoming call using GSM 27.007 notifications.
-    if ( info.state == CallState_Waiting ) {
-        emit unsolicited( "+CCWA: " + QAtUtils::encodeNumber( number ) + ",1" );
-    } else {
-        emit unsolicited( "RING\\n\\n+CLIP: " + QAtUtils::encodeNumber( number )
-				+ "\\n\\n+CNAP: \"" + name + "\"" );
-    }
+    emitRing(info);
 
     // Announce the incoming call using Ericsson-style state notifications.
     sendState( info );
@@ -714,7 +744,7 @@ void CallManager::sendNextRing()
         } else {
             for ( int index = 0; index < callList.size(); ++index )
                 if ( callList[index].id == idForIncoming() && callList[index].state == CallState_Incoming )
-                    emit unsolicited( "RING" );
+                    emitRing(callList[index]);
             ringTimer->start(2000);
         }
     }

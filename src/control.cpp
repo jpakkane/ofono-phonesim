@@ -281,7 +281,16 @@ void ControlWidget::sendSMSDatagram()
 
 void ControlWidget::sendCall()
 {
-    emit startIncomingCall( ui->leCaller->text() , ui->leCallerName->text() );
+    QString number;
+    QString name;
+
+    if (ui->cbCaller->isChecked())
+        number = ui->leCaller->text();
+
+    if (ui->cbCallerName->isChecked())
+        name = ui->leCallerName->text();
+
+    emit startIncomingCall( number, name );
 }
 
 void ControlWidget::handleFromData( const QString& cmd )
