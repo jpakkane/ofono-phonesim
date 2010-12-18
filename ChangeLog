@@ -1,3 +1,11 @@
+ver 1.10:
+	Add SIM Refresh commands to SIM application menu.
+	Add provide local info command to SIM application menu.
+	Add timer management to SIM application menu.
+	Add support for TTY query.
+	Add support for CNAP SS command.
+	Add ability to provide CLIP / CNAP information.
+
 ver 1.9:
 	Add SIM Polling commands to SIM application menu.
 	Add Send Short Message commands to SIM application menu.
