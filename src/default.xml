@@ -3352,6 +3352,10 @@ OK</response>
     00 32 00 32 FF FF FF FF FF FF FF FF FF FF FF FF
 </file>
 
+<file name="EFcfis" recordsize="16">
+    01 1E FF FF FF FF FF FF FF FF FF FF FF FF FF FF
+</file>
+
 <!-- Record 1
      Length of alpha identifier: 32 chars
      Alpha Identifier: "ABC"
@@ -3489,6 +3493,10 @@ OK</response>
 
 <file name="EFcphs_info">
     02 3C 03 00
+</file>
+
+<file name="EFcphs_cff">
+    55 55
 </file>
 
 <file name="EFcphs_mbdn" recordsize="48">
