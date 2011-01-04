@@ -2822,7 +2822,7 @@ void _qtopiaphone_writeTextString( QByteArray& binary, const QString& str,
         // Special form for empty strings.
         binary += (char)tag;
         binary += (char)0x01;
-        binary += (char)options;
+        binary += (char)0x00;
         return;
     }
     int schemeMask = ((tag & 0xFF00) >> 8);     // For USSD string output.
