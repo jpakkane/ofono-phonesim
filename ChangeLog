@@ -1,3 +1,8 @@
+ver 1.11:
+	Add support for CFIS and CPHS SIM files.
+	Add support for SIM Toolkit null text strings.
+	Add support for using GSM Packed for empty text.
+
 ver 1.10:
 	Add SIM Refresh commands to SIM application menu.
 	Add provide local info command to SIM application menu.
