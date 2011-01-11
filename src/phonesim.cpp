@@ -546,10 +546,12 @@ SimRules::SimRules( int fd, QObject *p,  const QString& filename, HardwareManipu
     incomingUsed = 0;
     lineUsed = 0;
     defaultToolkitApp = toolkitApp = new DemoSimApplication( this, this );
+    conformanceApp = new ConformanceSimApplication( this, this );
     connect( _callManager, SIGNAL(controlEvent(QSimControlEvent)),
              toolkitApp, SLOT(controlEvent(QSimControlEvent)) );
 
     simApps.append( toolkitApp );
+    simApps.append( conformanceApp );
 
     if ( machine )
         machine->handleNewApp();
@@ -842,8 +844,7 @@ void SimRules::tryReadCommand()
 
 void SimRules::destruct()
 {
-    if ( toolkitApp != defaultToolkitApp )
-        delete toolkitApp;
+    delete conformanceApp;
     delete defaultToolkitApp;
     toolkitApp = NULL;
 

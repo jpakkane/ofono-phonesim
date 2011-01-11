@@ -138,4 +138,18 @@ private:
     QString timerStatus;
 };
 
+class ConformanceSimApplication : public SimApplication
+{
+    Q_OBJECT
+public:
+    ConformanceSimApplication( SimRules *rules, QObject *parent = 0 );
+    ~ConformanceSimApplication();
+
+    const QString getName();
+
+protected slots:
+    void mainMenu();
+    void mainMenuSelection( int id );
+};
+
 #endif

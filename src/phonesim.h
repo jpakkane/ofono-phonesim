@@ -334,6 +334,7 @@ private:
     SimFileSystem *fileSystem;
     SimApplication *defaultToolkitApp;
     SimApplication *toolkitApp;
+    SimApplication *conformanceApp;
     QList<SimApplication *> simApps;
 
     // Get a particular state object.

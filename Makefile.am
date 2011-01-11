@@ -26,7 +26,8 @@ src_phonesim_SOURCES = src/main.cpp \
 			src/qsimcommand.h src/qsimcommand.cpp \
 			src/qsimenvelope.h src/qsimenvelope.cpp \
 			src/qsimterminalresponse.h src/qsimterminalresponse.cpp \
-			src/qsimcontrolevent.h src/qsimcontrolevent.cpp
+			src/qsimcontrolevent.h src/qsimcontrolevent.cpp \
+			src/conformancesimapplication.cpp
 
 nodist_src_phonesim_SOURCES = src/ui_controlbase.h \
 				src/moc_control.cpp \
