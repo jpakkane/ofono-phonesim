@@ -38,6 +38,7 @@ const QString ConformanceSimApplication::getName()
 }
 
 #define ConformanceMenu_DisplayText 1
+#define ConformanceMenu_GetInkey    2
 
 #define NormalMenu_1_1    1
 #define NormalMenu_1_2    2
@@ -72,6 +73,18 @@ const QString ConformanceSimApplication::getName()
 #define Display_Text_Attribute          10
 #define Display_Text_Main               11
 
+#define GetInkeyMenu_Normal              1
+#define GetInkeyMenu_No_Response         2
+#define GetInkeyMenu_Cyrillic_Display_1  3
+#define GetInkeyMenu_Cyrillic_Display_2  4
+#define GetInkeyMenu_Cyrillic_Entry      5
+#define GetInkeyMenu_YesNo_Response      6
+#define GetInkeyMenu_Icon                7
+#define GetInkeyMenu_Help                8
+#define GetInkeyMenu_Variable_Timeout    9
+#define GetInkeyMenu_Text_Attribute     10
+#define GetInkeyMenu_Main               11
+
 void ConformanceSimApplication::mainMenu()
 {
     QSimCommand cmd;
@@ -82,6 +95,10 @@ void ConformanceSimApplication::mainMenu()
 
     item.setIdentifier( ConformanceMenu_DisplayText );
     item.setLabel( "Display Text" );
+    items += item;
+
+    item.setIdentifier( ConformanceMenu_GetInkey );
+    item.setLabel( "Get Inkey" );
     items += item;
 
     cmd.setMenuItems( items );
@@ -95,6 +112,12 @@ void ConformanceSimApplication::mainMenuSelection( int id )
         case ConformanceMenu_DisplayText:
         {
             sendDisplayTextMenu();
+        }
+        break;
+
+        case ConformanceMenu_GetInkey:
+        {
+            sendGetInkeyMenu();
         }
         break;
 
@@ -572,6 +595,482 @@ void ConformanceSimApplication::DisplayTextIconMenu(
         case IconMenu_Main:
         {
             sendDisplayTextMenu();
+        }
+        break;
+
+        default:
+            endSession();
+        break;
+    }
+}
+
+void ConformanceSimApplication::sendGetInkeyMenu()
+{
+    QSimCommand cmd;
+    QSimMenuItem item;
+    QList<QSimMenuItem> items;
+
+    cmd.setType( QSimCommand::SelectItem );
+    cmd.setTitle( "Get Inkey" );
+
+    item.setIdentifier( GetInkeyMenu_Normal );
+    item.setLabel( "Normal" );
+    items += item;
+
+    item.setIdentifier( GetInkeyMenu_No_Response );
+    item.setLabel( "No response from user" );
+    items += item;
+
+    item.setIdentifier( GetInkeyMenu_Cyrillic_Display_1 );
+    item.setLabel( "UCS2 display in Cyrillic" );
+    items += item;
+
+    item.setIdentifier( GetInkeyMenu_Cyrillic_Display_2 );
+    item.setLabel( "max. length UCS2 display in Cyrillic" );
+    items += item;
+
+    item.setIdentifier( GetInkeyMenu_Cyrillic_Entry );
+    item.setLabel( "UCS2 entry in Cyrillic" );
+    items += item;
+
+    item.setIdentifier( GetInkeyMenu_YesNo_Response );
+    item.setLabel( "Yes/No response for the input" );
+    items += item;
+
+    item.setIdentifier( GetInkeyMenu_Icon );
+    item.setLabel( "Display of icon" );
+    items += item;
+
+    item.setIdentifier( GetInkeyMenu_Help );
+    item.setLabel( "Help Information" );
+    items += item;
+
+    item.setIdentifier( GetInkeyMenu_Variable_Timeout );
+    item.setLabel( "Variable Time out" );
+    items += item;
+
+    item.setIdentifier( GetInkeyMenu_Text_Attribute );
+    item.setLabel( "Support of Text Attribute" );
+    items += item;
+
+    item.setIdentifier( GetInkeyMenu_Main );
+    item.setLabel( "Return to main menu" );
+    items += item;
+
+    cmd.setMenuItems( items );
+
+    command( cmd, this, SLOT(GetInkeyMenu(QSimTerminalResponse)) );
+}
+
+void ConformanceSimApplication::sendGetInkeyNormalMenu()
+{
+    QSimCommand cmd;
+    QSimMenuItem item;
+    QList<QSimMenuItem> items;
+
+    cmd.setType( QSimCommand::SelectItem );
+    cmd.setTitle( "Get Inkey (Normal)" );
+
+    item.setIdentifier( NormalMenu_1_1 );
+    item.setLabel( "Digits only for character set, unpacked 8-bit" );
+    items += item;
+
+    item.setIdentifier( NormalMenu_1_2 );
+    item.setLabel( "Digits only for character set, packed text string" );
+    items += item;
+
+    item.setIdentifier( NormalMenu_1_3 );
+    item.setLabel( "Backward move" );
+    items += item;
+
+    item.setIdentifier( NormalMenu_1_4 );
+    item.setLabel( "Abort" );
+    items += item;
+
+    item.setIdentifier( NormalMenu_1_5 );
+    item.setLabel( "SMS default alphabet for character set, unpacked 8-bit" );
+    items += item;
+
+    item.setIdentifier( NormalMenu_1_6 );
+    item.setLabel( "Max length for the Text String, successful" );
+    items += item;
+
+    item.setIdentifier( NormalMenu_Main );
+    item.setLabel( "Return to Get Inkey main menu" );
+    items += item;
+
+    cmd.setMenuItems( items );
+
+    command( cmd, this, SLOT(GetInkeyNormalMenu(QSimTerminalResponse)) );
+}
+
+void ConformanceSimApplication::sendGetInkeyIconMenu()
+{
+    QSimCommand cmd;
+    QSimMenuItem item;
+    QList<QSimMenuItem> items;
+
+    cmd.setType( QSimCommand::SelectItem );
+    cmd.setTitle( "Get Inkey (Icon support)" );
+
+    item.setIdentifier( IconMenu_1A );
+    item.setLabel( "basic icon, self-explanatory, successful" );
+    items += item;
+
+    item.setIdentifier( IconMenu_2A );
+    item.setLabel( "display of colour icon, successful" );
+    items += item;
+
+    item.setIdentifier( IconMenu_3A );
+    item.setLabel( "basic icon, not self-explanatory, successful" );
+    items += item;
+
+    item.setIdentifier( IconMenu_4A );
+    item.setLabel( "Colour icon, non self-explanatory, successful" );
+    items += item;
+
+    item.setIdentifier( IconMenu_5A );
+    item.setLabel( "basic icon, null text string, unsuccessful" );
+    items += item;
+
+    item.setIdentifier( IconMenu_6A );
+    item.setLabel( "basic icon, empty text string, unsuccessful" );
+    items += item;
+
+    item.setIdentifier( IconMenu_Main );
+    item.setLabel( "Return to Get Inkey main menu" );
+    items += item;
+
+    cmd.setMenuItems( items );
+
+    command( cmd, this, SLOT(GetInkeyIconMenu(QSimTerminalResponse)) );
+}
+
+void ConformanceSimApplication::sendHelpInfo( const QSimTerminalResponse& resp )
+{
+    if ( resp.result() == QSimTerminalResponse::HelpInformationRequested ) {
+            QSimCommand cmd;
+
+            cmd.setType( QSimCommand::DisplayText );
+            cmd.setDestinationDevice( QSimCommand::Display );
+            cmd.setClearAfterDelay( false );
+            cmd.setText( "Help information" );
+            command( cmd, this, SLOT(GetInkeyMenu(QSimTerminalResponse)) );
+    } else
+            endSession();
+}
+
+void ConformanceSimApplication::GetInkeyMenu( const QSimTerminalResponse& resp )
+{
+    QSimCommand cmd;
+
+    if ( resp.command().type() == QSimCommand::DisplayText &&
+                resp.result() == QSimTerminalResponse::Success ) {
+            cmd.setType( QSimCommand::GetInkey );
+            cmd.setDestinationDevice( QSimCommand::ME );
+            cmd.setWantDigits(true);
+            cmd.setHasHelp( true );
+            cmd.setText( "Enter \"+\"" );
+            command( cmd, this, SLOT(sendGetInkeyMenu()) );
+            return;
+    }
+
+    if ( resp.result() != QSimTerminalResponse::Success ) {
+        /* Unknown response - just go back to the main menu. */
+        endSession();
+
+        return;
+    }
+
+    /* Item selected. */
+    switch ( resp.menuItem() ) {
+        case GetInkeyMenu_Normal:
+        {
+            sendGetInkeyNormalMenu();
+        }
+        break;
+
+        case GetInkeyMenu_No_Response:
+        {
+            cmd.setType( QSimCommand::GetInkey );
+            cmd.setDestinationDevice( QSimCommand::ME );
+            cmd.setWantDigits(true);
+            cmd.setText( "<TIME-OUT>" );
+            command( cmd, this, SLOT(sendGetInkeyMenu()) );
+        }
+        break;
+
+        case GetInkeyMenu_Cyrillic_Display_1:
+        {
+            cmd.setType( QSimCommand::GetInkey );
+            cmd.setDestinationDevice( QSimCommand::ME );
+            cmd.setWantDigits(true);
+            QTextCodec *codec = QTextCodec::codecForName( "utf8" );
+            cmd.setText( codec->toUnicode( "ЗДРАВСТВУЙТЕ" ) );
+            command( cmd, this, SLOT(sendGetInkeyMenu()),
+                    QSimCommand::UCS2Strings );
+        }
+        break;
+
+        case GetInkeyMenu_Cyrillic_Display_2:
+        {
+            cmd.setType( QSimCommand::GetInkey );
+            cmd.setDestinationDevice( QSimCommand::ME );
+            cmd.setWantDigits(true);
+            QTextCodec *codec = QTextCodec::codecForName( "utf8" );
+            cmd.setText( codec->toUnicode( "ЗДРАВСТВУЙТЕЗДРАВСТВУЙТЕ"
+                                "ЗДРАВСТВУЙТЕЗДРАВСТВУЙТЕ"
+                                "ЗДРАВСТВУЙТЕЗДРАВСТВУЙ" ) );
+            command( cmd, this, SLOT(sendGetInkeyMenu()),
+                    QSimCommand::UCS2Strings );
+        }
+        break;
+
+        case GetInkeyMenu_Cyrillic_Entry:
+        {
+            cmd.setType( QSimCommand::GetInkey );
+            cmd.setDestinationDevice( QSimCommand::ME );
+            cmd.setWantDigits( false );
+            cmd.setUcs2Input( true );
+            cmd.setText( "Enter" );
+            command( cmd, this, SLOT(sendGetInkeyMenu()) );
+        }
+        break;
+
+        case GetInkeyMenu_YesNo_Response:
+        {
+            cmd.setType( QSimCommand::GetInkey );
+            cmd.setDestinationDevice( QSimCommand::ME );
+            cmd.setWantYesNo( true );
+            cmd.setText( "Enter YES" );
+            command( cmd, this, SLOT(sendGetInkeyMenu()) );
+        }
+        break;
+
+        case GetInkeyMenu_Icon:
+        {
+            sendGetInkeyIconMenu();
+        }
+        break;
+
+        case GetInkeyMenu_Help:
+        {
+            cmd.setType( QSimCommand::GetInkey );
+            cmd.setDestinationDevice( QSimCommand::ME );
+            cmd.setWantDigits(true);
+            cmd.setHasHelp( true );
+            cmd.setText( "Enter \"+\"" );
+            command( cmd, this, SLOT(sendHelpInfo(QSimTerminalResponse)) );
+        }
+        break;
+
+        case GetInkeyMenu_Variable_Timeout:
+        {
+            cmd.setType( QSimCommand::GetInkey );
+            cmd.setDestinationDevice( QSimCommand::ME );
+            cmd.setWantDigits(true);
+            cmd.setText( "Enter \"+\"" );
+            cmd.setDuration( 10000 );
+            command( cmd, this, SLOT(sendGetInkeyMenu()) );
+        }
+        break;
+
+        case GetInkeyMenu_Text_Attribute:
+        {
+            QByteArray ba;
+            ba.resize( 4 );
+            ba[0] = 0x00;
+            ba[1] = 0x09;
+            ba[2] = 0x00;
+            ba[3] = 0xB4;
+
+            cmd.setType( QSimCommand::GetInkey );
+            cmd.setDestinationDevice( QSimCommand::ME );
+            cmd.setWantDigits(true);
+            cmd.setText( "Enter \"+\"" );
+            cmd.setTextAttribute( ba );
+            command( cmd, this, SLOT(sendGetInkeyMenu()) );
+        }
+        break;
+
+        default:
+            endSession();
+        break;
+    }
+}
+
+void ConformanceSimApplication::GetInkeyNormalMenu( const QSimTerminalResponse& resp )
+{
+    QSimCommand cmd;
+
+    if ( resp.result() != QSimTerminalResponse::Success ) {
+        /* Unknown response - just go back to the main menu. */
+        endSession();
+
+        return;
+    }
+
+    /* Item selected. */
+    switch ( resp.menuItem() ) {
+        case NormalMenu_1_1:
+        {
+            cmd.setType( QSimCommand::GetInkey );
+            cmd.setDestinationDevice( QSimCommand::ME );
+            cmd.setWantDigits(true);
+            cmd.setText( "Enter \"+\"" );
+            command( cmd, this, SLOT(sendGetInkeyNormalMenu()) );
+        }
+        break;
+
+        case NormalMenu_1_2:
+        {
+            cmd.setType( QSimCommand::GetInkey );
+            cmd.setDestinationDevice( QSimCommand::ME );
+            cmd.setWantDigits(true);
+            cmd.setText( "Enter \"0\"" );
+            command( cmd, this, SLOT(sendGetInkeyNormalMenu()),
+                    QSimCommand::PackedStrings );
+        }
+        break;
+
+        case NormalMenu_1_3:
+        {
+            cmd.setType( QSimCommand::GetInkey );
+            cmd.setDestinationDevice( QSimCommand::ME );
+            cmd.setWantDigits(true);
+            cmd.setText( "<GO-BACKWARDS>" );
+            command( cmd, this, SLOT(sendGetInkeyNormalMenu()) );
+        }
+        break;
+
+        case NormalMenu_1_4:
+        {
+            cmd.setType( QSimCommand::GetInkey );
+            cmd.setDestinationDevice( QSimCommand::ME );
+            cmd.setWantDigits(true);
+            cmd.setText( "<ABORT>" );
+            command( cmd, this, SLOT(sendGetInkeyNormalMenu()) );
+        }
+        break;
+
+        case NormalMenu_1_5:
+        {
+            cmd.setType( QSimCommand::GetInkey );
+            cmd.setDestinationDevice( QSimCommand::ME );
+            cmd.setWantDigits(false);
+            cmd.setText( "Enter \"q\"" );
+            command( cmd, this, SLOT(sendGetInkeyNormalMenu()) );
+        }
+        break;
+
+        case NormalMenu_1_6:
+        {
+            cmd.setType( QSimCommand::GetInkey );
+            cmd.setDestinationDevice( QSimCommand::ME );
+            cmd.setWantDigits(false);
+            cmd.setText( "Enter \"x\". This command instructs the ME to display "
+                         "text, and to expect the user to enter a single character."
+                         " Any response entered by the user shall be passed t" );
+            command( cmd, this, SLOT(sendGetInkeyNormalMenu()) );
+        }
+        break;
+
+        case NormalMenu_Main:
+        {
+            sendGetInkeyMenu();
+        }
+        break;
+
+        default:
+            endSession();
+        break;
+    }
+}
+
+void ConformanceSimApplication::GetInkeyIconMenu( const QSimTerminalResponse& resp )
+{
+    QSimCommand cmd;
+
+    if ( resp.result() != QSimTerminalResponse::Success ) {
+        /* Unknown response - just go back to the main menu. */
+        endSession();
+
+        return;
+    }
+
+    /* Item selected. */
+    switch ( resp.menuItem() ) {
+        case IconMenu_1A:
+        {
+            cmd.setType( QSimCommand::GetInkey );
+            cmd.setDestinationDevice( QSimCommand::ME );
+            cmd.setWantDigits(true);
+            cmd.setText( "<NO-ICON>" );
+            cmd.setIconId( 1 );
+            cmd.setIconSelfExplanatory( true );
+            command( cmd, this, SLOT(sendGetInkeyIconMenu()) );
+        }
+        break;
+
+        case IconMenu_2A:
+        {
+            cmd.setType( QSimCommand::GetInkey );
+            cmd.setDestinationDevice( QSimCommand::ME );
+            cmd.setWantDigits(true);
+            cmd.setText( "<BASIC-ICON>" );
+            cmd.setIconId( 1 );
+            command( cmd, this, SLOT(sendGetInkeyIconMenu()) );
+        }
+        break;
+
+        case IconMenu_3A:
+        {
+            cmd.setType( QSimCommand::GetInkey );
+            cmd.setDestinationDevice( QSimCommand::ME );
+            cmd.setWantDigits(true);
+            cmd.setText( "<NO-ICON>" );
+            cmd.setIconId( 2 );
+            cmd.setIconSelfExplanatory( true );
+            command( cmd, this, SLOT(sendGetInkeyIconMenu()) );
+        }
+        break;
+
+        case IconMenu_4A:
+        {
+            cmd.setType( QSimCommand::GetInkey );
+            cmd.setDestinationDevice( QSimCommand::ME );
+            cmd.setWantDigits(true);
+            cmd.setText( "<COLOUR-ICON>" );
+            cmd.setIconId( 2 );
+            command( cmd, this, SLOT(sendGetInkeyIconMenu()) );
+        }
+        break;
+
+        case IconMenu_5A:
+        {
+            cmd.setType( QSimCommand::GetInkey );
+            cmd.setDestinationDevice( QSimCommand::ME );
+            cmd.setWantDigits(true);
+            cmd.setText( "" );
+            cmd.setIconId( 1 );
+            command( cmd, this, SLOT(sendGetInkeyIconMenu()) );
+        }
+        break;
+
+        case IconMenu_6A:
+        {
+            cmd.setType( QSimCommand::GetInkey );
+            cmd.setDestinationDevice( QSimCommand::ME );
+            cmd.setWantDigits(true);
+            cmd.setText( QString() );
+            cmd.setIconId( 1 );
+            command( cmd, this, SLOT(sendGetInkeyIconMenu()) );
+        }
+        break;
+
+        case IconMenu_Main:
+        {
+            sendGetInkeyMenu();
         }
         break;
 
