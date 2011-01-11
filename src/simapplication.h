@@ -150,6 +150,12 @@ public:
 protected slots:
     void mainMenu();
     void mainMenuSelection( int id );
+    void sendDisplayTextMenu();
+    void DisplayTextMenu( const QSimTerminalResponse& resp );
+    void DisplayTextNormalMenu( const QSimTerminalResponse& resp );
+    void sendDisplayTextNormalMenu();
+    void sendDisplayTextIconMenu();
+    void DisplayTextIconMenu( const QSimTerminalResponse& resp );
 };
 
 #endif
