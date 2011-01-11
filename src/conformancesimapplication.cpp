@@ -40,6 +40,7 @@ const QString ConformanceSimApplication::getName()
 #define ConformanceMenu_DisplayText 1
 #define ConformanceMenu_GetInkey    2
 #define ConformanceMenu_GetInput    3
+#define ConformanceMenu_MoreTime    4
 
 #define NormalMenu_1_1    1
 #define NormalMenu_1_2    2
@@ -119,6 +120,10 @@ void ConformanceSimApplication::mainMenu()
     item.setLabel( "Get Input" );
     items += item;
 
+    item.setIdentifier( ConformanceMenu_MoreTime );
+    item.setLabel( "More Time" );
+    items += item;
+
     cmd.setMenuItems( items );
 
     command( cmd, 0, 0 );
@@ -126,6 +131,8 @@ void ConformanceSimApplication::mainMenu()
 
 void ConformanceSimApplication::mainMenuSelection( int id )
 {
+    QSimCommand cmd;
+
     switch ( id ) {
         case ConformanceMenu_DisplayText:
         {
@@ -142,6 +149,14 @@ void ConformanceSimApplication::mainMenuSelection( int id )
         case ConformanceMenu_GetInput:
         {
             sendGetInputMenu();
+        }
+        break;
+
+        case ConformanceMenu_MoreTime:
+        {
+            cmd.setType( QSimCommand::MoreTime );
+            cmd.setDestinationDevice( QSimCommand::ME );
+            command( cmd, this, SLOT(endSession()) );
         }
         break;
 
