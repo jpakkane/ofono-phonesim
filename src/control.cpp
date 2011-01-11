@@ -457,8 +457,7 @@ void ControlWidget::simInsertRemove()
 
 void ControlWidget::handleNewApp()
 {
-    ui->lblApplicationName->setText( "Current application: " +
-            p->getSimAppName() );
+    ui->cbSimApps->insertItems( 0, p->getSimAppsNameList() );
 }
 
 void Control::handleNewApp()
@@ -468,7 +467,7 @@ void Control::handleNewApp()
 
 void ControlWidget::simAppStart()
 {
-    p->simAppStart();
+    p->simAppStart( ui->cbSimApps->currentIndex() );
 }
 
 void ControlWidget::simAppAbort()

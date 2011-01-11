@@ -284,6 +284,8 @@ public:
     SimApplication *simApplication() const { return toolkitApp; }
     void setSimApplication( SimApplication *app );
 
+    const QList<SimApplication *> getSimApps();
+
 signals:
     void returnQueryVariable( const QString&, const QString & );
     void returnQueryState( const QString& );
@@ -332,6 +334,7 @@ private:
     SimFileSystem *fileSystem;
     SimApplication *defaultToolkitApp;
     SimApplication *toolkitApp;
+    QList<SimApplication *> simApps;
 
     // Get a particular state object.
     SimState *state( const QString& name ) const;

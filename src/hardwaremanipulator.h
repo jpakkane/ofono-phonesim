@@ -35,7 +35,7 @@ public:
     HardwareManipulator(SimRules *sr, QObject *parent=0);
     QSMSMessageList & getSMSList();
     bool getSimPresent();
-    QString getSimAppName();
+    QStringList getSimAppsNameList();
 
 public slots:
     virtual void handleFromData( const QString& );
@@ -46,7 +46,7 @@ public slots:
     virtual void sendVMNotify( int type, int count, const QList<QVMMessage> &received, const QList<QVMMessage> &deleted, const QString &mailbox );
     virtual void sendUSSD( bool cancel, bool response, const QString &content );
     virtual void setSimPresent( bool present );
-    virtual void simAppStart();
+    virtual void simAppStart( int appIndex );
     virtual void simAppAbort();
     virtual void handleNewApp();
 

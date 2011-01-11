@@ -1288,6 +1288,9 @@ p, li { white-space: pre-wrap; }
          </property>
          <layout class="QHBoxLayout">
           <item>
+           <widget class="QComboBox" name="cbSimApps"/>
+          </item>
+          <item>
            <widget class="QPushButton" name="pbStart">
             <property name="text">
              <string>Start</string>
@@ -1298,13 +1301,6 @@ p, li { white-space: pre-wrap; }
            <widget class="QPushButton" name="pbAbort">
             <property name="text">
              <string>Abort</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QLabel" name="lblApplicationName">
-            <property name="toolTip">
-             <string>Shows current selected application's name</string>
             </property>
            </widget>
           </item>

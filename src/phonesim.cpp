@@ -548,6 +548,9 @@ SimRules::SimRules( int fd, QObject *p,  const QString& filename, HardwareManipu
     defaultToolkitApp = toolkitApp = new DemoSimApplication( this, this );
     connect( _callManager, SIGNAL(controlEvent(QSimControlEvent)),
              toolkitApp, SLOT(controlEvent(QSimControlEvent)) );
+
+    simApps.append( toolkitApp );
+
     if ( machine )
         machine->handleNewApp();
 
@@ -844,6 +847,9 @@ void SimRules::destruct()
     delete defaultToolkitApp;
     toolkitApp = NULL;
 
+    for ( int i = 0; i < simApps.count(); i++ )
+        simApps.removeAt( i );
+
     if ( getMachine() )
         getMachine()->handleNewApp();
 
@@ -877,13 +883,18 @@ HardwareManipulator * SimRules::getMachine() const
 
 void SimRules::setSimApplication( SimApplication *app )
 {
-    if ( toolkitApp != defaultToolkitApp )
-        delete toolkitApp;
-    toolkitApp = ( app ? app : defaultToolkitApp );
-    toolkitApp->start();
+    if ( toolkitApp == app )
+        return;
 
-    if ( getMachine() )
-        getMachine()->handleNewApp();
+    if ( toolkitApp )
+        toolkitApp->abort();
+
+    toolkitApp = app;
+}
+
+const QList<SimApplication *> SimRules::getSimApps()
+{
+    return simApps;
 }
 
 void SimRules::switchTo(const QString& name)

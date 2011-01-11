@@ -307,26 +307,27 @@ void HardwareManipulator::setSimPresent( bool present )
     simPresent = present;
 }
 
-QString HardwareManipulator::getSimAppName()
+QStringList HardwareManipulator::getSimAppsNameList()
 {
-    SimApplication *app = rules->simApplication();
+    const QList<SimApplication *> simApps = rules->getSimApps();
+    QStringList nameList;
 
-    if (app)
-        return app->getName();
+    for ( int i = 0; i  < simApps.count(); i++ )
+        nameList.append( simApps.at( i )->getName() );
 
-    return "None";
+    return nameList;
 }
 
 void HardwareManipulator::handleNewApp()
 {
 }
 
-void HardwareManipulator::simAppStart()
+void HardwareManipulator::simAppStart( int appIndex )
 {
-    SimApplication *app = rules->simApplication();
+    const QList<SimApplication *> simApps = rules->getSimApps();
 
-    if (app)
-        return app->start();
+    rules->setSimApplication( simApps.at( appIndex ) );
+    simApps.at( appIndex )->start();
 }
 
 void HardwareManipulator::simAppAbort()
