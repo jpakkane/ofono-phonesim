@@ -163,6 +163,12 @@ protected slots:
     void sendGetInkeyIconMenu();
     void GetInkeyIconMenu( const QSimTerminalResponse& resp );
     void sendHelpInfo( const QSimTerminalResponse& resp );
+    void sendGetInputMenu();
+    void GetInputMenu( const QSimTerminalResponse& resp );
+    void GetInputNormalMenu( const QSimTerminalResponse& resp );
+    void sendGetInputNormalMenu();
+    void sendGetInputIconMenu();
+    void GetInputIconMenu( const QSimTerminalResponse& resp );
 };
 
 #endif
