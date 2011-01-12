@@ -3184,6 +3184,7 @@
 +CMEE
 +CMGF
 +CMGS
++CUAD
 +DR
 +DS
 +GCAP
@@ -3198,6 +3199,7 @@
 +ILRR
 +IPR
 +FCLASS
++PTTY
 +VBT
 +VCID
 +VGR
@@ -3257,6 +3259,20 @@ OK</response>
     <!-- Query TTY (hearing impaired) state -->
     <command>AT+PTTY?</command>
     <response>+PTTY: ${PTTY}\n\nOK</response>
+</chat>
+
+<chat>
+    <!-- Discover UICC applications -->
+    <!-- the response is in sync with the EFdir contents in the filesystem
+	 definition below -->
+    <command>AT+CUAD</command>
+    <response>+CUAD: "611B4F10A0000000871002FFFFFFFF8905080000FFFFFFFFFFFFFFFFFFFFFFFFFF611F4F0CA000000063504B43532D313550094D49445066696C657351043F007F80"\n\nOK</response>
+</chat>
+
+<chat>
+    <!-- Query "Discover UICC applications" support -->
+    <command>AT+CUAD=?</command>
+    <response>OK</response>
 </chat>
 
 <!-- SIM filesystem definition, based on standard test strings
@@ -3507,6 +3523,13 @@ OK</response>
 
 <file name="EFcphs_mwis">
     5A 55
+</file>
+
+<file name="EFdir" recordsize="33">
+    61 1B 4F 10 A0 00 00 00 87 10 02 FF FF FF FF 89 05 08 00 00 FF FF
+    FF FF FF FF FF FF FF FF FF FF FF
+    61 1F 4F 0C A0 00 00 00 63 50 4B 43 53 2D 31 35 50 09 4D 49 44 50
+    66 69 6C 65 73 51 04 3F 00 7F 80"
 </file>
 
 </filesystem>
