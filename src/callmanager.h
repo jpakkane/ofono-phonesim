@@ -39,6 +39,7 @@ struct CallInfo
     int         id;
     CallState   state;
     QString     number;
+    QString     calledNumber;
     bool        incoming;
     bool        dialBack;
     QString     name;
@@ -94,9 +95,10 @@ public:
 
 public slots:
     // Start an incoming call simulation.
-    void startIncomingCall( const QString& number, const QString& name,
-						bool dialBack );
-    void startIncomingCall( const QString& number, const QString& name );
+    void startIncomingCall( const QString& number, const QString& calledNumber,
+                                const QString& name, bool dialBack );
+    void startIncomingCall( const QString& number, const QString& calledNumber,
+                                const QString& name );
 
 signals:
     // Send a response to a command.

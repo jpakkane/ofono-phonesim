@@ -55,7 +55,7 @@ signals:
     void command(const QString &cmd);
     void variableChanged(const QString &n, const QString &v);
     void switchTo(const QString &cmd);
-    void startIncomingCall(const QString &number, const QString &name);
+    void startIncomingCall(const QString &number, const QString &called_number, const QString &name);
 
 protected:
     virtual QString constructCBMessage(const QString &messageCode, int geographicalScope, const QString &updateNumber, const QString &channel,

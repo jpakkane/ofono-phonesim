@@ -119,7 +119,7 @@ Control::Control(const QString& ruleFile, SimRules *sr, QObject *parent)
         << SIGNAL(command(QString))
         << SIGNAL(variableChanged(QString,QString))
         << SIGNAL(switchTo(QString))
-        << SIGNAL(startIncomingCall(QString, QString));
+        << SIGNAL(startIncomingCall(QString, QString, QString));
 
     foreach (QByteArray sig, proxySignals)
         connect(widget, sig, this, sig);
@@ -282,15 +282,19 @@ void ControlWidget::sendSMSDatagram()
 void ControlWidget::sendCall()
 {
     QString number;
+    QString calledNumber;
     QString name;
 
     if (ui->cbCaller->isChecked())
         number = ui->leCaller->text();
 
+    if (ui->cbCalledLine->isChecked())
+        calledNumber = ui->leCalledLine->text();
+
     if (ui->cbCallerName->isChecked())
         name = ui->leCallerName->text();
 
-    emit startIncomingCall( number, name );
+    emit startIncomingCall( number, calledNumber, name );
 }
 
 void ControlWidget::handleFromData( const QString& cmd )

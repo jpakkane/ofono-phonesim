@@ -326,6 +326,11 @@ void CallManager::emitRing(const CallInfo &info)
         else
             str += "\\n\\n+CLIP: " + QAtUtils::encodeNumber( info.number ) + ",,,,0";
 
+        if (info.calledNumber.isNull())
+            ;
+        else
+            str += "\\n\\n+CDIP: " + QAtUtils::encodeNumber( info.calledNumber ) + ",,,";
+
         if (info.name.isNull())
             ;
 	else if (info.name.isEmpty())
@@ -338,7 +343,8 @@ void CallManager::emitRing(const CallInfo &info)
 }
 
 void CallManager::startIncomingCall( const QString& number,
-				const QString& name, bool dialBack )
+                                     const QString& calledNumber,
+                                     const QString& name, bool dialBack )
 {
     // Bail out if there is already an incoming call.
     if ( idForIncoming() >= 0 ) {
@@ -356,6 +362,7 @@ void CallManager::startIncomingCall( const QString& number,
         info.state = CallState_Incoming;
     }
     info.number = number;
+    info.calledNumber = calledNumber;
     info.incoming = true;
     info.dialBack = dialBack;
     info.name = name;
@@ -371,9 +378,11 @@ void CallManager::startIncomingCall( const QString& number,
     ringTimer->start(2000);
 }
 
-void CallManager::startIncomingCall( const QString& number , const QString& name )
+void CallManager::startIncomingCall( const QString& number,
+                                     const QString& calledNumber,
+                                     const QString& name )
 {
-    startIncomingCall( number, name, false );
+    startIncomingCall( number, calledNumber, name, false );
 }
 
 void CallManager::hangupAll()
@@ -702,18 +711,18 @@ void CallManager::dialingToAlerting()
 
 void CallManager::dialBack()
 {
-    startIncomingCall( "1234567", "Alice", true );
+    startIncomingCall( "1234567", "7654321", "Alice", true );
 }
 
 void CallManager::dialBackWithHangup5()
 {
-    startIncomingCall( "1234567", "Bob", true );
+    startIncomingCall( "1234567", "7654321", "Bob", true );
     hangupTimer->start( 5000 );
 }
 
 void CallManager::dialBackWithHangup4()
 {
-    startIncomingCall( "1234567", "Mallory", true );
+    startIncomingCall( "1234567", "7654321", "Mallory", true );
     hangupTimer->start( 4000 );
 }
 

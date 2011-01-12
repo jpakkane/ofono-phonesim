@@ -526,8 +526,8 @@ SimRules::SimRules( int fd, QObject *p,  const QString& filename, HardwareManipu
              this, SLOT(dialCheck(QString,bool&)) );
 
     if ( machine ) {
-        connect( machine, SIGNAL(startIncomingCall(QString,QString)),
-                 _callManager, SLOT(startIncomingCall(QString,QString)) );
+        connect( machine, SIGNAL(startIncomingCall(QString,QString,QString)),
+                 _callManager, SLOT(startIncomingCall(QString,QString,QString)) );
     }
 
     connect(this,SIGNAL(readyRead()),
