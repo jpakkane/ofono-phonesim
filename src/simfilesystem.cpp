@@ -106,8 +106,8 @@ static SimFileInfo const knownFiles[] =
     {"6FDE",        "7F20",     "EFspni",      0x04ff44,  FILE_TYPE_TRANSPARENT},
     {"6FDF",        "7F20",     "EFpnni",      0x04ff44,  FILE_TYPE_LINEAR_FIXED},
 
-    {"2FE2",        "3F00",     "EFiccid",     0x04ff44,  FILE_TYPE_TRANSPARENT},
-    {"2F05",        "3F00",     "EFpl",        0x11ff44,  FILE_TYPE_TRANSPARENT},
+    {"2FE2",        "3F00",     "EFiccid",     0x0fff44,  FILE_TYPE_TRANSPARENT},
+    {"2F05",        "3F00",     "EFpl",        0x01ff44,  FILE_TYPE_TRANSPARENT},
 
     {"5F50",        "7F10",     "DFgraphics",  0,         FILE_TYPE_TRANSPARENT},
     {"4F20",        "5F50",     "EFimg",       0x14ff44,  FILE_TYPE_LINEAR_FIXED},
