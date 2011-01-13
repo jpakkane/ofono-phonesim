@@ -844,12 +844,16 @@ void SimRules::tryReadCommand()
 
 void SimRules::destruct()
 {
-    delete conformanceApp;
-    delete defaultToolkitApp;
-    toolkitApp = NULL;
+    int count = simApps.count();
 
-    for ( int i = 0; i < simApps.count(); i++ )
-        simApps.removeAt( i );
+    for ( int i = 0; i < count; i++ )
+        simApps.removeAt( 0 );
+
+    delete conformanceApp;
+    conformanceApp = NULL;
+    delete defaultToolkitApp;
+    defaultToolkitApp = NULL;
+    toolkitApp = NULL;
 
     if ( getMachine() )
         getMachine()->handleNewApp();

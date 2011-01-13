@@ -467,7 +467,8 @@ void Control::handleNewApp()
 
 void ControlWidget::simAppStart()
 {
-    p->simAppStart( ui->cbSimApps->currentIndex() );
+    if ( ui->cbSimApps->currentIndex() >= 0 )
+        p->simAppStart( ui->cbSimApps->currentIndex() );
 }
 
 void ControlWidget::simAppAbort()
