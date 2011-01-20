@@ -1,3 +1,10 @@
+ver 1.12:
+	Fix access bits for EFiccid, EFpl files.
+	Add support for CUAD command and EFdir EF.
+	Add support for handling CDIP called line.
+	Add support for conformance SIM application.
+	Add support for SIM application selection user interface.
+
 ver 1.11:
 	Add support for CFIS and CPHS SIM files.
 	Add support for SIM Toolkit null text strings.
