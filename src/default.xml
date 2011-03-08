@@ -304,12 +304,14 @@
     <!-- TTY (hearing impared) state -->
     <set name="PTTY" value="1" />
 
+    <!-- Positioning reporting state -->
+    <set name="CPOSR" value="0" />
+
 <!-- Time -->
 <!-- Enable for testing
 <unsolicited delay="3000" once="true">*TTZ: 2, "11/25/2007, 12:12:12+40", 0</unsolicited>
 <unsolicited delay="3000" once="true">*TTZ: 2, "Cingluar", 0</unsolicited>
 -->
-
 
 <!-- GSM 07.07: General commands -->
 
@@ -2993,6 +2995,49 @@
     <response>ERROR</response>
 </chat>
 
+<!-- Positioning related commands -->
+
+<chat>
+    <!-- Query if CPOSR is supported -->
+    <command>AT+CPOSR=?</command>
+    <response>OK</response>
+</chat>
+
+<chat>
+    <!-- Set unsolicited position reporting -->
+    <command>AT+CPOSR=*</command>
+    <response>OK</response>
+    <set name="CPOSR" value="*"/>
+</chat>
+
+<chat>
+    <!-- Read unsolicited position reporting state -->
+    <command>AT+CPOSR?</command>
+    <response>+CPOSR: ${CPOSR}\n\nOK</response>
+</chat>
+
+<chat>
+    <!-- Query if CPOS supported -->
+    <command>AT+CPOS=?</command>
+    <response>OK</response>
+</chat>
+
+<chat>
+    <!-- Send positioning element -->
+    <command>AT+CPOS</command>
+<!--    <response eol="false">&gt; </response> -->
+    <response eol="false"></response>
+    <switch name="cposread"/>
+</chat>
+
+<state name="cposread">
+    <chat>
+        <command wildcard="true"></command>
+        <response>OK</response>
+        <switch name="default"/>
+    </chat>
+</state>
+
 <!-- Modem compatibility commands for phones that support data services -->
 
 <chat>
@@ -3200,6 +3245,8 @@
 +CPBR
 +CPBF
 +CPBW
++CPOS
++CPOSR
 +CMEE
 +CMGF
 +CMGS

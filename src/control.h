@@ -95,6 +95,8 @@ private slots:
     void simAppStart();
     void simAppAbort();
     void modemSilentReset();
+    void sendGNSSData();
+    void setDefaultGNSSData();
 
 signals:
     void unsolicitedCommand(const QString &);

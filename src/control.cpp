@@ -85,6 +85,8 @@ ControlWidget::ControlWidget(const QString &ruleFile, Control *parent)
     connect(ui->pbStart, SIGNAL(clicked()), this, SLOT(simAppStart()));
     connect(ui->pbAbort, SIGNAL(clicked()), this, SLOT(simAppAbort()));
     connect(ui->pbReset, SIGNAL(clicked()), this, SLOT(modemSilentReset()));
+    connect(ui->pbSendGNSSData, SIGNAL(clicked()), this, SLOT(sendGNSSData()));
+    connect(ui->pbGNSSDefault, SIGNAL(clicked()), this, SLOT(setDefaultGNSSData()));
 
     QStringList headers;
     headers << "Sender" << "Priority" << "Notification Status";
@@ -220,6 +222,33 @@ void ControlWidget::sendSMSMessage()
         return;
     }
     p->constructSMSMessage(ui->leSMSClass->text().toInt(), ui->leMessageSender->text(), ui->leSMSServiceCenter->text(), ui->teSMSText->toPlainText());
+}
+
+void ControlWidget::setDefaultGNSSData()
+{
+    ui->teGNSStext->clear();
+
+    ui->teGNSStext->append("<?xml version=\"1.0\" ?>");
+    ui->teGNSStext->append("<pos>");
+    ui->teGNSStext->append("  <pos_err>");
+    ui->teGNSStext->append("    <err_reason literal=\"not_enough_gps_satellites\" />");
+    ui->teGNSStext->append("  </pos_err>");
+    ui->teGNSStext->append("</pos>");
+}
+
+void ControlWidget::sendGNSSData()
+{
+    QStringList xml = ui->teGNSStext->toPlainText().split("\n");
+
+    foreach ( QString line, xml )
+    {
+        if (!line.isEmpty()) {
+            QString cposr =  "+CPOSR: " + line;
+
+            emit unsolicitedCommand(cposr);
+            handleFromData( cposr );
+        }
+    }
 }
 
 void ControlWidget::sendMGD()
@@ -505,6 +534,9 @@ Script::Script(QObject *obj, Ui_ControlBase *ui) : QDBusAbstractAdaptor(obj)
 
     QScriptValue qsTab6 = engine.newQObject(ui->tab_6);
     engine.globalObject().setProperty("tabSIM", qsTab6);
+
+    QScriptValue qsTab8 = engine.newQObject(ui->tab_8);
+    engine.globalObject().setProperty("tabPosition", qsTab8);
 }
 
 void Script::SetPath(const QString &path, const QDBusMessage &msg)
