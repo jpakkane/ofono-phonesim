@@ -21,3 +21,7 @@ Call Management
 - Add support for +CSSU / +CSSI notifications.  These can be used to simulate
   the remote party putting the call on hold, retrieving or creating an mpty
   call.
+
+  Priority: Low
+  Complexity: C1
+  Owner: Nicolas Bertrand <nicolas.bertrand@linux.intel.com>
