@@ -195,17 +195,60 @@
         </layout>
        </item>
        <item>
-        <spacer>
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>566</width>
-           <height>101</height>
-          </size>
-         </property>
-        </spacer>
+        <layout class="QHBoxLayout" name="horizontalLayout_3">
+         <item>
+          <spacer name="horizontalSpacer">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeType">
+            <enum>QSizePolicy::Fixed</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>322</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="QGroupBox" name="gbCallSettings">
+           <property name="title">
+            <string>Call Settings</string>
+           </property>
+           <layout class="QGridLayout" name="gridLayout_2">
+            <item row="0" column="1">
+             <widget class="QComboBox" name="cbCSSU"/>
+            </item>
+            <item row="1" column="1">
+             <widget class="QComboBox" name="cbCSSI"/>
+            </item>
+            <item row="0" column="0">
+             <widget class="QLabel" name="lbCSSU">
+              <property name="text">
+               <string>CSSU</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="0">
+             <widget class="QLabel" name="lbCSSI">
+              <property name="text">
+               <string>CSSI</string>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="1">
+             <widget class="QPushButton" name="pbSendNotif">
+              <property name="text">
+               <string>Send Notification</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+        </layout>
        </item>
        <item>
         <widget class="QCheckBox" name="atCheckBox">
