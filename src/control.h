@@ -70,6 +70,7 @@ public:
     void handleFromData( const QString& );
     void handleToData( const QString& );
     void handleNewApp();
+    void handleCSSNNotif();
 
 private slots:
     void sendSQ();
@@ -97,6 +98,7 @@ private slots:
     void modemSilentReset();
     void sendGNSSData();
     void setDefaultGNSSData();
+    void sendCSSN();
 
 signals:
     void unsolicitedCommand(const QString &);

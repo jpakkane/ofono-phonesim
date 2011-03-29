@@ -87,6 +87,7 @@ ControlWidget::ControlWidget(const QString &ruleFile, Control *parent)
     connect(ui->pbReset, SIGNAL(clicked()), this, SLOT(modemSilentReset()));
     connect(ui->pbSendGNSSData, SIGNAL(clicked()), this, SLOT(sendGNSSData()));
     connect(ui->pbGNSSDefault, SIGNAL(clicked()), this, SLOT(setDefaultGNSSData()));
+    connect(ui->pbSendNotif, SIGNAL(clicked()), this, SLOT(sendCSSN()));
 
     QStringList headers;
     headers << "Sender" << "Priority" << "Notification Status";
@@ -94,6 +95,7 @@ ControlWidget::ControlWidget(const QString &ruleFile, Control *parent)
     ui->twMessageList->verticalHeader()->hide();
 
     handleNewApp();
+    handleCSSNNotif();
 
     show();
 }
@@ -142,12 +144,38 @@ void Control::warning( const QString &title, const QString &message )
     QMessageBox::warning(widget, title, message, "OK");
 }
 
+void ControlWidget::handleCSSNNotif()
+{
+    ui->cbCSSU->insertItem(0, "");
+    ui->cbCSSU->insertItem(1, "0 - forwarded", 0);
+    ui->cbCSSU->insertItem(3, "2 - on hold", 2);
+    ui->cbCSSU->insertItem(4, "3 - retrieved", 3);
+    ui->cbCSSU->insertItem(5, "4 - multiparty", 4);
+
+    ui->cbCSSI->insertItem(0, "");
+    ui->cbCSSI->insertItem(3, "2 - forwarded", 2);
+    ui->cbCSSI->insertItem(6, "5 - outgoing barred", 5);
+    ui->cbCSSI->insertItem(7, "6 - incomming barred", 6);
+}
+
+void ControlWidget::sendCSSN()
+{
+    QVariant v = ui->cbCSSU->itemData(ui->cbCSSU->currentIndex());
+
+    if (v.canConvert<int>())
+        emit unsolicitedCommand("+CSSU: "+QString::number(v.toInt()));
+
+    v = ui->cbCSSI->itemData(ui->cbCSSI->currentIndex());
+
+    if (v.canConvert<int>())
+        emit unsolicitedCommand("+CSSI: "+QString::number(v.toInt()));
+}
+
 void ControlWidget::sendSQ()
 {
     emit variableChanged("SQ",QString::number(ui->hsSignalQuality->value())+",99");
     emit unsolicitedCommand("+CSQ: "+QString::number(ui->hsSignalQuality->value())+",99");
 }
-
 
 void ControlWidget::sendBC()
 {
