@@ -216,13 +216,13 @@ public:
     };
 
     enum OpenChannelQualifier {
-	    OpenchannelOnDemand	 = 0x00,
-	    OpenchannelImmediate = 0x01,
+        OpenChannelOnDemand           = 0x00,
+        OpenChannelImmediate          = 0x01,
     };
 
     enum SendDataQualifier {
-	    SendDataStoreData	= 0x00,
-	    SendDataImmediately	= 0x01,
+        SendDataStoreData       = 0x00,
+        SendDataImmediately     = 0x01,
     };
 
     int commandNumber() const;
