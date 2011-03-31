@@ -215,6 +215,16 @@ public:
         Network             = 0x83
     };
 
+    enum OpenChannelQualifier {
+	    OpenchannelOnDemand	 = 0x00,
+	    OpenchannelImmediate = 0x01,
+    };
+
+    enum SendDataQualifier {
+	    SendDataStoreData	= 0x00,
+	    SendDataImmediately	= 0x01,
+    };
+
     int commandNumber() const;
     void setCommandNumber( int value );
 
@@ -361,6 +371,33 @@ public:
 
     int qualifier() const;
     void setQualifier( int value );
+
+    QByteArray bearerDesc() const;
+    void setBearerDesc( const QByteArray& value );
+
+    ushort bufferSize() const;
+    void setBufferSize( ushort value );
+
+    uint dataLength() const;
+    void setDataLength( uint value );
+
+    QByteArray apn() const;
+    void setApn( const QByteArray& value );
+
+    QByteArray destAddress() const;
+    void setDestAddress( const QByteArray& value );
+
+    QByteArray localAddress() const;
+    void setLocalAddress( const QByteArray& value );
+
+    QString userLogin() const;
+    void setUserLogin( const QString& value );
+
+    QString userPassword() const;
+     void setUserPassword( const QString& value );
+
+    QByteArray uti() const;
+    void setUti( const QByteArray& value );
 
     QByteArray extensionData() const;
     void setExtensionData( QByteArray value );

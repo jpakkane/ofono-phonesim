@@ -69,6 +69,8 @@ public:
         timerId = 0;
         device = -1;
         qualifier = 0;
+        bufferSize = 0;
+        dataLength = 0;
     }
     QSimCommandPrivate( QSimCommandPrivate *other )
     {
@@ -102,6 +104,15 @@ public:
         device = other->device;
         qualifier = other->qualifier;
         extensionData = other->extensionData;
+        bearerDesc = other->bearerDesc;
+        bufferSize = other->bufferSize;
+        dataLength = other->dataLength;
+        apn = other->apn;
+        uti = other->uti;
+        userLogin = other->userLogin;
+        userPassword = other->userPassword;
+        destAddress = other->destAddress;
+        localAddress = other->localAddress;
     }
 
     bool flag( int bit ) const
@@ -165,7 +176,15 @@ public:
     int device;
     int qualifier;
     QByteArray extensionData;
-
+    QByteArray bearerDesc;
+    ushort bufferSize;
+    uint dataLength;
+    QByteArray apn;
+    QByteArray uti;
+    QString userLogin;
+    QString userPassword;
+    QByteArray destAddress;
+    QByteArray localAddress;
 };
 
 
@@ -2202,6 +2221,96 @@ void QSimCommand::setTimerId( int id )
     dwrite()->timerId = id;
 }
 
+ushort QSimCommand::bufferSize() const
+{
+    return d->bufferSize;
+}
+
+void QSimCommand::setBufferSize( ushort value )
+{
+    dwrite()->bufferSize = value;
+}
+
+uint QSimCommand::dataLength() const
+{
+    return d->dataLength;
+}
+
+void QSimCommand::setDataLength( uint value )
+{
+    dwrite()->dataLength = value;
+}
+
+QString QSimCommand::userLogin() const
+{
+    return d->userLogin;
+}
+
+void QSimCommand::setUserLogin( const QString& value )
+{
+    dwrite()->userLogin = value;
+}
+
+QString QSimCommand::userPassword() const
+{
+    return d->userPassword;
+}
+
+void QSimCommand::setUserPassword( const QString& value )
+{
+    dwrite()->userPassword = value;
+}
+
+QByteArray QSimCommand::uti() const
+{
+    return d->uti;
+}
+
+void QSimCommand::setUti( const QByteArray& value )
+{
+    dwrite()->uti = value;
+}
+
+QByteArray QSimCommand::bearerDesc() const
+{
+    return d->bearerDesc;
+}
+
+void QSimCommand::setBearerDesc( const QByteArray& value )
+{
+    dwrite()->bearerDesc = value;
+}
+
+QByteArray QSimCommand::localAddress() const
+{
+    return d->localAddress;
+}
+
+void QSimCommand::setLocalAddress( const QByteArray& value )
+{
+    dwrite()->localAddress = value;
+}
+
+QByteArray QSimCommand::destAddress() const
+{
+    return d->destAddress;
+}
+
+void QSimCommand::setDestAddress( const QByteArray& value )
+{
+    dwrite()->destAddress = value;
+}
+
+QByteArray QSimCommand::apn() const
+{
+    return d->apn;
+}
+
+void QSimCommand::setApn( const QByteArray& value )
+{
+    dwrite()->apn = value;
+}
+
 /*!
     Copy the QSimCommand object \a value.
 */
@@ -3045,6 +3154,64 @@ void _qtopiaphone_writeTimerValue( QByteArray& data, uint value )
 }
 #define writeTimerValue _qtopiaphone_writeTimerValue
 
+// Write a Bearer description field.
+static void writeBearerDesc( QByteArray& data, const QByteArray& bearerDesc )
+{
+    if ( !bearerDesc.isEmpty() ) {
+        data += (char)0x35;
+        writeBerLength( data, bearerDesc.length() );
+        data += bearerDesc;
+    }
+}
+
+// Write a Network Access Name field as specified in TS 23.003
+static void writeApn( QByteArray& data, const QByteArray& apn )
+{
+    if ( !apn.isEmpty() ) {
+        data += (char)0x47;
+        writeBerLength( data, apn.length() );
+        data += apn;
+    }
+}
+
+// Write a Buffer size field.
+static void writeBufferSize( QByteArray& data, ushort size )
+{
+    if ( size ) {
+        data += 0x39;
+        data += 0x02;
+        data += (char)(size >> 8);
+        data += (char)size;
+    }
+}
+
+// Write a data length field.
+static void writeDataLength( QByteArray& data, uint value )
+{
+    data += 0x37;
+    data += 0x01;
+    data += (char)value;
+}
+
+// Write a UICC/terminal interface transport level field
+static void writeUti( QByteArray& data, const QByteArray& uti )
+{
+    if ( !uti.isEmpty() ) {
+        data += (char)0x3C;
+        writeBerLength( data, uti.length() );
+        data += uti;
+    }
+}
+
+// Write the Address information field
+static void writeOtherAddress( QByteArray& data, const QByteArray& otherAddress )
+{
+    if ( !otherAddress.isEmpty() ) {
+        data += (char)0x3E;
+        writeBerLength( data, otherAddress.length() );
+        data += otherAddress;
+    }
+}
 /*!
     \enum QSimCommand::ToPduOptions
     This enum defines additional options to use when encoding SIM commands with QSimCommand::toPdu().
@@ -3324,17 +3491,42 @@ QByteArray QSimCommand::toPdu( QSimCommand::ToPduOptions options ) const
             if ( !text().isEmpty() || ( options & QSimCommand::EncodeEmptyStrings ) != 0 )
                 writeEFADN( data, text(), options, 0x05 );
             writeIcon( data, iconId(), iconSelfExplanatory(), true );
-            if ( !number().isEmpty() )
-                writeEFADNNumber( data, number() );
-            if ( !subAddress().isEmpty() )
-                writeSubAddress( data, subAddress() );
+            writeBearerDesc( data, bearerDesc() );
+            writeBufferSize( data, bufferSize() );
+            writeApn( data, apn() );
+            writeOtherAddress( data, localAddress() );
+            if ( !userLogin().isEmpty() )
+                writeTextString( data, userLogin(), QSimCommand::NoPduOptions, 0x0D );
+            if ( !userPassword().isEmpty() )
+                writeTextString( data, userPassword(), QSimCommand::NoPduOptions, 0x0D );
+            writeUti( data, uti() );
+            writeOtherAddress( data, destAddress() );
+            writeTextAttribute( data, textAttribute() );
+        }
+        break;
+
+        case ReceiveData:
+        {
+            if ( !text().isEmpty() || ( options & QSimCommand::EncodeEmptyStrings ) != 0 )
+                writeEFADN( data, text(), options, 0x05 );
+            writeIcon( data, iconId(), iconSelfExplanatory(), true );
+            writeDataLength( data, dataLength() );
+            writeTextAttribute( data, textAttribute() );
+        }
+        break;
+
+        case SendData:
+        {
+            if ( !text().isEmpty() || ( options & QSimCommand::EncodeEmptyStrings ) != 0 )
+                writeEFADN( data, text(), options, 0x05 );
+            writeIcon( data, iconId(), iconSelfExplanatory(), true );
+            data += extData;
             writeTextAttribute( data, textAttribute() );
         }
         break;
 
         case CloseChannel:
-        case ReceiveData:
-        case SendData:
+        case GetChannelStatus:
         {
             if ( !text().isEmpty() || ( options & QSimCommand::EncodeEmptyStrings ) != 0 )
                 writeEFADN( data, text(), options, 0x05 );
