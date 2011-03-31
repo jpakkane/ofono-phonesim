@@ -291,6 +291,7 @@ const QString DemoSimApplication::getName()
 #define MainMenu_Timers     16
 #define MainMenu_Refresh    17
 #define MainMenu_LocalInfo  18
+#define MainMenu_BIP        19
 
 #define SportsMenu_Chess        1
 #define SportsMenu_Painting     2
@@ -348,6 +349,12 @@ const QString DemoSimApplication::getName()
 
 #define LocalInfoMenu_Time  1
 #define LocalInfoMenu_Lang  2
+
+#define BIPMenu_OpenChannel      1
+#define BIPMenu_CloseChannel     2
+#define BIPMenu_ReceiveData      3
+#define BIPMenu_SendData         4
+#define BIPMenu_GetChannelStatus 5
 
 enum SendSMSMenuItems {
 	SendSMS_Unpacked = 1,
@@ -446,6 +453,10 @@ void DemoSimApplication::mainMenu()
 
     item.setIdentifier( MainMenu_LocalInfo );
     item.setLabel( "Provide Local Information" );
+    items += item;
+
+    item.setIdentifier( MainMenu_BIP );
+    item.setLabel( "BIP commands" );
     items += item;
 
     cmd.setMenuItems( items );
@@ -587,6 +598,12 @@ void DemoSimApplication::mainMenuSelection( int id )
         case MainMenu_LocalInfo:
         {
             sendLocalInfoMenu();
+        }
+        break;
+
+        case MainMenu_BIP:
+        {
+            sendBIPMenu();
         }
         break;
 
@@ -2350,4 +2367,148 @@ void DemoSimApplication::localInfoMenu( const QSimTerminalResponse& resp )
     } else {
         endSession();
     }
+}
+
+void DemoSimApplication::BIPMenu( const QSimTerminalResponse& resp )
+{
+    QSimCommand cmd;
+
+    if ( resp.result() == QSimTerminalResponse::Success ) {
+	switch ( resp.menuItem() ) {
+
+            case BIPMenu_OpenChannel:
+            {
+                QByteArray bearerDesc;
+                QByteArray uti;
+                QByteArray destAddress;
+                QByteArray apn;
+
+                bearerDesc += 0x02;
+                bearerDesc += 0x03;
+                bearerDesc += 0x04;
+                bearerDesc += 0x03;
+                bearerDesc += 0x04;
+                bearerDesc += 0x1F;
+                bearerDesc += 0x02;
+
+                uti += 0x01;
+                uti += 0xAD;
+                uti += 0x9C;
+
+                destAddress += 0x21;
+                destAddress += 0x01;
+                destAddress += 0x01;
+                destAddress += 0x01;
+                destAddress += 0x01;
+
+                apn += 0x06;
+                apn += 0x54;
+                apn += 0x65;
+                apn += 0x73;
+                apn += 0x74;
+                apn += 0x47;
+                apn += 0x70;
+                apn += 0x02;
+                apn += 0x72;
+                apn += 0x73;
+
+                cmd.setType( QSimCommand::OpenChannel );
+                cmd.setQualifier( QSimCommand::OpenChannelImmediate );
+                cmd.setText("Open ID");
+                cmd.setBearerDesc(bearerDesc);
+                cmd.setBufferSize(1400);
+                cmd.setApn(apn);
+                cmd.setUserLogin("UserLog");
+                cmd.setUserPassword("UserPwd");
+                cmd.setUti(uti);
+                cmd.setDestAddress(destAddress);
+                command( cmd, this, SLOT(sendBIPMenu()) );
+            }
+            break;
+
+            case BIPMenu_ReceiveData:
+            {
+                cmd.setType( QSimCommand::ReceiveData );
+                cmd.setDestinationDevice( QSimCommand::Channel1 );
+                cmd.setText("Receive Data 1");
+                cmd.setDataLength(200);
+                command( cmd, this, SLOT(sendBIPMenu()) );
+            }
+            break;
+
+            case BIPMenu_SendData:
+            {
+                QByteArray data;
+
+                data += 0x01;
+                data += 0x02;
+                data += 0x03;
+                data += 0x04;
+                data += 0x05;
+
+                cmd.setType( QSimCommand::SendData );
+                cmd.setDestinationDevice( QSimCommand::Channel1 );
+                cmd.setText("Send Data 1");
+                cmd.addExtensionField( 0x36, data );
+                command( cmd, this, SLOT(sendBIPMenu()) );
+            }
+            break;
+
+            case BIPMenu_CloseChannel:
+            {
+                cmd.setType( QSimCommand::CloseChannel );
+                cmd.setDestinationDevice( QSimCommand::Channel1 );
+                cmd.setText("Close ID 1");
+                command( cmd, this, SLOT(sendBIPMenu()) );
+            }
+            break;
+
+            case BIPMenu_GetChannelStatus:
+            {
+                cmd.setType( QSimCommand::GetChannelStatus );
+                command( cmd, this, SLOT(sendBIPMenu()) );
+            }
+            break;
+
+            default:
+                endSession();
+                break;
+        }
+    } else {
+        endSession();
+    }
+}
+
+void DemoSimApplication::sendBIPMenu()
+{
+    QSimCommand cmd;
+    QSimMenuItem item;
+    QList<QSimMenuItem> items;
+
+    cmd.setType( QSimCommand::SelectItem );
+    cmd.setTitle( "BIP commands Menu" );
+
+    item.setIdentifier( BIPMenu_OpenChannel );
+    item.setLabel( "Open channel" );
+    items += item;
+
+    item.setIdentifier( BIPMenu_CloseChannel );
+    item.setLabel( "Close channel" );
+    items += item;
+
+    item.setIdentifier( BIPMenu_ReceiveData );
+    item.setLabel( "Receive data" );
+    items += item;
+
+    item.setIdentifier( BIPMenu_SendData );
+    item.setLabel( "Send data" );
+    items += item;
+
+    item.setIdentifier( BIPMenu_GetChannelStatus );
+    item.setLabel( "Get channel status" );
+    items += item;
+
+    cmd.setMenuItems( items );
+
+    command( cmd, this, SLOT(BIPMenu(QSimTerminalResponse)) );
 }
