@@ -3598,6 +3598,10 @@ OK</response>
     66 69 6C 65 73 51 04 3F 00 7F 80"
 </file>
 
+<file name="EFcphs_csp">
+	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 C0 80
+</file>
+
 </filesystem>
 
 </simulator>
