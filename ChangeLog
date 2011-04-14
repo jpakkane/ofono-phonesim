@@ -1,3 +1,9 @@
+ver 1.13:
+	Add support for CPHS EFcsp SIM file.
+	Add support for SIM Toolkit Class E commands.
+	Add support for CPOSR unsolicited notifications.
+	Add support for CSSU and CSSI notifications.
+
 ver 1.12:
 	Fix access bits for EFiccid, EFpl files.
 	Add support for CUAD command and EFdir EF.
