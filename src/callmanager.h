@@ -121,6 +121,9 @@ private slots:
     // Transition the active dialing call to alerting.
     void dialingToAlerting();
 
+    // Transition the waiting call to incoming.
+    void waitingToIncoming();
+
     // Handle dial-backs.
     void dialBack();
     void dialBackWithHangup5();

@@ -409,6 +409,9 @@ void CallManager::hangupConnected()
         }
     }
     callList = newCallList;
+
+    if ( !hasCall( CallState_Held ) )
+        waitingToIncoming();
 }
 
 void CallManager::hangupHeld()
@@ -423,6 +426,9 @@ void CallManager::hangupHeld()
         }
     }
     callList = newCallList;
+
+    if ( !hasCall( CallState_Active ) )
+        waitingToIncoming();
 }
 
 void CallManager::hangupConnectedAndHeld()
@@ -438,6 +444,7 @@ void CallManager::hangupConnectedAndHeld()
         }
     }
     callList = newCallList;
+    waitingToIncoming();
 }
 
 void CallManager::hangupCall( int id )
@@ -508,10 +515,6 @@ bool CallManager::chld1()
         // We only have active calls - hang them up.
         hangupConnected();
         return true;
-    } else if ( hasCall( CallState_Active ) ) {
-        // We only have active calls - hang them up.
-        hangupConnected();
-        return true;
     } else if ( ( id = idForDialing() ) >= 0 ) {
         // We have a dialing call.
         hangupCall(id);
@@ -544,6 +547,10 @@ bool CallManager::chld1x( int x )
         }
     }
     callList = newCallList;
+
+    if ( !hasCall( CallState_Active ) && !hasCall( CallState_Held ) )
+        waitingToIncoming();
+
     return found;
 }
 
@@ -706,6 +713,17 @@ void CallManager::dialingToAlerting()
 
     // Transition the call to its new state.
     callList[index].state = CallState_Alerting;
+    sendState( callList[index] );
+}
+
+void CallManager::waitingToIncoming()
+{
+    int index = indexForId( idForState( CallState_Waiting ) );
+
+    if ( index < 0 )
+        return;
+
+    callList[index].state = CallState_Incoming;
     sendState( callList[index] );
 }
 
