@@ -25,6 +25,7 @@
 #include <QtScript>
 #include "ui_controlbase.h"
 #include "attranslator.h"
+#include "callmanager.h"
 
 class Control;
 
@@ -71,6 +72,9 @@ public:
     void handleToData( const QString& );
     void handleNewApp();
     void handleCSSNNotif();
+    void setCssuEnabled( bool enableCSSU );
+    void setCssiEnabled( bool enableCSSI );
+
 
 private slots:
     void sendSQ();
@@ -146,6 +150,7 @@ public slots:
     void handleToData( const QString& );
     void setPhoneNumber( const QString& );
     void handleNewApp();
+    void callManagement( QList<CallInfo> *info );
 
 protected:
     virtual void warning( const QString&, const QString& );

@@ -134,6 +134,32 @@ Control::~Control()
     delete widget;
 }
 
+void Control::callManagement( QList<CallInfo> *list )
+{
+    bool enableCSSU = false;
+    bool enableCSSI = false;
+
+    foreach( CallInfo i, *list ) {
+        if ( i.incoming && !enableCSSU )
+            enableCSSU = true;
+        if ( !i.incoming && !enableCSSI )
+            enableCSSI = true;
+    }
+
+    widget->setCssiEnabled( enableCSSI );
+    widget->setCssuEnabled( enableCSSU );
+}
+
+void ControlWidget::setCssiEnabled( bool enableCSSI )
+{
+    ui->cbCSSI->setEnabled( enableCSSI );
+}
+
+void ControlWidget::setCssuEnabled( bool enableCSSU )
+{
+    ui->cbCSSU->setEnabled( enableCSSU );
+}
+
 void Control::setPhoneNumber( const QString &number )
 {
     widget->setWindowTitle("Phonesim - Number: " + number);
@@ -146,6 +172,10 @@ void Control::warning( const QString &title, const QString &message )
 
 void ControlWidget::handleCSSNNotif()
 {
+
+    ui->cbCSSU->setEnabled( false );
+    ui->cbCSSI->setEnabled( false );
+
     ui->cbCSSU->insertItem(0, "");
     ui->cbCSSU->insertItem(1, "0 - forwarded", 0);
     ui->cbCSSU->insertItem(3, "2 - on hold", 2);
@@ -160,15 +190,15 @@ void ControlWidget::handleCSSNNotif()
 
 void ControlWidget::sendCSSN()
 {
-    QVariant v = ui->cbCSSU->itemData(ui->cbCSSU->currentIndex());
+    QVariant v = ui->cbCSSU->itemData( ui->cbCSSU->currentIndex() );
 
-    if (v.canConvert<int>())
-        emit unsolicitedCommand("+CSSU: "+QString::number(v.toInt()));
+    if ( v.canConvert<int>() && ui->cbCSSU->isEnabled() )
+        emit unsolicitedCommand( "+CSSU: "+QString::number( v.toInt() ) );
 
     v = ui->cbCSSI->itemData(ui->cbCSSI->currentIndex());
 
-    if (v.canConvert<int>())
-        emit unsolicitedCommand("+CSSI: "+QString::number(v.toInt()));
+    if ( v.canConvert<int>() && ui->cbCSSI->isEnabled() )
+        emit unsolicitedCommand( "+CSSI: "+QString::number( v.toInt() ) );
 }
 
 void ControlWidget::sendSQ()
