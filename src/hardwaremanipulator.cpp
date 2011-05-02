@@ -337,3 +337,7 @@ void HardwareManipulator::simAppAbort()
     if (app)
         return app->abort();
 }
+
+void HardwareManipulator::callManagement( QList<CallInfo> *info )
+{
+}

@@ -27,6 +27,7 @@
 class QSMSMessage;
 class QVMMessage;
 class SimRules;
+struct CallInfo;
 class HardwareManipulator : public QObject
 {
 Q_OBJECT
@@ -49,6 +50,7 @@ public slots:
     virtual void simAppStart( int appIndex );
     virtual void simAppAbort();
     virtual void handleNewApp();
+    virtual void callManagement( QList<CallInfo> *info );
 
 signals:
     void unsolicitedCommand(const QString &cmd);
