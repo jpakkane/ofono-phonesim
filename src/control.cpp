@@ -139,6 +139,9 @@ void Control::callManagement( QList<CallInfo> *list )
     int row = 0;
     bool enableCSSU = false;
     bool enableCSSI = false;
+    static const char *state_table[] = { "Active", "Held", "Dialing",
+                                         "Alerting", "Incoming", "Waiting",
+                                         "Disconnected", "Swapping" };
 
     widget->clearCallView();
 
@@ -152,58 +155,7 @@ void Control::callManagement( QList<CallInfo> *list )
 
         param[0].setNum( i.id );
         param[1] = i.number;
-
-        switch( i.state ) {
-
-            case CallState_Active:
-            {
-                param[2] = "Active";
-            }
-            break;
-
-            case CallState_Held:
-            {
-                param[2] = "Held";
-            }
-            break;
-
-            case CallState_Dialing:
-            {
-                param[2] = "Dialing";
-            }
-            break;
-
-            case CallState_Alerting:
-            {
-                param[2] = "Alerting";
-            }
-            break;
-
-            case CallState_Incoming:
-            {
-                param[2] = "Incoming";
-            }
-            break;
-
-            case CallState_Waiting:
-            {
-                param[2] = "Waiting";
-            }
-            break;
-
-            case CallState_Hangup:
-            {
-                param[2] = "Hangup";
-            }
-            break;
-
-            case CallState_SwapDummy:
-            {
-                param[2] = "SwapDummy";
-            }
-            break;
-        }
-
+        param[2] = state_table[i.state];
         param[3] = i.name;
         param[4] = i.incoming ? "incoming" : "outgoing";
 
