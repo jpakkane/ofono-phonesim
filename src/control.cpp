@@ -216,7 +216,7 @@ void ControlWidget::handleCSSNNotif()
     ui->cbCSSI->insertItem( 0, "" );
     ui->cbCSSI->insertItem( 3, "2 - forwarded", 2 );
     ui->cbCSSI->insertItem( 6, "5 - outgoing barred", 5 );
-    ui->cbCSSI->insertItem( 7, "6 - incomming barred", 6 );
+    ui->cbCSSI->insertItem( 7, "6 - incoming barred", 6 );
 }
 
 void ControlWidget::sendCSSN()
