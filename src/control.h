@@ -74,7 +74,8 @@ public:
     void handleCSSNNotif();
     void setCssuEnabled( bool enableCSSU );
     void setCssiEnabled( bool enableCSSI );
-
+    void updateCallView( QString callParameters [5], int row );
+    void clearCallView();
 
 private slots:
     void sendSQ();

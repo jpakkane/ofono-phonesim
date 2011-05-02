@@ -136,14 +136,79 @@ Control::~Control()
 
 void Control::callManagement( QList<CallInfo> *list )
 {
+    int row = 0;
     bool enableCSSU = false;
     bool enableCSSI = false;
 
+    widget->clearCallView();
+
     foreach( CallInfo i, *list ) {
+        QString param[5];
+
         if ( i.incoming && !enableCSSU )
             enableCSSU = true;
         if ( !i.incoming && !enableCSSI )
             enableCSSI = true;
+
+        param[0].setNum( i.id );
+        param[1] = i.number;
+
+        switch( i.state ) {
+
+            case CallState_Active:
+            {
+                param[2] = "Active";
+            }
+            break;
+
+            case CallState_Held:
+            {
+                param[2] = "Held";
+            }
+            break;
+
+            case CallState_Dialing:
+            {
+                param[2] = "Dialing";
+            }
+            break;
+
+            case CallState_Alerting:
+            {
+                param[2] = "Alerting";
+            }
+            break;
+
+            case CallState_Incoming:
+            {
+                param[2] = "Incoming";
+            }
+            break;
+
+            case CallState_Waiting:
+            {
+                param[2] = "Waiting";
+            }
+            break;
+
+            case CallState_Hangup:
+            {
+                param[2] = "Hangup";
+            }
+            break;
+
+            case CallState_SwapDummy:
+            {
+                param[2] = "SwapDummy";
+            }
+            break;
+        }
+
+        param[3] = i.name;
+        param[4] = i.incoming ? "incoming" : "outgoing";
+
+        widget->updateCallView( param, row );
+        row++;
     }
 
     widget->setCssiEnabled( enableCSSI );
@@ -160,6 +225,20 @@ void ControlWidget::setCssuEnabled( bool enableCSSU )
     ui->cbCSSU->setEnabled( enableCSSU );
 }
 
+void ControlWidget::clearCallView()
+{
+    ui->twCallMgt->clearContents();
+}
+
+void ControlWidget::updateCallView( QString callParameters [5], int row )
+{
+    if ( row > ui->twCallMgt->rowCount() - 1 )
+        ui->twCallMgt->insertRow( row );
+
+    for ( int i = 0; i < 5; i++ )
+        ui->twCallMgt->setItem( row, i, new QTableWidgetItem( callParameters[i] ) );
+}
+
 void Control::setPhoneNumber( const QString &number )
 {
     widget->setWindowTitle("Phonesim - Number: " + number);
@@ -172,20 +251,19 @@ void Control::warning( const QString &title, const QString &message )
 
 void ControlWidget::handleCSSNNotif()
 {
-
     ui->cbCSSU->setEnabled( false );
     ui->cbCSSI->setEnabled( false );
 
-    ui->cbCSSU->insertItem(0, "");
-    ui->cbCSSU->insertItem(1, "0 - forwarded", 0);
-    ui->cbCSSU->insertItem(3, "2 - on hold", 2);
-    ui->cbCSSU->insertItem(4, "3 - retrieved", 3);
-    ui->cbCSSU->insertItem(5, "4 - multiparty", 4);
+    ui->cbCSSU->insertItem( 0, "" );
+    ui->cbCSSU->insertItem( 1, "0 - forwarded", 0 );
+    ui->cbCSSU->insertItem( 3, "2 - on hold", 2 );
+    ui->cbCSSU->insertItem( 4, "3 - retrieved", 3 );
+    ui->cbCSSU->insertItem( 5, "4 - multiparty", 4 );
 
-    ui->cbCSSI->insertItem(0, "");
-    ui->cbCSSI->insertItem(3, "2 - forwarded", 2);
-    ui->cbCSSI->insertItem(6, "5 - outgoing barred", 5);
-    ui->cbCSSI->insertItem(7, "6 - incomming barred", 6);
+    ui->cbCSSI->insertItem( 0, "" );
+    ui->cbCSSI->insertItem( 3, "2 - forwarded", 2 );
+    ui->cbCSSI->insertItem( 6, "5 - outgoing barred", 5 );
+    ui->cbCSSI->insertItem( 7, "6 - incomming barred", 6 );
 }
 
 void ControlWidget::sendCSSN()
@@ -195,7 +273,7 @@ void ControlWidget::sendCSSN()
     if ( v.canConvert<int>() && ui->cbCSSU->isEnabled() )
         emit unsolicitedCommand( "+CSSU: "+QString::number( v.toInt() ) );
 
-    v = ui->cbCSSI->itemData(ui->cbCSSI->currentIndex());
+    v = ui->cbCSSI->itemData( ui->cbCSSI->currentIndex() );
 
     if ( v.canConvert<int>() && ui->cbCSSI->isEnabled() )
         emit unsolicitedCommand( "+CSSI: "+QString::number( v.toInt() ) );
