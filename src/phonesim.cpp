@@ -528,6 +528,8 @@ SimRules::SimRules( int fd, QObject *p,  const QString& filename, HardwareManipu
     if ( machine ) {
         connect( machine, SIGNAL(startIncomingCall(QString,QString,QString)),
                  _callManager, SLOT(startIncomingCall(QString,QString,QString)) );
+        connect ( _callManager, SIGNAL( callStatesChanged( QList<CallInfo> * ) ),
+                  machine, SLOT( callManagement( QList<CallInfo> * ) ) );
     }
 
     connect(this,SIGNAL(readyRead()),
