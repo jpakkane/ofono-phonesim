@@ -139,9 +139,10 @@ void Control::callManagement( QList<CallInfo> *list )
     int row = 0;
     bool enableCSSU = false;
     bool enableCSSI = false;
-    static const char *state_table[] = { "Active", "Held", "Dialing",
-                                         "Alerting", "Incoming", "Waiting",
-                                         "Disconnected", "Swapping" };
+    static QString state_table[] = { tr("Active"), tr("Held"),
+                                      tr("Dialing"), tr("Alerting"),
+                                      tr("Incoming"), tr("Waiting"),
+                                      tr("Disconnected"), tr("Swapping") };
 
     widget->clearCallView();
 
@@ -157,7 +158,7 @@ void Control::callManagement( QList<CallInfo> *list )
         param[1] = i.number;
         param[2] = state_table[i.state];
         param[3] = i.name;
-        param[4] = i.incoming ? "incoming" : "outgoing";
+        param[4] = i.incoming ? tr("Incoming") : tr("Outgoing");
 
         widget->updateCallView( param, row );
         row++;
