@@ -149,6 +149,8 @@ bool CallManager::command( const QString& cmd )
         info.dialBack = false;
         callList += info;
 
+        emit callStatesChanged( &callList );
+
         // Advertise the call state change and then return to command mode.
         sendState( info );
         send( "OK" );
@@ -175,6 +177,8 @@ bool CallManager::command( const QString& cmd )
                 info.incoming = false;
                 info.dialBack = false;
                 callList += info;
+
+                emit callStatesChanged( &callList );
 
                 // Advertise the call state change and then return to command mode.
                 sendState( info );
@@ -369,6 +373,7 @@ void CallManager::startIncomingCall( const QString& number,
     callList += info;
 
     emitRing(info);
+    emit callStatesChanged( &callList );
 
     // Announce the incoming call using Ericsson-style state notifications.
     sendState( info );
@@ -395,6 +400,7 @@ void CallManager::hangupAll()
     connectTimer->stop();
     alertingTimer->stop();
     hangupTimer->stop();
+    emit callStatesChanged( &callList );
 }
 
 void CallManager::hangupConnected()
@@ -412,6 +418,8 @@ void CallManager::hangupConnected()
 
     if ( !hasCall( CallState_Held ) )
         waitingToIncoming();
+
+    emit callStatesChanged( &callList );
 }
 
 void CallManager::hangupHeld()
@@ -429,6 +437,8 @@ void CallManager::hangupHeld()
 
     if ( !hasCall( CallState_Active ) )
         waitingToIncoming();
+
+    emit callStatesChanged( &callList );
 }
 
 void CallManager::hangupConnectedAndHeld()
@@ -445,6 +455,7 @@ void CallManager::hangupConnectedAndHeld()
     }
     callList = newCallList;
     waitingToIncoming();
+    emit callStatesChanged( &callList );
 }
 
 void CallManager::hangupCall( int id )
@@ -466,11 +477,13 @@ bool CallManager::acceptCall()
         changeGroup( CallState_Active, CallState_Held );
         callList[index].state = CallState_Active;
         sendState( callList[index] );
+        emit callStatesChanged( &callList );
         return true;
     } else {
         // Only held calls, or no other calls, so just make the incoming call active.
         callList[index].state = CallState_Active;
         sendState( callList[index] );
+        emit callStatesChanged( &callList );
         return true;
     }
 }
@@ -500,6 +513,7 @@ bool CallManager::chld1()
         int index = indexForId(id);
         callList[index].state = CallState_Active;
         sendState( callList[index] );
+        emit callStatesChanged( &callList );
         return true;
     } else if ( hasCall( CallState_Held ) ) {
         // Hangup the active calls and activate the held ones.
@@ -508,6 +522,7 @@ bool CallManager::chld1()
             if ( callList[index].state == CallState_Held ) {
                 callList[index].state = CallState_Active;
                 sendState( callList[index] );
+                emit callStatesChanged( &callList );
             }
         }
         return true;
@@ -551,6 +566,7 @@ bool CallManager::chld1x( int x )
     if ( !hasCall( CallState_Active ) && !hasCall( CallState_Held ) )
         waitingToIncoming();
 
+    emit callStatesChanged( &callList );
     return found;
 }
 
@@ -570,6 +586,7 @@ bool CallManager::chld2()
         int index = indexForId( id );
         callList[index].state = CallState_Active;
         sendState( callList[index] );
+        emit callStatesChanged( &callList );
         return true;
     } else if ( hasCall( CallState_Active ) && hasCall( CallState_Held ) ) {
         // Swap the active and held calls.
@@ -620,6 +637,7 @@ bool CallManager::chld2x( int x )
             // No active calls, so make just this call active.
             callList[index].state = CallState_Active;
             sendState( callList[index] );
+            emit callStatesChanged( &callList );
         }
         return true;
     } else if ( callList[index].state == CallState_Active ) {
@@ -634,6 +652,7 @@ bool CallManager::chld2x( int x )
                     return false;
                 callList[index2].state = CallState_Held;
                 sendState( callList[index2] );
+                emit callStatesChanged( &callList );
             }
         }
         return true;
@@ -691,6 +710,7 @@ void CallManager::dialingToConnected()
     // Transition the call to its new state.
     callList[index].state = CallState_Active;
     sendState( callList[index] );
+    emit callStatesChanged( &callList );
     // If the dialed number starts with 05123, disconnect the
     // call after xx seconds, where xx is part of the dial string
     // as 05123xx
@@ -714,6 +734,7 @@ void CallManager::dialingToAlerting()
     // Transition the call to its new state.
     callList[index].state = CallState_Alerting;
     sendState( callList[index] );
+    emit callStatesChanged( &callList );
 }
 
 void CallManager::waitingToIncoming()
@@ -856,6 +877,7 @@ void CallManager::changeGroup( CallState oldState, CallState newState )
             sendState( callList[index] );
         }
     }
+    emit callStatesChanged( &callList );
 }
 
 void CallManager::sendState( const CallInfo& info )

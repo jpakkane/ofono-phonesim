@@ -114,6 +114,9 @@ signals:
     // Send a call control event.
     void controlEvent( const QSimControlEvent& event );
 
+    // Send calls list on status change
+    void callStatesChanged( QList<CallInfo> *list );
+
 private slots:
     // Transition the active dialing or alerting call to connected.
     void dialingToConnected();
