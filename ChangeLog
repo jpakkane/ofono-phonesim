@@ -1,3 +1,6 @@
+ver 1.14:
+	Add support for call management user interface.
+
 ver 1.13:
 	Add support for CPHS EFcsp SIM file.
 	Add support for SIM Toolkit Class E commands.
