@@ -107,6 +107,7 @@ void ConformanceSimApplication::mainMenu()
     QList<QSimMenuItem> items;
 
     cmd.setType( QSimCommand::SetupMenu );
+    cmd.setTitle( "Conformance menu" );
 
     item.setIdentifier( ConformanceMenu_DisplayText );
     item.setLabel( "Display Text" );

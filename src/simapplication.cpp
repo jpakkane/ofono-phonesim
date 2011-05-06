@@ -382,6 +382,7 @@ void DemoSimApplication::mainMenu()
     QList<QSimMenuItem> items;
 
     cmd.setType( QSimCommand::SetupMenu );
+    cmd.setTitle( "Phonesim services" );
 
     item.setIdentifier( MainMenu_News );
     item.setLabel( "News" );
