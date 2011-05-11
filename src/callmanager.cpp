@@ -700,6 +700,10 @@ bool CallManager::chld4()
 
 void CallManager::dialingToConnected()
 {
+    // Stop timers in case they are still active
+    alertingTimer->stop();
+    connectTimer->stop();
+
     // Find the currently dialing or alerting call.
     int index = indexForId( idForState( CallState_Dialing ) );
     if ( index < 0 )
@@ -726,6 +730,9 @@ void CallManager::dialingToConnected()
 
 void CallManager::dialingToAlerting()
 {
+    // Stop the timer in case it is still active
+    alertingTimer->stop();
+
     // Find the currently dialing or alerting call.
     int index = indexForId( idForState( CallState_Dialing ) );
     if ( index < 0 )

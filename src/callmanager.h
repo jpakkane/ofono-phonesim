@@ -100,6 +100,12 @@ public slots:
     void startIncomingCall( const QString& number, const QString& calledNumber,
                                 const QString& name );
 
+    // Transition the active dialing or alerting call to connected.
+    void dialingToConnected();
+
+    // Transition the active dialing call to alerting.
+    void dialingToAlerting();
+
 signals:
     // Send a response to a command.
     void send( const QString& line );
@@ -118,12 +124,6 @@ signals:
     void callStatesChanged( QList<CallInfo> *list );
 
 private slots:
-    // Transition the active dialing or alerting call to connected.
-    void dialingToConnected();
-
-    // Transition the active dialing call to alerting.
-    void dialingToAlerting();
-
     // Transition the waiting call to incoming.
     void waitingToIncoming();
 
