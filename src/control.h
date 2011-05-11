@@ -113,6 +113,8 @@ signals:
     void variableChanged(const QString &, const QString &);
     void switchTo(const QString &);
     void startIncomingCall(const QString &, const QString &, const QString &);
+    void stateChangedToAlerting();
+    void stateChangedToConnected();
 
 protected:
     void closeEvent(QCloseEvent *event);

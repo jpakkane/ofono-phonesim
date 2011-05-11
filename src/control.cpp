@@ -125,7 +125,9 @@ Control::Control(const QString& ruleFile, SimRules *sr, QObject *parent)
         << SIGNAL(command(QString))
         << SIGNAL(variableChanged(QString,QString))
         << SIGNAL(switchTo(QString))
-        << SIGNAL(startIncomingCall(QString, QString, QString));
+        << SIGNAL(startIncomingCall(QString, QString, QString))
+        << SIGNAL(stateChangedToAlerting())
+        << SIGNAL(stateChangedToConnected());
 
     foreach (QByteArray sig, proxySignals)
         connect(widget, sig, this, sig);
@@ -172,12 +174,12 @@ void Control::callManagement( QList<CallInfo> *list )
 
 void ControlWidget::setStateConnected()
 {
-    emit p->stateChangedToConnected();
+    emit stateChangedToConnected();
 }
 
 void ControlWidget::setStateAlerting()
 {
-    emit p->stateChangedToAlerting();
+    emit stateChangedToAlerting();
 }
 
 void ControlWidget::setCssiEnabled( bool enableCSSI )
