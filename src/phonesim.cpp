@@ -530,6 +530,10 @@ SimRules::SimRules( int fd, QObject *p,  const QString& filename, HardwareManipu
                  _callManager, SLOT(startIncomingCall(QString,QString,QString)) );
         connect ( _callManager, SIGNAL( callStatesChanged( QList<CallInfo> * ) ),
                   machine, SLOT( callManagement( QList<CallInfo> * ) ) );
+        connect ( machine, SIGNAL( stateChangedToAlerting() ), _callManager,
+                SLOT( dialingToAlerting() ) );
+        connect ( machine, SIGNAL( stateChangedToConnected() ), _callManager,
+                SLOT( dialingToConnected() ) );
     }
 
     connect(this,SIGNAL(readyRead()),
