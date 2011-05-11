@@ -104,6 +104,8 @@ private slots:
     void sendGNSSData();
     void setDefaultGNSSData();
     void sendCSSN();
+    void setStateAlerting();
+    void setStateConnected();
 
 signals:
     void unsolicitedCommand(const QString &);

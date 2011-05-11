@@ -88,6 +88,8 @@ ControlWidget::ControlWidget(const QString &ruleFile, Control *parent)
     connect(ui->pbSendGNSSData, SIGNAL(clicked()), this, SLOT(sendGNSSData()));
     connect(ui->pbGNSSDefault, SIGNAL(clicked()), this, SLOT(setDefaultGNSSData()));
     connect(ui->pbSendNotif, SIGNAL(clicked()), this, SLOT(sendCSSN()));
+    connect(ui->pbAlerting, SIGNAL(clicked()), this, SLOT(setStateAlerting()));
+    connect(ui->pbActive, SIGNAL(clicked()), this, SLOT(setStateConnected()));
 
     QStringList headers;
     headers << "Sender" << "Priority" << "Notification Status";
@@ -166,6 +168,16 @@ void Control::callManagement( QList<CallInfo> *list )
 
     widget->setCssiEnabled( enableCSSI );
     widget->setCssuEnabled( enableCSSU );
+}
+
+void ControlWidget::setStateConnected()
+{
+    emit p->stateChangedToConnected();
+}
+
+void ControlWidget::setStateAlerting()
+{
+    emit p->stateChangedToAlerting();
 }
 
 void ControlWidget::setCssiEnabled( bool enableCSSI )
