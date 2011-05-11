@@ -1395,6 +1395,24 @@ p, li { white-space: pre-wrap; }
         </widget>
        </item>
        <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_4">
+         <item>
+          <widget class="QPushButton" name="pbAlerting">
+           <property name="text">
+            <string>Alerting</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="pbActive">
+           <property name="text">
+            <string>Active</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
         <layout class="QHBoxLayout" name="horizontalLayout_3">
          <item>
           <widget class="QGroupBox" name="gbIncomingCall">
