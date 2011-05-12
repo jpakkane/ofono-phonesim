@@ -143,8 +143,6 @@ private slots:
 
 private:
     QList<CallInfo> callList;
-    QTimer *connectTimer;
-    QTimer *alertingTimer;
     QTimer *hangupTimer;
     QTimer *ringTimer;
     bool _holdWillFail;

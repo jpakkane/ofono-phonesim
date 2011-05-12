@@ -31,14 +31,6 @@ CallManager::CallManager( QObject *parent )
     _multipartyLimit = -1;
     numRings = 0;
 
-    connectTimer = new QTimer(this);
-    connectTimer->setSingleShot(true);
-    connect( connectTimer, SIGNAL(timeout()), this, SLOT(dialingToConnected()) );
-
-    alertingTimer = new QTimer(this);
-    alertingTimer->setSingleShot(true);
-    connect( alertingTimer, SIGNAL(timeout()), this, SLOT(dialingToAlerting()) );
-
     hangupTimer = new QTimer(this);
     hangupTimer->setSingleShot(true);
     connect( hangupTimer, SIGNAL(timeout()), this, SLOT(hangupTimeout()) );
@@ -155,10 +147,6 @@ bool CallManager::command( const QString& cmd )
         sendState( info );
         send( "OK" );
 
-        // Start timers to transition the dialing call to alerting and connected.
-        alertingTimer->start(2500);
-        connectTimer->start(3000);
-
     // Data call - phone number 696969
     } else if ( cmd.startsWith( "ATD" ) ) {
         // Data call setup.
@@ -183,10 +171,6 @@ bool CallManager::command( const QString& cmd )
                 // Advertise the call state change and then return to command mode.
                 sendState( info );
                 send( "CONNECT 19200" );
-
-                // Start timers to transition the dialing call to alerting and connected.
-                alertingTimer->start(2500);
-                connectTimer->start(3000);
                 } else {
                 // If not a data line
                 emit send( "NO CARRIER" );
@@ -397,8 +381,6 @@ void CallManager::hangupAll()
         sendState( callList[index] );
     }
     callList.clear();
-    connectTimer->stop();
-    alertingTimer->stop();
     hangupTimer->stop();
     emit callStatesChanged( &callList );
 }
@@ -533,8 +515,6 @@ bool CallManager::chld1()
     } else if ( ( id = idForDialing() ) >= 0 ) {
         // We have a dialing call.
         hangupCall(id);
-        connectTimer->stop();
-        alertingTimer->stop();
         hangupTimer->stop();
         return true;
     } else {
@@ -550,8 +530,6 @@ bool CallManager::chld1x( int x )
         if ( callList[index].id == x ) {
             if ( callList[index].state == CallState_Dialing ||
                  callList[index].state == CallState_Alerting ) {
-                connectTimer->stop();
-                alertingTimer->stop();
                 hangupTimer->stop();
             }
             callList[index].state = CallState_Hangup;
@@ -700,10 +678,6 @@ bool CallManager::chld4()
 
 void CallManager::dialingToConnected()
 {
-    // Stop timers in case they are still active
-    alertingTimer->stop();
-    connectTimer->stop();
-
     // Find the currently dialing or alerting call.
     int index = indexForId( idForState( CallState_Dialing ) );
     if ( index < 0 )
@@ -730,9 +704,6 @@ void CallManager::dialingToConnected()
 
 void CallManager::dialingToAlerting()
 {
-    // Stop the timer in case it is still active
-    alertingTimer->stop();
-
     // Find the currently dialing or alerting call.
     int index = indexForId( idForState( CallState_Dialing ) );
     if ( index < 0 )
