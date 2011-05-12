@@ -203,7 +203,11 @@ void ControlWidget::updateCallView( QString callParameters [5], int row )
         ui->twCallMgt->insertRow( row );
 
     for ( int i = 0; i < 5; i++ )
-        ui->twCallMgt->setItem( row, i, new QTableWidgetItem( callParameters[i] ) );
+    {
+        QTableWidgetItem *item = new QTableWidgetItem( callParameters[i] );
+        item->setFlags( item->flags() & ~Qt::ItemIsEditable );
+        ui->twCallMgt->setItem( row, i, item );
+    }
 }
 
 void Control::setPhoneNumber( const QString &number )
