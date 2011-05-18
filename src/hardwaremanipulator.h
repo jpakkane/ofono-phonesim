@@ -60,6 +60,7 @@ signals:
     void startIncomingCall(const QString &number, const QString &called_number, const QString &name);
     void stateChangedToAlerting();
     void stateChangedToConnected();
+    void stateChangedToHangup( int callId );
 
 protected:
     virtual QString constructCBMessage(const QString &messageCode, int geographicalScope, const QString &updateNumber, const QString &channel,
