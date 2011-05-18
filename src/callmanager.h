@@ -106,6 +106,9 @@ public slots:
     // Transition the active dialing call to alerting.
     void dialingToAlerting();
 
+    // Simulate a remote hangup.
+    void hangupRemote( int id );
+
 signals:
     // Send a response to a command.
     void send( const QString& line );

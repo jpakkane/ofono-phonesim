@@ -445,6 +445,29 @@ void CallManager::hangupCall( int id )
     chld1x( id );
 }
 
+void CallManager::hangupRemote( int id )
+{
+    int index = indexForId( id );
+    if ( index >= 0 )
+    {
+        if ( callList[index].state == CallState_Dialing ||
+                callList[index].state == CallState_Alerting )
+        {
+            hangupTimer->stop();
+        }
+        callList[index].state = CallState_Hangup;
+        sendState( callList[index] );
+
+        callList.removeAt( index );
+
+        if ( !hasCall( CallState_Active ) && !hasCall( CallState_Held ) )
+            waitingToIncoming();
+
+        send ( "NO CARRIER" );
+        emit callStatesChanged( &callList );
+    }
+}
+
 bool CallManager::acceptCall()
 {
     int id = idForIncoming();
