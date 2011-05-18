@@ -1410,6 +1410,13 @@ p, li { white-space: pre-wrap; }
            </property>
           </widget>
          </item>
+         <item>
+          <widget class="QPushButton" name="pbHangup">
+           <property name="text">
+            <string>Hangup</string>
+           </property>
+          </widget>
+         </item>
         </layout>
        </item>
        <item>
