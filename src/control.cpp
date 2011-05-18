@@ -90,6 +90,7 @@ ControlWidget::ControlWidget(const QString &ruleFile, Control *parent)
     connect(ui->pbSendNotif, SIGNAL(clicked()), this, SLOT(sendCSSN()));
     connect(ui->pbAlerting, SIGNAL(clicked()), this, SLOT(setStateAlerting()));
     connect(ui->pbActive, SIGNAL(clicked()), this, SLOT(setStateConnected()));
+    connect(ui->pbHangup, SIGNAL(clicked()), this, SLOT(setStateHangup()));
 
     QStringList headers;
     headers << "Sender" << "Priority" << "Notification Status";
@@ -127,7 +128,8 @@ Control::Control(const QString& ruleFile, SimRules *sr, QObject *parent)
         << SIGNAL(switchTo(QString))
         << SIGNAL(startIncomingCall(QString, QString, QString))
         << SIGNAL(stateChangedToAlerting())
-        << SIGNAL(stateChangedToConnected());
+        << SIGNAL(stateChangedToConnected())
+        << SIGNAL(stateChangedToHangup(int));
 
     foreach (QByteArray sig, proxySignals)
         connect(widget, sig, this, sig);
@@ -180,6 +182,26 @@ void ControlWidget::setStateConnected()
 void ControlWidget::setStateAlerting()
 {
     emit stateChangedToAlerting();
+}
+
+void ControlWidget::setStateHangup()
+{
+    QList <QTableWidgetItem *> items = ui->twCallMgt->selectedItems();
+
+    foreach ( QTableWidgetItem *item, items )
+    {
+        int row = item->row();
+        if ( row >= 0 )
+        {
+            QTableWidgetItem *itemCallId = ui->twCallMgt->item( row, 0 );
+            if ( itemCallId != 0 )
+            {
+                QString strid = itemCallId->text();
+                int id = strid.toInt();
+                emit p->stateChangedToHangup( id );
+            }
+        }
+    }
 }
 
 void ControlWidget::setCssiEnabled( bool enableCSSI )

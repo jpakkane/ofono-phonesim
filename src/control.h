@@ -106,6 +106,7 @@ private slots:
     void sendCSSN();
     void setStateAlerting();
     void setStateConnected();
+    void setStateHangup();
 
 signals:
     void unsolicitedCommand(const QString &);
@@ -115,6 +116,7 @@ signals:
     void startIncomingCall(const QString &, const QString &, const QString &);
     void stateChangedToAlerting();
     void stateChangedToConnected();
+    void stateChangedToHangup( int callId );
 
 protected:
     void closeEvent(QCloseEvent *event);
