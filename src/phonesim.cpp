@@ -534,6 +534,8 @@ SimRules::SimRules( int fd, QObject *p,  const QString& filename, HardwareManipu
                 SLOT( dialingToAlerting() ) );
         connect ( machine, SIGNAL( stateChangedToConnected() ), _callManager,
                 SLOT( dialingToConnected() ) );
+        connect ( machine, SIGNAL( stateChangedToHangup( int ) ), _callManager,
+                SLOT( hangupRemote( int ) ) );
     }
 
     connect(this,SIGNAL(readyRead()),
