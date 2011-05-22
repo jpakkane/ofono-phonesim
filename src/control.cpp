@@ -216,6 +216,7 @@ void ControlWidget::setCssuEnabled( bool enableCSSU )
 
 void ControlWidget::clearCallView()
 {
+    ui->twCallMgt->setRowCount(0);
     ui->twCallMgt->clearContents();
 }
 
