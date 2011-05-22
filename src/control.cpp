@@ -198,7 +198,7 @@ void ControlWidget::setStateHangup()
             {
                 QString strid = itemCallId->text();
                 int id = strid.toInt();
-                emit p->stateChangedToHangup( id );
+                emit stateChangedToHangup( id );
             }
         }
     }
