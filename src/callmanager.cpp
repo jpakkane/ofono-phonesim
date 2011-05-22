@@ -381,7 +381,6 @@ void CallManager::hangupAll()
         sendState( callList[index] );
     }
     callList.clear();
-    hangupTimer->stop();
     emit callStatesChanged( &callList );
 }
 
@@ -450,11 +449,6 @@ void CallManager::hangupRemote( int id )
     int index = indexForId( id );
     if ( index >= 0 )
     {
-        if ( callList[index].state == CallState_Dialing ||
-                callList[index].state == CallState_Alerting )
-        {
-            hangupTimer->stop();
-        }
         callList[index].state = CallState_Hangup;
         sendState( callList[index] );
 
@@ -538,7 +532,6 @@ bool CallManager::chld1()
     } else if ( ( id = idForDialing() ) >= 0 ) {
         // We have a dialing call.
         hangupCall(id);
-        hangupTimer->stop();
         return true;
     } else {
         return false;
@@ -551,10 +544,6 @@ bool CallManager::chld1x( int x )
     bool found = false;
     for ( int index = 0; index < callList.size(); ++index ) {
         if ( callList[index].id == x ) {
-            if ( callList[index].state == CallState_Dialing ||
-                 callList[index].state == CallState_Alerting ) {
-                hangupTimer->stop();
-            }
             callList[index].state = CallState_Hangup;
             sendState( callList[index] );
             found = true;
