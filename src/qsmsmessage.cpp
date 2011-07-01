@@ -2347,11 +2347,9 @@ static void unpackSckl( QSMSMessage& m, const QString& text )
 QSMSMessage QSMSDeliverMessage::unpack(QTextCodec *codec)
 {
     QSMSMessage m;
-    bool moreMessages;
     bool statusReport;
     bool userDataHeader;
     bool replyPath;
-    bool rejectDuplicates;
     unsigned char protocol;
     unsigned char scheme;
     uint msgType;
@@ -2370,16 +2368,12 @@ QSMSMessage QSMSDeliverMessage::unpack(QTextCodec *codec)
         return m;
     msgType = bits(0, 2);
     if ( msgType == SMS_Deliver ) {
-        moreMessages = bit(2);
         // Bits 3 and 4 are unused for deliver messages.
         statusReport = bit(5);
         userDataHeader = bit(6);
         replyPath = bit(7);
-        rejectDuplicates = false;
         validityFormat = SMS_VF_NoPresent;
     } else if ( msgType == SMS_Submit ) {
-        moreMessages = false;
-        rejectDuplicates = bit(2);
         validityFormat = bits(3, 2);
         statusReport = bit(5);
         userDataHeader = bit(6);
