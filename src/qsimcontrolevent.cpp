@@ -261,7 +261,6 @@ QSimControlEvent QSimControlEvent::fromPdu
     QSimControlEvent ev;
     QByteArray content;
     uint posn = 0;
-    uint startPosn;
     uint newPosn;
     uint tag, length;
     ev.setType( type );
@@ -273,7 +272,6 @@ QSimControlEvent QSimControlEvent::fromPdu
     ev.setResult( (QSimControlEvent::Result)tag );
     content = pdu.mid( posn, length );
     posn = 0;
-    startPosn = 0;
     if ( posn >= (uint)content.size() )
         return ev;
     readBer( content, posn, tag, length );
@@ -300,7 +298,6 @@ QSimControlEvent QSimControlEvent::fromPdu
         posn = newPosn;
         if ( posn >= (uint)content.size() )
             break;
-        startPosn = newPosn;
         readBer( content, posn, tag, length );
     }
     return ev;

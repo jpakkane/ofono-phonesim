@@ -357,7 +357,6 @@ QSimEnvelope QSimEnvelope::fromPdu( const QByteArray& pdu )
     QSimEnvelope env;
     QByteArray content;
     uint posn = 0;
-    uint startPosn;
     uint newPosn;
     uint tag, length;
     readBer( pdu, posn, tag, length );
@@ -368,7 +367,6 @@ QSimEnvelope QSimEnvelope::fromPdu( const QByteArray& pdu )
     env.setType( (QSimEnvelope::Type)tag );
     content = pdu.mid( posn, length );
     posn = 0;
-    startPosn = 0;
     readBer( content, posn, tag, length );
     for (;;) {
         if ( ( posn + length ) > (uint)content.size() )
@@ -421,7 +419,6 @@ QSimEnvelope QSimEnvelope::fromPdu( const QByteArray& pdu )
         posn = newPosn;
         if ( posn >= (uint)content.size() )
             break;
-        startPosn = newPosn;
         readBer( content, posn, tag, length );
     }
     return env;
