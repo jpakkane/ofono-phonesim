@@ -1,3 +1,7 @@
+ver 1.15:
+	Fix issue with missing title in SETUP menu.
+	Update call management user interface.
+
 ver 1.14:
 	Add support for call management user interface.
 
