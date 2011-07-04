@@ -350,11 +350,13 @@ const QString DemoSimApplication::getName()
 #define LocalInfoMenu_Time  1
 #define LocalInfoMenu_Lang  2
 
-#define BIPMenu_OpenChannel      1
-#define BIPMenu_CloseChannel     2
-#define BIPMenu_ReceiveData      3
-#define BIPMenu_SendData         4
-#define BIPMenu_GetChannelStatus 5
+#define BIPMenu_OpenChannel_TCP        1
+#define BIPMenu_OpenChannel_UDP        2
+#define BIPMenu_CloseChannel           3
+#define BIPMenu_ReceiveData            4
+#define BIPMenu_SendData_Immediately   5
+#define BIPMenu_SendData_Store         6
+#define BIPMenu_GetChannelStatus       7
 
 enum SendSMSMenuItems {
 	SendSMS_Unpacked = 1,
@@ -2377,7 +2379,7 @@ void DemoSimApplication::BIPMenu( const QSimTerminalResponse& resp )
     if ( resp.result() == QSimTerminalResponse::Success ) {
 	switch ( resp.menuItem() ) {
 
-            case BIPMenu_OpenChannel:
+            case BIPMenu_OpenChannel_TCP:
             {
                 QByteArray bearerDesc;
                 QByteArray uti;
@@ -2392,14 +2394,14 @@ void DemoSimApplication::BIPMenu( const QSimTerminalResponse& resp )
                 bearerDesc += 0x1F;
                 bearerDesc += 0x02;
 
-                uti += 0x01;
-                uti += 0xAD;
-                uti += 0x9C;
+                uti += 0x02; /* TCP, UICC in client mode, remote connection */
+                uti += 0x30;
+                uti += 0x3C; /* port 12348 */
 
                 destAddress += 0x21;
-                destAddress += 0x01;
-                destAddress += 0x01;
-                destAddress += 0x01;
+                destAddress += 0x7F; /* local host 127.0.0.1 */
+                destAddress += (char) 0x00;
+                destAddress += (char) 0x00;
                 destAddress += 0x01;
 
                 apn += 0x06;
@@ -2415,7 +2417,57 @@ void DemoSimApplication::BIPMenu( const QSimTerminalResponse& resp )
 
                 cmd.setType( QSimCommand::OpenChannel );
                 cmd.setQualifier( QSimCommand::OpenChannelImmediate );
-                cmd.setText("Open ID");
+                cmd.setText("Open channel TCP");
+                cmd.setBearerDesc(bearerDesc);
+                cmd.setBufferSize(1400);
+                cmd.setApn(apn);
+                cmd.setUserLogin("UserLog");
+                cmd.setUserPassword("UserPwd");
+                cmd.setUti(uti);
+                cmd.setDestAddress(destAddress);
+                command( cmd, this, SLOT(sendBIPMenu()) );
+            }
+            break;
+
+            case BIPMenu_OpenChannel_UDP:
+            {
+                QByteArray bearerDesc;
+                QByteArray uti;
+                QByteArray destAddress;
+                QByteArray apn;
+
+                bearerDesc += 0x02;
+                bearerDesc += 0x03;
+                bearerDesc += 0x04;
+                bearerDesc += 0x03;
+                bearerDesc += 0x04;
+                bearerDesc += 0x1F;
+                bearerDesc += 0x02;
+
+                uti += 0x01; /* UDP, UICC in client mode, remote connection */
+                uti += 0x30;
+                uti += 0x3C; /* port 12348 */
+
+                destAddress += 0x21;
+                destAddress += 0x7F; /* local host 127.0.0.1 */
+                destAddress += (char) 0x00;
+                destAddress += (char) 0x00;
+                destAddress += 0x01;
+
+                apn += 0x06;
+                apn += 0x54;
+                apn += 0x65;
+                apn += 0x73;
+                apn += 0x74;
+                apn += 0x47;
+                apn += 0x70;
+                apn += 0x02;
+                apn += 0x72;
+                apn += 0x73;
+
+                cmd.setType( QSimCommand::OpenChannel );
+                cmd.setQualifier( QSimCommand::OpenChannelImmediate );
+                cmd.setText("Open channel UDP");
                 cmd.setBearerDesc(bearerDesc);
                 cmd.setBufferSize(1400);
                 cmd.setApn(apn);
@@ -2437,19 +2489,39 @@ void DemoSimApplication::BIPMenu( const QSimTerminalResponse& resp )
             }
             break;
 
-            case BIPMenu_SendData:
+            case BIPMenu_SendData_Immediately:
             {
                 QByteArray data;
 
-                data += 0x01;
-                data += 0x02;
-                data += 0x03;
-                data += 0x04;
-                data += 0x05;
+                data += 0x61;
+                data += 0x62;
+                data += 0x63;
+                data += 0x64;
+                data += 0x65;
 
+                cmd.setQualifier( QSimCommand::SendDataImmediately );
                 cmd.setType( QSimCommand::SendData );
                 cmd.setDestinationDevice( QSimCommand::Channel1 );
-                cmd.setText("Send Data 1");
+                cmd.setText("Send Data Immediately");
+                cmd.addExtensionField( 0x36, data );
+                command( cmd, this, SLOT(sendBIPMenu()) );
+            }
+            break;
+
+            case BIPMenu_SendData_Store:
+            {
+                QByteArray data;
+
+                data += 0x31;
+                data += 0x32;
+                data += 0x33;
+                data += 0x34;
+                data += 0x35;
+
+                cmd.setQualifier( QSimCommand::SendDataStoreData );
+                cmd.setType( QSimCommand::SendData );
+                cmd.setDestinationDevice( QSimCommand::Channel1 );
+                cmd.setText("Store Data");
                 cmd.addExtensionField( 0x36, data );
                 command( cmd, this, SLOT(sendBIPMenu()) );
             }
@@ -2489,8 +2561,12 @@ void DemoSimApplication::sendBIPMenu()
     cmd.setType( QSimCommand::SelectItem );
     cmd.setTitle( "BIP commands Menu" );
 
-    item.setIdentifier( BIPMenu_OpenChannel );
-    item.setLabel( "Open channel" );
+    item.setIdentifier( BIPMenu_OpenChannel_TCP );
+    item.setLabel( "Open channel - TCP in client mode" );
+    items += item;
+
+    item.setIdentifier( BIPMenu_OpenChannel_UDP );
+    item.setLabel( "Open channel - UDP in client mode" );
     items += item;
 
     item.setIdentifier( BIPMenu_CloseChannel );
@@ -2501,8 +2577,12 @@ void DemoSimApplication::sendBIPMenu()
     item.setLabel( "Receive data" );
     items += item;
 
-    item.setIdentifier( BIPMenu_SendData );
-    item.setLabel( "Send data" );
+    item.setIdentifier( BIPMenu_SendData_Immediately );
+    item.setLabel( "Send data - Immediately" );
+    items += item;
+
+    item.setIdentifier( BIPMenu_SendData_Store );
+    item.setLabel( "Send data - Store" );
     items += item;
 
     item.setIdentifier( BIPMenu_GetChannelStatus );
