@@ -308,6 +308,7 @@ public slots:
     void respond( const QString& resp ) { respond( resp, 0 ); }
 
     void proactiveCommandNotify( const QByteArray& cmd );
+    void modemHandledCommandNotify( const QByteArray& cmd );
     void callControlEventNotify( const QSimControlEvent& event );
 
 private slots:

@@ -1615,6 +1615,11 @@ void SimRules::proactiveCommandNotify( const QByteArray& cmd )
     unsolicited( "+CUSATP: " + QAtUtils::toHex( cmd ) );
 }
 
+void SimRules::modemHandledCommandNotify( const QByteArray& cmd )
+{
+    unsolicited( "*HCMD: " + QAtUtils::toHex( cmd ) );
+}
+
 void SimRules::callControlEventNotify( const QSimControlEvent& evt )
 {
     unsolicited( "*TCC: " + QString::number( (int) (evt.type()) ) +
