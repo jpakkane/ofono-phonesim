@@ -50,6 +50,7 @@ protected slots:
                   QObject *target, const char *slot,
                   QSimCommand::ToPduOptions options
                         = QSimCommand::NoPduOptions );
+    void modemHandledCommand( const QSimCommand& cmd, int timeout );
     void controlEvent( const QSimControlEvent& event );
 
     virtual void mainMenu() = 0;

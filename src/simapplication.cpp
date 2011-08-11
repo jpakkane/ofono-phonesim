@@ -29,6 +29,7 @@ public:
     SimApplicationPrivate()
     {
         expectedType = QSimCommand::NoCommand;
+        modemHandled = false;
         target = 0;
         slot = 0;
         inResponse = false;
@@ -36,6 +37,7 @@ public:
 
     SimRules   *rules;
     QSimCommand::Type expectedType;
+    bool modemHandled;
     QByteArray  currentCommand;
     QObject    *target;
     const char *slot;
@@ -86,6 +88,20 @@ void SimApplication::command( const QSimCommand& cmd,
     }
 }
 
+void SimApplication::modemHandledCommand( const QSimCommand& cmd, int timeout)
+{
+    // Record the command details, together with the type of
+    // TERMINAL RESPONSE or ENVELOPE that we expect in answer.
+    d->currentCommand = cmd.toPdu( QSimCommand::NoPduOptions );
+    d->expectedType = cmd.type();
+    d->modemHandled = true;
+
+    if ( d->rules && !d->inResponse ) {
+        d->rules->modemHandledCommandNotify( d->currentCommand );
+    }
+
+    QTimer::singleShot( timeout, this, SLOT(endSession()) );
+}
 /*!
     Sends a call control \a event to the ME.
 */
@@ -118,6 +134,7 @@ void SimApplication::start()
 void SimApplication::abort()
 {
     d->expectedType = QSimCommand::NoCommand;
+    d->modemHandled = false;
     d->currentCommand = QByteArray();
     d->target = 0;
     d->slot = 0;
@@ -201,6 +218,9 @@ bool SimApplication::response( const QSimTerminalResponse& resp )
          resp.command().type() != d->expectedType )
         return false;
 
+    if (d->modemHandled == true)
+        return false;
+
     // Save the target information.
     QObject *target = d->target;
     const char *slot = d->slot;
@@ -208,6 +228,7 @@ bool SimApplication::response( const QSimTerminalResponse& resp )
     // Clear the command details, in preparation for a new command.
     if ( resp.command().type() != QSimCommand::SetupMenu ) {
         d->expectedType = QSimCommand::NoCommand;
+        d->modemHandled = false;
         d->currentCommand = QByteArray();
     }
     d->target = 0;
@@ -241,7 +262,10 @@ bool SimApplication::response( const QSimTerminalResponse& resp )
             resp.command().type() == QSimCommand::SetupMenu )
         return true;
 
-    d->rules->proactiveCommandNotify( d->currentCommand );
+    if (d->modemHandled)
+        d->rules->modemHandledCommandNotify( d->currentCommand );
+    else
+        d->rules->proactiveCommandNotify( d->currentCommand );
 
     return true;
 }
@@ -249,7 +273,8 @@ bool SimApplication::response( const QSimTerminalResponse& resp )
 void SimApplication::endSession()
 {
     d->expectedType = QSimCommand::SetupMenu;
-    d->rules->unsolicited( "+CUSATEND" );
+    d->modemHandled = false;
+    d->rules->respond( "+CUSATEND", 1);
 }
 
 DemoSimApplication::DemoSimApplication( SimRules *rules, QObject *parent )
