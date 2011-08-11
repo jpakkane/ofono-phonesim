@@ -133,6 +133,8 @@ protected slots:
     void localInfoMenu( const QSimTerminalResponse& resp );
     void sendBIPMenu();
     void BIPMenu( const QSimTerminalResponse& resp );
+    void sendHandledMenu();
+    void handledMenuResp( const QSimTerminalResponse& resp );
 
 private:
     int sticksLeft;

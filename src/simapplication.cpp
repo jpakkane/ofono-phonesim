@@ -315,6 +315,7 @@ const QString DemoSimApplication::getName()
 #define MainMenu_Refresh    17
 #define MainMenu_LocalInfo  18
 #define MainMenu_BIP        19
+#define MainMenu_Handled    20
 
 #define SportsMenu_Chess        1
 #define SportsMenu_Painting     2
@@ -380,6 +381,8 @@ const QString DemoSimApplication::getName()
 #define BIPMenu_SendData_Immediately   5
 #define BIPMenu_SendData_Store         6
 #define BIPMenu_GetChannelStatus       7
+
+#define Handled_SendSMS	1
 
 enum SendSMSMenuItems {
 	SendSMS_Unpacked = 1,
@@ -483,6 +486,10 @@ void DemoSimApplication::mainMenu()
 
     item.setIdentifier( MainMenu_BIP );
     item.setLabel( "BIP commands" );
+    items += item;
+
+    item.setIdentifier( MainMenu_Handled );
+    item.setLabel( "Modem-Handled commands" );
     items += item;
 
     cmd.setMenuItems( items );
@@ -630,6 +637,12 @@ void DemoSimApplication::mainMenuSelection( int id )
         case MainMenu_BIP:
         {
             sendBIPMenu();
+        }
+        break;
+
+        case MainMenu_Handled:
+        {
+            sendHandledMenu();
         }
         break;
 
@@ -2615,4 +2628,63 @@ void DemoSimApplication::sendBIPMenu()
     cmd.setMenuItems( items );
 
     command( cmd, this, SLOT(BIPMenu(QSimTerminalResponse)) );
+}
+
+void DemoSimApplication::sendHandledMenu()
+{
+    QSimCommand cmd;
+    QSimMenuItem item;
+    QList<QSimMenuItem> items;
+
+    cmd.setType( QSimCommand::SelectItem );
+    cmd.setTitle( "Modem-Handled Commands Menu" );
+
+    item.setIdentifier( Handled_SendSMS );
+    item.setLabel( "Send Modem-Handled SMS" );
+    items += item;
+
+    cmd.setMenuItems( items );
+
+    command( cmd, this, SLOT(handledMenuResp(QSimTerminalResponse)) );
+}
+
+void DemoSimApplication::handledMenuResp( const QSimTerminalResponse& resp )
+{
+    QSimCommand cmd;
+
+    if ( resp.result() != QSimTerminalResponse::Success ) {
+        /* Unknown response - just go back to the main menu. */
+        endSession();
+
+        return;
+    }
+
+    /* Item selected. */
+    switch ( resp.menuItem() ) {
+    case Handled_SendSMS:
+    {
+        QSMSMessage sms;
+        sms.setValidityPeriod( -1 );
+        sms.setMessageClass( 2 );
+        sms.setProtocol( 0 );
+        sms.setRecipient( "12345" );
+        sms.setText( smsText );
+        sms.setForceGsm( false );
+        sms.setBestScheme( QSMS_8BitAlphabet );
+        sms.setDataCodingScheme( 0xf6 );
+
+        cmd.setType( QSimCommand::SendSMS );
+        cmd.setText( "Sending an SMS to our friends at 12345" );
+        cmd.setNumber( "123" );
+        cmd.addExtensionField( 0x8b, sms.toPdu().mid( 1 ) );
+        cmd.setDestinationDevice( QSimCommand::Network );
+
+        modemHandledCommand(cmd, 6000);
+        break;
+    }
+
+    default:
+	endSession();
+	break;
+    }
 }
