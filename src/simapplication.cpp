@@ -232,22 +232,16 @@ bool SimApplication::response( const QSimTerminalResponse& resp )
 
     // Answer the AT+CSIM command and send notification of the new command.
     if ( !d->rules )
-        return false;////
-    if ( d->currentCommand.isEmpty() || resp.command().type() == QSimCommand::SetupMenu ) {
-        // No new command, so respond with a simple OK.
-        d->rules->respond( "+CSIM: 4,9000\\n\\nOK" );
-    } else {
-        // There is a new command, so send back 91XX to the TERMINAL RESPONSE
-        // or ENVELOPE request to indicate that we have another command to
-        // be fetched.  Then send the unsolicited "*TCMD" notification.
-        QByteArray data;
-        data += (char)0x91;
-        data += (char)(d->currentCommand.size());
-        d->rules->respond( "+CSIM: " + QString::number( data.size() * 2 ) + "," +
-                           QAtUtils::toHex( data ) + "\\n\\nOK" );
-        d->rules->unsolicited
-            ( "*TCMD: " + QString::number( d->currentCommand.size() ) );
-    }
+        return false;
+
+    d->rules->respond("OK");
+
+    // No new command
+    if ( d->currentCommand.isEmpty() ||
+            resp.command().type() == QSimCommand::SetupMenu )
+        return true;
+
+    d->rules->proactiveCommandNotify( d->currentCommand );
 
     return true;
 }
@@ -255,7 +249,7 @@ bool SimApplication::response( const QSimTerminalResponse& resp )
 void SimApplication::endSession()
 {
     d->expectedType = QSimCommand::SetupMenu;
-    d->rules->unsolicited("*TEND");
+    d->rules->unsolicited( "+CUSATEND" );
 }
 
 DemoSimApplication::DemoSimApplication( SimRules *rules, QObject *parent )

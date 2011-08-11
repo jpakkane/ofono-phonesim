@@ -961,16 +961,15 @@ bool SimRules::simCsimOk( const QByteArray& payload )
 
 bool SimRules::simCommand( const QString& cmd )
 {
-    /* Process SIM toolkit begin and end commands by forcing the
-     * app back to the main menu.  */
-    if ( cmd == "AT*TSTB" || cmd == "AT*TSTE" ) {
-        if ( !toolkitApp ) {
-            respond( "ERROR" );
-            return true;
-        }
+    // 3GPP Terminal Response Command
+    if ( cmd.startsWith("AT+CUSATT=") ) {
+        int start = cmd.indexOf( QChar('=') ) + 1;
+        QByteArray response = QAtUtils::fromHex( cmd.mid(start) );
+        QSimTerminalResponse resp = QSimTerminalResponse::fromPdu( response );
 
-        respond( "OK" );
-        toolkitApp->abort();
+        if ( !toolkitApp || !toolkitApp->response( resp ) )
+            respond( "ERROR" );
+
         return true;
     }
 
@@ -1599,7 +1598,7 @@ void SimRules::respond( const QString& resp, int delay, bool eol )
 
 void SimRules::proactiveCommandNotify( const QByteArray& cmd )
 {
-    unsolicited( "*TCMD: " + QString::number( cmd.size() ) );
+    unsolicited( "+CUSATP: " + QAtUtils::toHex( cmd ) );
 }
 
 void SimRules::callControlEventNotify( const QSimControlEvent& evt )
