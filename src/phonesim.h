@@ -260,9 +260,6 @@ public:
     // Expand variable references in a string.
     QString expand( const QString& s );
 
-    // force the next returned reply to be 'error'
-    void setReturnError( const QString &error, uint repeat = 0 );
-
     // Allocate a new call identifier.
     int newCall();
 
@@ -340,8 +337,6 @@ private:
     // Get a particular state object.
     SimState *state( const QString& name ) const;
 
-    QString return_error_string;
-    uint return_error_count;
     QString mPhoneNumber;
     HardwareManipulator *machine;
 

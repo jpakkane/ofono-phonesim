@@ -545,8 +545,6 @@ SimRules::SimRules( int fd, QObject *p,  const QString& filename, HardwareManipu
     // Initialize the local state.
     currentState = 0;
     defState = 0;
-    return_error_string = "";
-    return_error_count = 0;
     usedCallIds = 0;
     fileSystem = 0;
     useGsm0710 = false;
@@ -1510,13 +1508,6 @@ SimPhoneBook *SimRules::currentPB() const
         return 0;
 }
 
-void SimRules::setReturnError( const QString &error, uint repeat )
-{
-    return_error_string = error;
-    return_error_count = repeat;
-}
-
-
 int SimRules::newCall()
 {
     int id;
@@ -1591,15 +1582,8 @@ QString expandEscapes( const QString& data, bool eol )
 void SimRules::respond( const QString& resp, int delay, bool eol )
 {
     QString r = expand( resp );
-    if (return_error_string != "") {
-        r = return_error_string;
-        if (return_error_count > 0)
-            return_error_count--;
-        if (return_error_count == 0)
-            return_error_string = "";
-    }
-
     QByteArray escaped = expandEscapes( r, eol ).toUtf8();
+
     if ( !delay ) {
         writeChatData(escaped.data(), escaped.length());
         flush();
