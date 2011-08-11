@@ -973,6 +973,20 @@ bool SimRules::simCommand( const QString& cmd )
         return true;
     }
 
+    // 3GPP Envelope command
+    if ( cmd.startsWith("AT+CUSATE=") ) {
+        int start = cmd.indexOf( QChar('=') ) + 1;
+        QByteArray envelope = QAtUtils::fromHex( cmd.mid(start) );
+        QSimEnvelope env = QSimEnvelope::fromPdu( envelope );
+
+        if (!toolkitApp || !toolkitApp->envelope( env ) )
+            respond( "ERROR" );
+
+        respond( "OK" );
+
+        return true;
+    }
+
     // If not AT+CSIM, then this is not a SIM toolkit command.
     if ( !cmd.startsWith( "AT+CSIM=" ) )
         return false;
