@@ -179,8 +179,10 @@ bool SimApplication::envelope( const QSimEnvelope& env )
 {
     /* Process a menu selection ENVELOPE message.  We turn it into a
      * QSimTerminalResponse to make it easier to process.  */
-    if ( env.type() == QSimEnvelope::EventDownload )
+    if ( env.type() == QSimEnvelope::EventDownload ) {
+        d->rules->respond( "OK" );
         return true;
+    }
 
     if ( env.type() != QSimEnvelope::MenuSelection )
         /* Not supported */
@@ -189,6 +191,8 @@ bool SimApplication::envelope( const QSimEnvelope& env )
     if ( d->expectedType != QSimCommand::SetupMenu )
         /* Envelope sent for the wrong type of command. */
         return false;
+
+    d->rules->respond( "OK" );
 
     d->expectedType = QSimCommand::NoCommand;
     d->currentCommand = QByteArray();

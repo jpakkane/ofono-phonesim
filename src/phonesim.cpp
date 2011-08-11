@@ -982,8 +982,6 @@ bool SimRules::simCommand( const QString& cmd )
         if (!toolkitApp || !toolkitApp->envelope( env ) )
             respond( "ERROR" );
 
-        respond( "OK" );
-
         return true;
     }
 
