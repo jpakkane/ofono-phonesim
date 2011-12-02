@@ -3602,6 +3602,14 @@ OK</response>
 	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 C0 80
 </file>
 
+<file name="EFcphs_spn">
+	63 70 68 73 11 73 70 6E
+</file>
+
+<file name="EFcphs_spns">
+	63 70 68 73 11 73 70 6E 73 FF
+</file>
+
 </filesystem>
 
 </simulator>
