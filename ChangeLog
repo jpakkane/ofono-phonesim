@@ -1,3 +1,8 @@
+ver 1.16:
+	Add support for handling 27.007 SIM Toolkit commands.
+	Add support for BIP SIM Toolkit menus.
+	Add support for CPHS SPN and short-SPN.
+
 ver 1.15:
 	Fix issue with missing title in SETUP menu.
 	Update call management user interface.
