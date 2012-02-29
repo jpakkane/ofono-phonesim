@@ -331,22 +331,24 @@ bool SimChat::command( const QString& cmd )
     for ( int varNum = 0; varNum < variables.size(); ++varNum ) {
     	QString variable = variables[varNum];
 	QString value = values[varNum];
-        if ( value != "*" ) {
+        QString val;
+
+        if ( value == "*" )
+            val = wild;
+        else {
             int index = value.indexOf( "${*}" );
-            if ( index == -1 ) {
-                state()->rules()->setVariable( variable, value );
-            } else {
+            if ( index != -1 ) {
                 if ( wild.length() > 0 && wild[wild.length() - 1] == 0x1A ) {
                     // Strip the terminating ^Z from SMS PDU's.
                     wild = wild.left( wild.length() - 1 );
                 }
-                state()->rules()->setVariable
-                    ( variable, value.left( index ) + wild +
-                    value.mid( index + 4 ) );
-            }
-        } else {
-            state()->rules()->setVariable( variable, wild );
+
+                val = value.left( index ) + wild + value.mid( index + 4 );
+            } else
+                val = value;
         }
+
+        state()->rules()->setVariable( variable, val );
     }
 
     // Switch to the new state.
