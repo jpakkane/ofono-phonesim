@@ -667,6 +667,9 @@ Script::Script(QObject *obj, Ui_ControlBase *ui) : QDBusAbstractAdaptor(obj)
 
     QScriptValue qsTab8 = engine.newQObject(ui->tab_8);
     engine.globalObject().setProperty("tabPosition", qsTab8);
+
+    QScriptValue qsTab9 = engine.newQObject(ui->tab_9);
+    engine.globalObject().setProperty("tabCall", qsTab9);
 }
 
 void Script::SetPath(const QString &path, const QDBusMessage &msg)
