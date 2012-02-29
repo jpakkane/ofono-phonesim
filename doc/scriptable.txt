@@ -7,8 +7,8 @@ call, you have to do some operations manually within phonesim GUI).  Below are
 several examples:
 
 1. call.js (stand for incoming call and copy it to /tmp/call/)
-tabRegistration.gbIncomingCall.leCaller.text = "12345";
-tabRegistration.gbIncomingCall.pbIncomingCall.click();
+tabCall.gbIncomingCall.leCaller.text = "12345";
+tabCall.gbIncomingCall.pbIncomingCall.click();
 
 Then set the path of script and run the script with its name:
 
@@ -50,6 +50,6 @@ Reference" for details.
 For example, if you want to know the current incoming number, you may write a
 script as below:
 // number.js
-tabRegistration.gbIncomingCall.leCaller.text
+tabCall.gbIncomingCall.leCaller.text
 
 After running the script the similar way as above, you may get the number.
