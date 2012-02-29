@@ -268,8 +268,12 @@ SimChat::SimChat( SimState *state, SimXmlNode& e )
         } else if ( n->tag == "switch" ) {
             switchTo = n->getAttribute( "name" );
         } else if ( n->tag == "set" ) {
-	    variables += n->getAttribute( "name" );
+            QString name = n->getAttribute( "name" );
+	    variables += name;
 	    values += n->getAttribute( "value" );
+            int delay = n->getAttribute( "delay" ).toInt();
+            if (delay)
+                delays[name] = delay;
         } else if ( n->tag == "newcall" ) {
             newCallVar = n->getAttribute( "name" );
         } else if ( n->tag == "forgetcall" ) {
@@ -331,6 +335,7 @@ bool SimChat::command( const QString& cmd )
     for ( int varNum = 0; varNum < variables.size(); ++varNum ) {
     	QString variable = variables[varNum];
 	QString value = values[varNum];
+        int delay = delays.value(variable, 0);
         QString val;
 
         if ( value == "*" )
@@ -348,7 +353,18 @@ bool SimChat::command( const QString& cmd )
                 val = value;
         }
 
-        state()->rules()->setVariable( variable, val );
+        if (delay) {
+            QVariantTimer *timer = new QVariantTimer(this->state()->rules());
+
+            timer->param = QVariant::fromValue(QPairKV(variable, val));
+
+            timer->setSingleShot( true );
+
+            connect(timer, SIGNAL(timeout()), this->state()->rules(),
+                    SLOT(delaySetVariable()));
+            timer->start( delay );
+        } else
+            state()->rules()->setVariable( variable, val );
     }
 
     // Switch to the new state.
@@ -1637,6 +1653,15 @@ void SimRules::delayTimeout()
     timer->deleteLater();
 }
 
+void SimRules::delaySetVariable()
+{
+    QVariantTimer *timer = (QVariantTimer *)sender();
+    QPairKV kv = timer->param.value<QPairKV>();
+
+    setVariable( kv.first, kv.second );
+
+    delete timer;
+}
 
 void SimRules::dialCheck( const QString& number, bool& ok )
 {

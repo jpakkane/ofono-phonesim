@@ -162,6 +162,7 @@ private:
     bool eol;
     QStringList variables;
     QStringList values;
+    QMap<QString, int> delays;
     QString newCallVar;
     QString forgetCallId;
     bool listSMS;
@@ -315,6 +316,7 @@ private slots:
     void tryReadCommand();
     void destruct();
     void delayTimeout();
+    void delaySetVariable();
     void dialCheck( const QString& number, bool& ok );
 
 private:
@@ -372,5 +374,17 @@ public:
     QString response;
     int channel;
 };
+
+class QVariantTimer : public QTimer
+{
+    Q_OBJECT
+public:
+    QVariantTimer( QObject *parent = 0 ) : QTimer(parent) { }
+    QVariant param;
+};
+
+typedef QPair<QString,QString> QPairKV;
+
+Q_DECLARE_METATYPE(QPairKV);
 
 #endif
