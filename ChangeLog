@@ -1,3 +1,7 @@
+ver 1.17:
+	Fix issue with call scripting capability.
+	Add support for timer to set variable with delay.
+
 ver 1.16:
 	Add support for handling 27.007 SIM Toolkit commands.
 	Add support for BIP SIM Toolkit menus.
