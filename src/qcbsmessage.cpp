@@ -40,6 +40,7 @@ public:
         mLanguage = QCBSMessage::English;
         mPage = 1;
         mNumPages = 1;
+        mDataCodingScheme = -1;
     }
 
     ~QCBSMessagePrivate()
