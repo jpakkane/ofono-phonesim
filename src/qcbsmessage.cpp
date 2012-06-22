@@ -425,14 +425,13 @@ QByteArray QCBSMessage::toPdu() const
     QCBSDeliverMessage deliver;
     QSMSDataCodingScheme scheme;
 
-	if(dataCodingScheme() == -1)
+    if(dataCodingScheme() == -1)
         scheme = bestScheme( text() );
     else
         scheme = (QSMSDataCodingScheme)dataCodingScheme();
 
     deliver.pack( *this, scheme );
     return deliver.toByteArray();
-
 }
 
 /*!
