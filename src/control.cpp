@@ -339,7 +339,7 @@ void ControlWidget::sendCBM()
 
 void ControlWidget::sendSMSMessage()
 {
-    if (ui->leSMSClass->text().isEmpty()) {
+    if (ui->leMessageSender->text().isEmpty()) {
         p->warning(tr("Invalid Sender"),
                 tr("Sender must not be empty"));
         return;
