@@ -20,6 +20,7 @@
 #include <stdlib.h>
 
 #include <qsmsmessage.h>
+#include <qcbsmessage.h>
 #include "qsmsmessage_p.h"
 #include <qatutils.h>
 #include <qgsmcodec.h>
@@ -2462,6 +2463,93 @@ QSMSMessage QSMSDeliverMessage::unpack(QTextCodec *codec)
     return m;
 }
 
+static void iso639_2_from_language(QCBSMessage::Language lang, char *iso639)
+{
+    switch (lang) {
+    case QCBSMessage::German:
+        iso639[0] = 'd';
+        iso639[1] = 'e';
+        iso639[2] = '\0';
+        break;
+    case QCBSMessage::English:
+        iso639[0] = 'e';
+        iso639[1] = 'n';
+        iso639[2] = '\0';
+        break;
+    case QCBSMessage::Italian:
+        iso639[0] = 'i';
+        iso639[1] = 't';
+        iso639[2] = '\0';
+        break;
+    case QCBSMessage::French:
+        iso639[0] = 'f';
+        iso639[1] = 'r';
+        iso639[2] = '\0';
+        break;
+    case QCBSMessage::Spanish:
+        iso639[0] = 'e';
+        iso639[1] = 's';
+        iso639[2] = '\0';
+        break;
+    case QCBSMessage::Dutch:
+        iso639[0] = 'n';
+        iso639[1] = 'l';
+        iso639[2] = '\0';
+        break;
+    case QCBSMessage::Swedish:
+        iso639[0] = 's';
+        iso639[1] = 'v';
+        iso639[2] = '\0';
+        break;
+    case QCBSMessage::Danish:
+        iso639[0] = 'd';
+        iso639[1] = 'a';
+        iso639[2] = '\0';
+        break;
+    case QCBSMessage::Portuguese:
+        iso639[0] = 'p';
+        iso639[1] = 't';
+        iso639[2] = '\0';
+        break;
+    case QCBSMessage::Finnish:
+        iso639[0] = 'f';
+        iso639[1] = 'i';
+        iso639[2] = '\0';
+        break;
+    case QCBSMessage::Norwegian:
+        iso639[0] = 'n';
+        iso639[1] = 'o';
+        iso639[2] = '\0';
+        break;
+    case QCBSMessage::Greek:
+        iso639[0] = 'e';
+        iso639[1] = 'l';
+        iso639[2] = '\0';
+        break;
+    case QCBSMessage::Turkish:
+        iso639[0] = 't';
+        iso639[1] = 'r';
+        iso639[2] = '\0';
+        break;
+    case QCBSMessage::Hungarian:
+        iso639[0] = 'h';
+        iso639[1] = 'u';
+        iso639[2] = '\0';
+        break;
+    case QCBSMessage::Polish:
+        iso639[0] = 'p';
+        iso639[1] = 'l';
+        iso639[2] = '\0';
+        break;
+    default:
+        iso639[0] = '\0';
+        iso639[1] = '\0';
+        iso639[2] = '\0';
+        break;
+    }
+
+    return;
+}
 
 QCBSDeliverMessage::QCBSDeliverMessage()
     : QPDUMessage()
@@ -2518,29 +2606,44 @@ QCBSMessage QCBSDeliverMessage::unpack(QTextCodec *codec)
 
 void QCBSDeliverMessage::pack(const QCBSMessage &m, QSMSDataCodingScheme scheme)
 {
+    int numPad;
+    QTextCodec *codec = QAtUtils::codec( "gsm" );
+    QByteArray header;
+
     // Clear the pdu before we start.
     mBuffer = QByteArray();
     mPosn = 0;
     mBits = 0;
 
-    scheme = QSMS_DefaultAlphabet;
-    QByteArray data;
     mBuffer.append( (char) (((m.messageCode() >> 4) & 0x3F) | (m.scope() << 6)) );
     mBuffer.append( (char)(((m.messageCode() & 0xF) << 4) | (m.updateNumber() & 0xF)) );
     mBuffer.append( (char)((m.channel() & 0x0000FF00) >> 8) );
     mBuffer.append( (char)(m.channel() & 0x000000FF) );
-    mBuffer.append( (char)(((scheme & 0x0F)<<4) | (m.language() & 0x0F)) );
-    mBuffer.append( (char)((m.numPages() & 0x0F) | ((m.page() & 0x0F) << 4)) );
 
-    QTextCodec *codec = QAtUtils::codec( "gsm" );
-    QByteArray header;
+    if (scheme == QSMS_UCS2Alphabet)
+        mBuffer.append( 0x11 );
+    else
+        mBuffer.append( (char)(((scheme & 0x0F)<<4) | (m.language() & 0x0F)) );
+
+    mBuffer.append( (char)((m.numPages() & 0x0F) | ((m.page() & 0x0F) << 4)) );
 
     QString paddedText = m.text();
 
-    int numPad = 93 - getEncodedLength(paddedText, paddedText.length());
+    if (scheme == QSMS_UCS2Alphabet) {
+        char iso639[3];
+        unsigned short c;
+
+        iso639_2_from_language(m.language(), iso639);
+        c = ((iso639[1] & 0x7F)<<7) | (iso639[0] & 0x7F);
+        mBuffer.append( (char)(c & 0xFF) );
+        mBuffer.append( (char)(c >> 8) );
+        numPad = 40 - (paddedText.length());
+    }
+    else
+        numPad = 93 - getEncodedLength(paddedText, paddedText.length());
 
     for (int i = 0; i < numPad; i++)
-    	paddedText.append(QChar(0x0D));
+        paddedText.append(QChar(0x0D));
 
     setUserData(paddedText, scheme, codec, header,true);
 }
