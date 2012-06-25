@@ -287,14 +287,37 @@ void HardwareManipulator::sendVMNotify( int type, int count, const QList<QVMMess
 void HardwareManipulator::sendUSSD( bool cancel, bool response,
 		const QString &content )
 {
-    QTextCodec *codec = QAtUtils::codec( rules->variable("SCS") );
     /* TODO: if rules->variable("USD") == "0" then return */
     if (cancel)
         emit unsolicitedCommand( "+CUSD: 2" );
-    else
+    else {
+        QTextCodec *codec = QAtUtils::codec( "gsm-noloss" );
+        bool gsmSafe;
+        QString request;
+
+        // Check the body for non-GSM characters.
+        gsmSafe = codec->canEncode( content );
+
+        // Use the default alphabet if everything is GSM-compatible.
+        if ( gsmSafe ) {
+            QTextCodec *codec = QAtUtils::codec( rules->variable("SCS") );
+            request= QAtUtils::quote( content, codec );
+        } else {
+            // Encode the text using the 16-bit UCS2 alphabet.
+            uint u;
+            QByteArray binary;
+            uint len = content.length();
+
+            for ( u = 0; u < len; u++ ) {
+                binary += (unsigned char)(content[u].unicode() >> 8);
+                binary += (unsigned char)(content[u].unicode() & 0xFF);
+            }
+            request = PS_toHex( binary );
+        }
         emit unsolicitedCommand( "+CUSD: " +
-                        QString::number( response ? 1 : 0 ) + ",\"" +
-                        QAtUtils::quote( content, codec ) + "\",0" );
+                    QString::number( response ? 1 : 0 ) + ",\"" +
+                    request + "\"," + QString::number( gsmSafe ? 0 : 0x48 ));
+    }
 }
 
 bool HardwareManipulator::getSimPresent()
