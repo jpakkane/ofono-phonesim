@@ -76,6 +76,9 @@ public:
     QCBSMessage::Language language() const;
     void setLanguage( QCBSMessage::Language lang );
 
+    void setDataCodingScheme(int);
+    int dataCodingScheme() const;
+
     uint page() const;
     void setPage( uint page );
 
@@ -92,6 +95,10 @@ public:
 
     QByteArray toPdu() const;
     static QCBSMessage fromPdu( const QByteArray& pdu );
+
+    bool shouldSplit() const;
+    QList<QCBSMessage> split() const;
+    void computeSize( uint& numPages, uint& spaceLeftInLast ) const;
 
 private:
     QCBSMessagePrivate *d;

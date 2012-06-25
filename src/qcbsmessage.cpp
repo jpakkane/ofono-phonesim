@@ -51,6 +51,7 @@ public:
     uint mUpdateNumber;
     uint mChannel;
     QCBSMessage::Language mLanguage;
+    uint mDataCodingScheme;
     uint mPage;
     uint mNumPages;
     QString mText;
@@ -268,6 +269,30 @@ void QCBSMessage::setLanguage( QCBSMessage::Language lang )
 }
 
 /*!
+    Returns the recommended data coding scheme for encoding CBS text strings.
+    The default value is -1, which indicates that the best scheme should be chosen
+    based on the contents of the CBS text string.
+
+    \sa setDataCodingScheme()
+*/
+int QCBSMessage::dataCodingScheme() const
+{
+    return d->mDataCodingScheme;
+}
+
+/*!
+    Sets the recommended data coding scheme for encoding CBS text strings to \a value.
+    The value -1 indicates that the best scheme should be chosen based on the contents
+    of the CBS text string.
+
+    \sa dataCodingScheme()
+*/
+void QCBSMessage::setDataCodingScheme( int value )
+{
+    d->mDataCodingScheme = value;
+}
+
+/*!
     Returns the page number for this cell broadcast message if the
     information that it contains is split over multiple pages.
 
@@ -398,7 +423,14 @@ static QSMSDataCodingScheme bestScheme( const QString& body )
 QByteArray QCBSMessage::toPdu() const
 {
     QCBSDeliverMessage deliver;
-    deliver.pack( *this, bestScheme( text() ) );
+    QSMSDataCodingScheme scheme;
+
+	if(dataCodingScheme() == -1)
+        scheme = bestScheme( text() );
+    else
+        scheme = (QSMSDataCodingScheme)dataCodingScheme();
+
+    deliver.pack( *this, scheme );
     return deliver.toByteArray();
 
 }
@@ -411,4 +443,110 @@ QCBSMessage QCBSMessage::fromPdu( const QByteArray& pdu )
 {
     QCBSDeliverMessage deliver( pdu );
     return deliver.unpack();
+}
+
+/*!
+    Compute an estimate for the number of pages that will need
+    to be used to send this CBS message (\a numMessages), and the
+    number of spare characters that are left in the last message
+    before it overflows (\a spaceLeftInLast).
+*/
+void QCBSMessage::computeSize( uint& numPages, uint& spaceLeftInLast ) const
+{
+    QString body = text();
+    uint len = body.length();
+    uint scheme= dataCodingScheme();
+
+    if ( scheme == QSMS_DefaultAlphabet ) {
+        // Encode the message using 7-bit GSM.
+        if ( len <= 93 ) { // (82*8)/7 = 93 characters
+            numPages = 1;
+            spaceLeftInLast = 93 - len;
+        } else {
+            numPages = ( len + 92 ) / 93;
+            len %= 93;
+            if ( len != 0 )
+                spaceLeftInLast = 93 - len;
+            else
+                spaceLeftInLast = 0;
+        }
+    } else {
+        // Encode the message with unicode.
+        if ( len <= 40 ) { // 40 = 82/2 - 2 (2 GSM 7-bit ISO 639 characters).
+            numPages = 1;
+            spaceLeftInLast = 40 - len;
+        } else {
+            numPages = ( len + 39 ) / 40;
+            len %= 40;
+            if ( len != 0 )
+                spaceLeftInLast = 40 - len;
+            else
+                spaceLeftInLast = 0;
+        }
+    }
+}
+
+/*!
+    Returns true if this message needs to be split into multiple messages
+    before being transmitted over a GSM network; otherwise returns false.
+
+    \sa split()
+*/
+bool QCBSMessage::shouldSplit() const
+{
+    uint numPages, spaceLeftInLast;
+    this->computeSize( numPages, spaceLeftInLast );
+    return ( numPages <=1 ? false : true );
+}
+
+/*!
+    Split this message into several pages of 88 bytes for
+    transmission over a GSM network.
+
+    \sa shouldSplit()
+*/
+QList<QCBSMessage> QCBSMessage::split() const
+{
+    QList<QCBSMessage> list;
+    uint numPages, spaceLeftInLast;
+
+    computeSize( numPages, spaceLeftInLast );
+    if ( numPages <= 1 ) {
+        // Splitting is not necessary, so return a list with one page.
+        list += *this;
+        return list;
+    }
+
+    // Get the number of characters to transmit in each page.
+    int split;
+    uint scheme= dataCodingScheme();
+
+    switch ( scheme ) {
+        case QSMS_UCS2Alphabet:
+            split = 40; break;
+        case QSMS_DefaultAlphabet:
+        default:
+            split = 93; break;
+    }
+
+    // Split the message to create sub-messages and transmit them.
+    int posn = 0;
+    int len;
+    uint number;
+    QCBSMessage tmp;
+    number = 1;
+    QString txt = text();
+    while ( posn < txt.length() ) {
+        tmp = *this;
+        len = txt.length() - posn;
+        if ( len > split ) {
+            len = split;
+        }
+        tmp.setText( txt.mid( posn, len ) );
+        tmp.setPage( number++ );
+        posn += len;
+        list.append(tmp);
+    }
+
+    return list;
 }
