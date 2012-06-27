@@ -2044,6 +2044,13 @@
 </chat>
 
 <chat>
+    <!-- cancel USSD session -->
+    <command>AT+CUSD=2</command>
+    <response>OK</response>
+    <set name="USD" value="1"/>
+</chat>
+
+<chat>
     <!-- Enable unstructured supplementary service presentation mode -->
     <command>AT+CUSD=1</command>
     <response>OK</response>
