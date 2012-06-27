@@ -2009,6 +2009,13 @@
 </chat>
 
 <chat>
+    <!-- USSD answer that is supported by the network -->
+    <command>AT+CUSD=1,"response",15</command>
+    <response>+CUSD: 0,"Thank you.",15\n\nOK</response>
+    <set name="USD" value="1"/>
+</chat>
+
+<chat>
     <!-- SAT initiated 7-Bit USSD query that is supported by the network -->
     <command>AT+CUSD=1,"ABCD",240</command>
     <response>+CUSD: 0,"USSD string received from SS",240\n\nOK</response>
