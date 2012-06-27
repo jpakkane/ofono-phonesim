@@ -96,6 +96,7 @@ public:
     QByteArray toPdu() const;
     static QCBSMessage fromPdu( const QByteArray& pdu );
 
+    int bestScheme() const;
     bool shouldSplit() const;
     QList<QCBSMessage> split() const;
     void computeSize( uint& numPages, uint& spaceLeftInLast ) const;

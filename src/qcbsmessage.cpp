@@ -396,9 +396,15 @@ void QCBSMessage::print()
                   << ", text=" << text();
 }
 
-static QSMSDataCodingScheme bestScheme( const QString& body )
+/*!
+    Returns the best CBS data coding scheme to use for this
+    message, determined by an inspection of the plain text body.
+
+*/
+int QCBSMessage::bestScheme() const
 {
     QTextCodec *codec = QAtUtils::codec( "gsm-noloss" );
+    QString body = text();
     uint len = body.length();
     bool gsmSafe;
 
@@ -427,7 +433,7 @@ QByteArray QCBSMessage::toPdu() const
     QSMSDataCodingScheme scheme;
 
     if(dataCodingScheme() == -1)
-        scheme = bestScheme( text() );
+        scheme = (QSMSDataCodingScheme)bestScheme();
     else
         scheme = (QSMSDataCodingScheme)dataCodingScheme();
 
