@@ -25,6 +25,7 @@
 #include "qsmsmessagelist.h"
 
 class QSMSMessage;
+class QCBSMessage;
 class QVMMessage;
 class SimRules;
 struct CallInfo;
@@ -43,6 +44,7 @@ public slots:
     virtual void handleToData( const QString& );
     virtual void setPhoneNumber( const QString& );
     virtual void constructSMSMessage(const int type, const QString &sender, const QString &serviceCenter, const QString &text);
+    virtual void sendCBS( const QCBSMessage& m );
     virtual void sendSMS( const QSMSMessage& m );
     virtual void sendVMNotify( int type, int count, const QList<QVMMessage> &received, const QList<QVMMessage> &deleted, const QString &mailbox );
     virtual void sendUSSD( bool cancel, bool response, const QString &content );
@@ -63,8 +65,8 @@ signals:
     void stateChangedToHangup( int callId );
 
 protected:
-    virtual QString constructCBMessage(const QString &messageCode, int geographicalScope, const QString &updateNumber, const QString &channel,
-    const QString &scheme, int language, const QString &numPages, const QString &page, const QString &content);
+    virtual void constructCBMessage(const QString &messageCode, int geographicalScope, const QString &updateNumber, const QString &channel,
+    int language, const QString &content);
     virtual void constructSMSDatagram(int src, int dst, const QString &sender,  const QByteArray &data, const QByteArray &contentType);
 
     virtual void warning(const QString &title, const QString &message);

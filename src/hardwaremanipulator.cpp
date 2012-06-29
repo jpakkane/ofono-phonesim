@@ -62,8 +62,8 @@ void HardwareManipulator::setPhoneNumber( const QString& )
 
 QString PS_toHex( const QByteArray& binary );
 
-QString HardwareManipulator::constructCBMessage(const QString &messageCode, int geographicalScope, const QString &updateNumber,
-    const QString &channel, const QString &/*scheme*/, int language, const QString &numPages, const QString &page, const QString &content)
+void HardwareManipulator::constructCBMessage(const QString &messageCode, int geographicalScope, const QString &updateNumber,
+    const QString &channel, int language, const QString &content)
 {
 
     bool ok;
@@ -71,9 +71,8 @@ QString HardwareManipulator::constructCBMessage(const QString &messageCode, int 
     if ( !ok ) {
         warning(tr("Invalid Message Code"),
                 tr("Message code 3 hex digits long and no larger than 3FF"));
-        return "";
+        return;
     }
-
 
     QCBSMessage::GeographicalScope gs = (QCBSMessage::GeographicalScope)geographicalScope;
 
@@ -82,7 +81,7 @@ QString HardwareManipulator::constructCBMessage(const QString &messageCode, int 
         warning(tr("Invalid Update Number"),
                 tr("Update number must be 1 hex digit long"
                    "and no larger than F"));
-        return "";
+        return;
     }
 
 
@@ -91,31 +90,10 @@ QString HardwareManipulator::constructCBMessage(const QString &messageCode, int 
         warning(tr("Invalid Channel,"),
                 tr("Channel  must be 4 hex digits long "
                    "and no larger than FFFF"));
-        return "";
+        return;
     }
-
-    //scheme is currently hardcoded to QSMS8_BitCodingScheme
-    //uint sch = convertString(scheme, NIBBLE_MAX, ONE_CHAR,HEX_BASE,&ok);
-    //if ( !ok )
-    //    return "";
 
     QCBSMessage::Language lang = (QCBSMessage::Language)language;
-
-    uint npag = convertString(numPages, NIBBLE_MAX,ONE_CHAR,HEX_BASE,&ok);
-    if ( !ok ) {
-        warning(tr("Invalid number of pages,"),
-                tr("Number of pages  must be 1 hex digit long "
-                   "and no larger than F"));
-        return "";
-    }
-
-    uint pag = convertString(page, NIBBLE_MAX,ONE_CHAR,HEX_BASE,&ok);
-    if ( !ok ) {
-        warning(tr("Invalid page number,"),
-                tr("Page number  must be 1 hex digit long "
-                   "and no larger than F"));
-        return "";
-    }
 
     QCBSMessage m;
     m.setMessageCode(mc);
@@ -123,11 +101,15 @@ QString HardwareManipulator::constructCBMessage(const QString &messageCode, int 
     m.setUpdateNumber(un);
     m.setChannel(ch);
     m.setLanguage(lang);
-    m.setNumPages(npag);
-    m.setPage(pag);
     m.setText(content);
 
-    return PS_toHex( m.toPdu() );
+    sendCBS(m);
+}
+
+void HardwareManipulator::sendCBS( const QCBSMessage &m )
+{
+    QByteArray pdu = m.toPdu();
+    emit unsolicitedCommand(QString("+CBM: ")+QString::number(pdu.length())+'\r'+'\n'+ PS_toHex(pdu));
 }
 
 void HardwareManipulator::constructSMSMessage( const int type, const QString &sender, const QString &serviceCenter, const QString &text )

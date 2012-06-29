@@ -329,12 +329,9 @@ void ControlWidget::sendREG()
 
 void ControlWidget::sendCBM()
 {
-    QString pdu = p->constructCBMessage(ui->leMessageCode->text(),ui->cbGeographicalScope->currentIndex(),
-                       ui->leUpdateNumber->text(),ui->leChannel->text(),ui->leScheme->text(),
-                       ui->cbLanguage->currentIndex(),ui->leNumPages->text(),ui->lePage->text(),
-                       ui->teContent->toPlainText());
-
-    emit unsolicitedCommand(QString("+CBM: ")+QString::number(pdu.length()/2)+'\r'+'\n'+ pdu);
+    p->constructCBMessage(ui->leMessageCode->text(),ui->cbGeographicalScope->currentIndex(),
+                       ui->leUpdateNumber->text(),ui->leChannel->text(),
+                       ui->cbLanguage->currentIndex(),ui->teContent->toPlainText());
 }
 
 void ControlWidget::sendSMSMessage()
