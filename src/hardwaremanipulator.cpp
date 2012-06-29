@@ -108,8 +108,25 @@ void HardwareManipulator::constructCBMessage(const QString &messageCode, int geo
 
 void HardwareManipulator::sendCBS( const QCBSMessage &m )
 {
-    QByteArray pdu = m.toPdu();
-    emit unsolicitedCommand(QString("+CBM: ")+QString::number(pdu.length())+'\r'+'\n'+ PS_toHex(pdu));
+    uint numPages, spaceLeftInLast;
+    m.computeSize( numPages, spaceLeftInLast );
+
+    if ( numPages > 15) {
+            warning(tr("Text too long"),
+                    tr("The maximum number of pages (15) is reached"
+                       " - Text is truncated"));
+    }
+
+    if( numPages >1 ) {
+        QList<QCBSMessage> list = m.split();
+        for( int i =0; i < list.count(); i++ ) {
+            QByteArray pdu = list[i].toPdu();
+             emit unsolicitedCommand(QString("+CBM: ")+QString::number(pdu.length())+'\r'+'\n'+ PS_toHex(pdu));
+         }
+    } else {
+        QByteArray pdu = m.toPdu();
+        emit unsolicitedCommand(QString("+CBM: ")+QString::number(pdu.length())+'\r'+'\n'+ PS_toHex(pdu));
+    }
 }
 
 void HardwareManipulator::constructSMSMessage( const int type, const QString &sender, const QString &serviceCenter, const QString &text )
