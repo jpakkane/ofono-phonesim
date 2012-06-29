@@ -393,7 +393,17 @@
           <property name="spacing">
            <number>6</number>
           </property>
-          <item row="1" column="0">
+          <item row="2" column="0">
+           <widget class="QLabel" name="lblMessageCode">
+            <property name="text">
+             <string>Message C&amp;ode:</string>
+            </property>
+            <property name="buddy">
+             <cstring>leMessageCode</cstring>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="0">
            <widget class="QLabel" name="lblUpdateNumber">
             <property name="text">
              <string>&amp;Update Number:</string>
@@ -404,6 +414,33 @@
            </widget>
           </item>
           <item row="1" column="1">
+           <widget class="QComboBox" name="cbGeographicalScope">
+            <property name="currentIndex">
+             <number>3</number>
+            </property>
+            <item>
+             <property name="text">
+              <string>Cell wide(immediate)</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>PLMN wide</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Location Area wide</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Cell wide(norm)</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+          <item row="3" column="1">
            <widget class="QLineEdit" name="leUpdateNumber">
             <property name="text">
              <string>A</string>
@@ -413,27 +450,27 @@
             </property>
            </widget>
           </item>
-          <item row="1" column="2">
-           <widget class="QLabel" name="lblNumPages">
+          <item row="4" column="1">
+           <widget class="QLineEdit" name="leChannel">
             <property name="text">
-             <string>&amp;Number of Pages</string>
+             <string>0032</string>
             </property>
-            <property name="buddy">
-             <cstring>leNumPages</cstring>
+            <property name="maxLength">
+             <number>4</number>
             </property>
            </widget>
           </item>
-          <item row="3" column="0">
-           <widget class="QLabel" name="lblLanguage">
+          <item row="4" column="0">
+           <widget class="QLabel" name="lblChannel">
             <property name="text">
-             <string>&amp;Language</string>
+             <string>&amp;Channel</string>
             </property>
             <property name="buddy">
-             <cstring>cbLanguage</cstring>
+             <cstring>leChannel</cstring>
             </property>
            </widget>
           </item>
-          <item row="3" column="2">
+          <item row="1" column="0">
            <widget class="QLabel" name="lblGeographicalScope">
             <property name="text">
              <string>&amp;Geographical Scope</string>
@@ -443,17 +480,7 @@
             </property>
            </widget>
           </item>
-          <item row="2" column="3">
-           <widget class="QLineEdit" name="lePage">
-            <property name="text">
-             <string>1</string>
-            </property>
-            <property name="maxLength">
-             <number>1</number>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="1">
+          <item row="5" column="1">
            <widget class="QComboBox" name="cbLanguage">
             <property name="currentIndex">
              <number>1</number>
@@ -525,50 +552,17 @@
             </item>
            </widget>
           </item>
-          <item row="0" column="2">
-           <widget class="QLabel" name="lblScheme">
+          <item row="5" column="0">
+           <widget class="QLabel" name="lblLanguage">
             <property name="text">
-             <string>&amp;Scheme</string>
+             <string>&amp;Language</string>
             </property>
             <property name="buddy">
-             <cstring>leScheme</cstring>
+             <cstring>cbLanguage</cstring>
             </property>
            </widget>
           </item>
-          <item row="2" column="0">
-           <widget class="QLabel" name="lblChannel">
-            <property name="text">
-             <string>&amp;Channel</string>
-            </property>
-            <property name="buddy">
-             <cstring>leChannel</cstring>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="2">
-           <widget class="QLabel" name="lblPage">
-            <property name="text">
-             <string>&amp;Page</string>
-            </property>
-            <property name="buddy">
-             <cstring>lePage</cstring>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="3">
-           <widget class="QLineEdit" name="leScheme">
-            <property name="text">
-             <string>4</string>
-            </property>
-            <property name="maxLength">
-             <number>1</number>
-            </property>
-            <property name="readOnly">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="1">
+          <item row="2" column="1">
            <widget class="QLineEdit" name="leMessageCode">
             <property name="text">
              <string>012</string>
@@ -578,62 +572,21 @@
             </property>
            </widget>
           </item>
-          <item row="2" column="1">
-           <widget class="QLineEdit" name="leChannel">
-            <property name="text">
-             <string>0032</string>
+          <item row="1" column="2" rowspan="5">
+           <spacer name="verticalSpacer_2">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
             </property>
-            <property name="maxLength">
-             <number>4</number>
+            <property name="sizeType">
+             <enum>QSizePolicy::Ignored</enum>
             </property>
-           </widget>
-          </item>
-          <item row="1" column="3">
-           <widget class="QLineEdit" name="leNumPages">
-            <property name="text">
-             <string>1</string>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>290</width>
+              <height>150</height>
+             </size>
             </property>
-            <property name="maxLength">
-             <number>1</number>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="3">
-           <widget class="QComboBox" name="cbGeographicalScope">
-            <property name="currentIndex">
-             <number>3</number>
-            </property>
-            <item>
-             <property name="text">
-              <string>Cell wide(immediate)</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>PLMN wide</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Location Area wide</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Cell wide(norm)</string>
-             </property>
-            </item>
-           </widget>
-          </item>
-          <item row="0" column="0">
-           <widget class="QLabel" name="lblMessageCode">
-            <property name="text">
-             <string>Message C&amp;ode:</string>
-            </property>
-            <property name="buddy">
-             <cstring>leMessageCode</cstring>
-            </property>
-           </widget>
+           </spacer>
           </item>
          </layout>
         </widget>
@@ -1575,9 +1528,7 @@
   <tabstop>pbSendSMSDatagram</tabstop>
   <tabstop>atViewer</tabstop>
   <tabstop>openSpecButton</tabstop>
-  <tabstop>leScheme</tabstop>
-  <tabstop>leNumPages</tabstop>
-  <tabstop>lePage</tabstop>
+  <tabstop>teContent</tabstop>
   <tabstop>cbGeographicalScope</tabstop>
   <tabstop>pbSelectOperator</tabstop>
   <tabstop>hsBatteryCharge</tabstop>
@@ -1591,7 +1542,6 @@
   <tabstop>leLAC</tabstop>
   <tabstop>pbSendCellBroadcast</tabstop>
   <tabstop>leCellID</tabstop>
-  <tabstop>teContent</tabstop>
   <tabstop>tabWidget</tabstop>
   <tabstop>leChannel</tabstop>
   <tabstop>cbLanguage</tabstop>
