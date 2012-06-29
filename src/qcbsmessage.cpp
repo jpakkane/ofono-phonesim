@@ -408,6 +408,9 @@ int QCBSMessage::bestScheme() const
     uint len = body.length();
     bool gsmSafe;
 
+    if ( d->mDataCodingScheme != (QSMSDataCodingScheme)-1 )
+        return d->mDataCodingScheme;
+
     // Encode zero-length bodies in the default alphabet.
     if ( len == 0 )
         return QSMS_DefaultAlphabet;
@@ -430,14 +433,8 @@ int QCBSMessage::bestScheme() const
 QByteArray QCBSMessage::toPdu() const
 {
     QCBSDeliverMessage deliver;
-    QSMSDataCodingScheme scheme;
 
-    if(dataCodingScheme() == -1)
-        scheme = (QSMSDataCodingScheme)bestScheme();
-    else
-        scheme = (QSMSDataCodingScheme)dataCodingScheme();
-
-    deliver.pack( *this, scheme );
+    deliver.pack( *this, (QSMSDataCodingScheme)bestScheme() );
     return deliver.toByteArray();
 }
 
@@ -461,7 +458,7 @@ void QCBSMessage::computeSize( uint& numPages, uint& spaceLeftInLast ) const
 {
     QString body = text();
     uint len = body.length();
-    uint scheme= dataCodingScheme();
+    uint scheme= bestScheme();
 
     if ( scheme == QSMS_DefaultAlphabet ) {
         // Encode the message using 7-bit GSM.
@@ -493,19 +490,6 @@ void QCBSMessage::computeSize( uint& numPages, uint& spaceLeftInLast ) const
 }
 
 /*!
-    Returns true if this message needs to be split into multiple messages
-    before being transmitted over a GSM network; otherwise returns false.
-
-    \sa split()
-*/
-bool QCBSMessage::shouldSplit() const
-{
-    uint numPages, spaceLeftInLast;
-    this->computeSize( numPages, spaceLeftInLast );
-    return ( numPages <=1 ? false : true );
-}
-
-/*!
     Split this message into several pages of 88 bytes for
     transmission over a GSM network.
 
@@ -521,11 +505,13 @@ QList<QCBSMessage> QCBSMessage::split() const
         // Splitting is not necessary, so return a list with one page.
         list += *this;
         return list;
-    }
+    } else if ( numPages > 15)
+        //Up to 15 pages can be concatenated to form a CBS message
+        numPages = 15;
 
     // Get the number of characters to transmit in each page.
     int split;
-    uint scheme= dataCodingScheme();
+    uint scheme= bestScheme();
 
     switch ( scheme ) {
         case QSMS_UCS2Alphabet:
@@ -542,7 +528,7 @@ QList<QCBSMessage> QCBSMessage::split() const
     QCBSMessage tmp;
     number = 1;
     QString txt = text();
-    while ( posn < txt.length() ) {
+    while ( posn < txt.length() && number <= numPages ) {
         tmp = *this;
         len = txt.length() - posn;
         if ( len > split ) {
@@ -550,6 +536,10 @@ QList<QCBSMessage> QCBSMessage::split() const
         }
         tmp.setText( txt.mid( posn, len ) );
         tmp.setPage( number++ );
+        tmp.setNumPages(numPages);
+        // Set mDataCodingScheme to apply the same scheme for all the pages
+        // of the CBS message
+        tmp.setDataCodingScheme(scheme);
         posn += len;
         list.append(tmp);
     }
