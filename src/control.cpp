@@ -711,7 +711,7 @@ QString Script::Run(const QString &name, const QDBusMessage &msg)
     QScriptValue qsScript = engine.evaluate(contents);
     if (qsScript.isError()) {
         QString info = fileName + ", line " + qsScript.property("lineNumber").toString() + ", " + qsScript.toString();
-        QDBusMessage reply = msg.createErrorReply(SERVICE "Error.ScriptExecError", info);
+        QDBusMessage reply = msg.createErrorReply(SERVICE ".Error.ScriptExecError", info);
         QDBusConnection::sessionBus().send(reply);
         return QString();
     }
