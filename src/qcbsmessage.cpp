@@ -52,7 +52,7 @@ public:
     uint mUpdateNumber;
     uint mChannel;
     QCBSMessage::Language mLanguage;
-    uint mDataCodingScheme;
+    int mDataCodingScheme;
     uint mPage;
     uint mNumPages;
     QString mText;
@@ -408,7 +408,7 @@ int QCBSMessage::bestScheme() const
     uint len = body.length();
     bool gsmSafe;
 
-    if ( d->mDataCodingScheme != (QSMSDataCodingScheme)-1 )
+    if ( d->mDataCodingScheme != -1 )
         return d->mDataCodingScheme;
 
     // Encode zero-length bodies in the default alphabet.
