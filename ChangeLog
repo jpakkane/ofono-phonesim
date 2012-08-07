@@ -1,3 +1,10 @@
+ver 1.18:
+	Add support for multi-page CBS messages.
+	Add support for UCS2 scheme for CBS messages.
+	Add support for USC2 encoding for USSD.
+	Add support for USSD session cancellation.
+	Add support for USSD answer.
+
 ver 1.17:
 	Fix issue with call scripting capability.
 	Add support for timer to set variable with delay.
