@@ -147,6 +147,11 @@ bool CallManager::command( const QString& cmd )
         sendState( info );
         send( "OK" );
 
+        // Automatic accept of calls
+        if ( number.startsWith( "05123" ) ) {
+            QTimer::singleShot( 1000, this, SLOT(dialingToConnected()) );
+        }
+
     // Data call - phone number 696969
     } else if ( cmd.startsWith( "ATD" ) ) {
         // Data call setup.
