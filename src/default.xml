@@ -8,6 +8,7 @@
 <!-- Note: dialing 166 will accept the incoming call and hangup up after 5 seconds-->
 <!-- Note: dialing 155 will elicit a 'BUSY' response from the recipient-->
 <!-- Note: dialing 05123xx cause an MT disconnect of the connected call after xx seconds-->
+<!-- Note: dialing 06123xx cause an automatic accept after xx seconds-->
 
 <!-- Initialize state variables -->
 
