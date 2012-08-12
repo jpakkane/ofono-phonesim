@@ -150,6 +150,8 @@ bool CallManager::command( const QString& cmd )
         // Automatic accept of calls
         if ( number.startsWith( "05123" ) ) {
             QTimer::singleShot( 1000, this, SLOT(dialingToConnected()) );
+        } else if ( number.startsWith( "06123" ) ) {
+            QTimer::singleShot( 1000, this, SLOT(dialingToAlerting()) );
         }
 
     // Data call - phone number 696969
@@ -730,6 +732,17 @@ void CallManager::dialingToAlerting()
     callList[index].state = CallState_Alerting;
     sendState( callList[index] );
     emit callStatesChanged( &callList );
+    // If the dialed number starts with 06123, accept that
+    // call after xx seconds, where xx is part of the dial string
+    // as 06123xx
+    if( callList[index].number.startsWith( "06123" ) ) {
+        bool ok;
+        QString temp = callList[index].number;
+        temp = temp.replace( "06123" , "" );
+        int timeout = temp.toInt( &ok, 10 );
+        timeout = ok ? timeout * 1000 : 10000;
+        QTimer::singleShot( timeout, this, SLOT(dialingToConnected()) );
+    }
 }
 
 void CallManager::waitingToIncoming()
