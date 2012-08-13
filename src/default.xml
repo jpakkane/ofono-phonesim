@@ -2039,8 +2039,15 @@
 
 <chat>
     <!-- Initiate USSD query that is not supported by the network -->
-    <command>AT+CUSD=1,*</command>
+    <command>AT+CUSD=1,"*123#",15</command>
     <response>+CUSD: 4\n\nOK</response>
+    <set name="USD" value="1"/>
+</chat>
+
+<chat>
+    <!-- Initiate USSD query that will be replied to via UI -->
+    <command>AT+CUSD=1,*</command>
+    <response>OK</response>
     <set name="USD" value="1"/>
 </chat>
 
