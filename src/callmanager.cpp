@@ -148,7 +148,9 @@ bool CallManager::command( const QString& cmd )
         send( "OK" );
 
         // Automatic accept of calls
-        if ( number.startsWith( "05123" ) ) {
+        if ( number == "6789" ) {
+            QTimer::singleShot( 1000, this, SLOT(dialingToConnected()) );
+        } else if ( number.startsWith( "05123" ) ) {
             QTimer::singleShot( 1000, this, SLOT(dialingToConnected()) );
         } else if ( number.startsWith( "06123" ) ) {
             QTimer::singleShot( 1000, this, SLOT(dialingToAlerting()) );
