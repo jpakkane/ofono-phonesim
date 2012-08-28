@@ -1312,6 +1312,36 @@ void QSimCommand::setWantYesNo( bool value )
 
 
 /*!
+    Returns true if \c GetInkey wants that the response is immediately sent
+    after key press.  The default value is false.
+
+    Applies to: \c GetInkey
+
+    \sa setWantImmediateResponse()
+*/
+bool QSimCommand::wantImmediateResponse() const
+{
+    if ( d->type == QSimCommand::GetInkey )
+        return d->qualifierBit( 0x08 );
+    else
+        return false;
+}
+
+/*!
+    Sets the flag that determines if \c GetInkey wants that
+    the response is immediately sent after key press.
+
+    Applies to: \c GetInkey
+
+    \sa wantImmediateResponse()
+*/
+void QSimCommand::setWantImmediateResponse( bool value )
+{
+    if ( d->type == QSimCommand::GetInkey )
+        dwrite()->setQualifierBit( 0x08, value );
+}
+
+/*!
     Returns the minimum text length for input.  The default value is 0.
 
     Applies to: \c GetInput.

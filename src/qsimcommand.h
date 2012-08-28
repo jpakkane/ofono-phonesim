@@ -292,6 +292,9 @@ public:
     bool echo() const;
     void setEcho( bool value );
 
+    bool wantImmediateResponse() const;
+    void setWantImmediateResponse( bool value );
+
     QSimCommand::Disposition disposition() const;
     void setDisposition( QSimCommand::Disposition value );
 
