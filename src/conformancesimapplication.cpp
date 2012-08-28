@@ -81,11 +81,12 @@ const QString ConformanceSimApplication::getName()
 #define GetInkeyMenu_Cyrillic_Display_2  4
 #define GetInkeyMenu_Cyrillic_Entry      5
 #define GetInkeyMenu_YesNo_Response      6
-#define GetInkeyMenu_Icon                7
-#define GetInkeyMenu_Help                8
-#define GetInkeyMenu_Variable_Timeout    9
-#define GetInkeyMenu_Text_Attribute     10
-#define GetInkeyMenu_Main               11
+#define GetInkeyMenu_ImmediateResponse   7
+#define GetInkeyMenu_Icon                8
+#define GetInkeyMenu_Help                9
+#define GetInkeyMenu_Variable_Timeout   10
+#define GetInkeyMenu_Text_Attribute     11
+#define GetInkeyMenu_Main               12
 
 #define GetInputMenu_Normal              1
 #define GetInputMenu_No_Response         2
@@ -677,6 +678,10 @@ void ConformanceSimApplication::sendGetInkeyMenu()
     item.setLabel( "Yes/No response for the input" );
     items += item;
 
+    item.setIdentifier( GetInkeyMenu_ImmediateResponse );
+    item.setLabel( "Immediate response for the digit input" );
+    items += item;
+
     item.setIdentifier( GetInkeyMenu_Icon );
     item.setLabel( "Display of icon" );
     items += item;
@@ -883,6 +888,16 @@ void ConformanceSimApplication::GetInkeyMenu( const QSimTerminalResponse& resp )
             cmd.setDestinationDevice( QSimCommand::ME );
             cmd.setWantYesNo( true );
             cmd.setText( "Enter YES" );
+            command( cmd, this, SLOT(sendGetInkeyMenu()) );
+        }
+        break;
+
+        case GetInkeyMenu_ImmediateResponse:
+        {
+            cmd.setType( QSimCommand::GetInkey );
+            cmd.setDestinationDevice( QSimCommand::ME );
+            cmd.setWantImmediateResponse( true );
+            cmd.setText( "Enter 1" );
             command( cmd, this, SLOT(sendGetInkeyMenu()) );
         }
         break;
