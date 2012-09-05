@@ -956,6 +956,7 @@ void DemoSimApplication::toneMenu( const QSimTerminalResponse& resp )
     if ( resp.result() == QSimTerminalResponse::Success ) {
         // Item selected.
         cmd.setType( QSimCommand::PlayTone );
+        cmd.setText( "Play a standard supervisory tone" );
         cmd.setDestinationDevice( QSimCommand::Earpiece );
         cmd.setTone( (QSimCommand::Tone)( resp.menuItem() ) );
         if ( cmd.tone() == QSimCommand::ToneDial )
@@ -1406,6 +1407,7 @@ void DemoSimApplication::CFMenu( const QSimTerminalResponse& resp )
                 cmd.setType( QSimCommand::SendSS );
                 cmd.setDestinationDevice( QSimCommand::Network );
                 cmd.setNumber( "**62*+155543*11#" );
+                cmd.setText( "Sending SS Registration" );
                 command( cmd, this, SLOT(sendCFMenu()) );
             }
             break;
@@ -1415,6 +1417,7 @@ void DemoSimApplication::CFMenu( const QSimTerminalResponse& resp )
                 cmd.setType( QSimCommand::SendSS );
                 cmd.setDestinationDevice( QSimCommand::Network );
                 cmd.setNumber( "*62#" );
+                cmd.setText( "Sending SS Activation" );
                 command( cmd, this, SLOT(sendCFMenu()) );
             }
             break;
@@ -1424,6 +1427,7 @@ void DemoSimApplication::CFMenu( const QSimTerminalResponse& resp )
                 cmd.setType( QSimCommand::SendSS );
                 cmd.setDestinationDevice( QSimCommand::Network );
                 cmd.setNumber( "*#62**11#" );
+                cmd.setText( "Sending SS Interrogation class voice" );
                 command( cmd, this, SLOT(sendCFMenu()) );
             }
             break;
@@ -1433,6 +1437,7 @@ void DemoSimApplication::CFMenu( const QSimTerminalResponse& resp )
                 cmd.setType( QSimCommand::SendSS );
                 cmd.setDestinationDevice( QSimCommand::Network );
                 cmd.setNumber( "#62#" );
+                cmd.setText( "Sending SS Deactivation" );
                 command( cmd, this, SLOT(sendCFMenu()) );
             }
             break;
@@ -1442,6 +1447,7 @@ void DemoSimApplication::CFMenu( const QSimTerminalResponse& resp )
                 cmd.setType( QSimCommand::SendSS );
                 cmd.setDestinationDevice( QSimCommand::Network );
                 cmd.setNumber( "##62#" );
+                cmd.setText( "Sending SS Erasure" );
                 command( cmd, this, SLOT(sendCFMenu()) );
             }
             break;
