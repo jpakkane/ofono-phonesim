@@ -79,6 +79,13 @@ bool CallManager::command( const QString& cmd )
             return true;
         }
 
+        // For SAT test purpose, reject the dialing number 0123401234 if there
+        // is a connected call.
+        if ( hasCall( CallState_Active ) && number == "+0123401234" ) {
+            send( "NO CARRIER" );
+            return true;
+         }
+
         // If there is a connected call, place it on hold.
         changeGroup( CallState_Active, CallState_Held );
 
