@@ -41,6 +41,7 @@ const QString ConformanceSimApplication::getName()
 #define ConformanceMenu_GetInkey    2
 #define ConformanceMenu_GetInput    3
 #define ConformanceMenu_MoreTime    4
+#define ConformanceMenu_SetupCall   5
 
 #define NormalMenu_1_1    1
 #define NormalMenu_1_2    2
@@ -101,6 +102,20 @@ const QString ConformanceSimApplication::getName()
 #define GetInputMenu_Text_Attribute     11
 #define GetInputMenu_Main               12
 
+#define SetupCall_Confirmed                1
+#define SetupCall_Long_AID                 2
+#define SetupCall_Subaddress_Not_Supported 3
+#define SetupCall_Rejected                 4
+#define SetupCall_Putting_On_Hold          5
+#define SetupCall_Disconnect_Others        6
+#define SetupCall_If_Not_Busy              7
+#define SetupCall_On_Hold_Not_allowed      8
+#define SetupCall_Max_Dialing_Number       9
+#define SetupCall_Two_AID                 10
+#define SetupCall_Basic_icon              11
+#define SetupCall_Self_basic_icon         12
+#define SetupCall_Basic_icon_during_call  13
+
 void ConformanceSimApplication::mainMenu()
 {
     QSimCommand cmd;
@@ -124,6 +139,10 @@ void ConformanceSimApplication::mainMenu()
 
     item.setIdentifier( ConformanceMenu_MoreTime );
     item.setLabel( "More Time" );
+    items += item;
+
+    item.setIdentifier( ConformanceMenu_SetupCall );
+    item.setLabel( "Setup Call" );
     items += item;
 
     cmd.setMenuItems( items );
@@ -159,6 +178,12 @@ void ConformanceSimApplication::mainMenuSelection( int id )
             cmd.setType( QSimCommand::MoreTime );
             cmd.setDestinationDevice( QSimCommand::ME );
             command( cmd, this, SLOT(endSession()) );
+        }
+        break;
+
+        case ConformanceMenu_SetupCall:
+        {
+            sendSetupCallMenu();
         }
         break;
 
@@ -1738,6 +1763,228 @@ void ConformanceSimApplication::GetInputIconMenu( const QSimTerminalResponse& re
         case IconMenu_Main:
         {
             sendGetInputMenu();
+        }
+        break;
+
+        default:
+            endSession();
+        break;
+    }
+}
+
+void ConformanceSimApplication::sendSetupCallMenu()
+{
+    QSimCommand cmd;
+    QSimMenuItem item;
+    QList<QSimMenuItem> items;
+
+    cmd.setType( QSimCommand::SelectItem );
+    cmd.setTitle( "Setup Call (Icon support)" );
+
+    item.setIdentifier( SetupCall_Confirmed );
+    item.setLabel( "Call confirmed and connected" );
+    items += item;
+
+    item.setIdentifier( SetupCall_Long_AID );
+    item.setLabel( "Long first alpha identifier" );
+    items += item;
+
+    item.setIdentifier( SetupCall_Subaddress_Not_Supported );
+    item.setLabel( "Called party subaddress not supported" );
+    items += item;
+
+    item.setIdentifier( SetupCall_Rejected );
+    item.setLabel( "Call rejected by the user" );
+    items += item;
+
+    item.setIdentifier( SetupCall_Putting_On_Hold );
+    item.setLabel( "Putting all other calls on hold" );
+    items += item;
+
+    item.setIdentifier( SetupCall_Disconnect_Others );
+    item.setLabel( "Disconnecting all other calls" );
+    items += item;
+
+    item.setIdentifier( SetupCall_If_Not_Busy );
+    item.setLabel( "Only if not currently busy on another call" );
+    items += item;
+
+    item.setIdentifier( SetupCall_On_Hold_Not_allowed );
+    item.setLabel( "Call hold is not allowed" );
+    items += item;
+
+    item.setIdentifier( SetupCall_Max_Dialing_Number );
+    item.setLabel( "Max dialing number string, no alpha" );
+    items += item;
+
+    item.setIdentifier( SetupCall_Two_AID );
+    item.setLabel( "Two alpha identifiers" );
+    items += item;
+
+    item.setIdentifier( SetupCall_Basic_icon );
+    item.setLabel( "Basic icon" );
+    items += item;
+
+    item.setIdentifier( SetupCall_Self_basic_icon );
+    item.setLabel( "Self-explanatory basic icon" );
+    items += item;
+
+    item.setIdentifier( SetupCall_Basic_icon_during_call );
+    item.setLabel( "Icon during setup call" );
+    items += item;
+
+    cmd.setMenuItems( items );
+
+    command( cmd, this, SLOT(SetupCallMenu(QSimTerminalResponse)) );
+}
+
+void ConformanceSimApplication::SetupCallMenu( const QSimTerminalResponse& resp )
+{
+    QSimCommand cmd;
+
+    if ( resp.result() != QSimTerminalResponse::Success ) {
+        /* Unknown response - just go back to the main menu. */
+        endSession();
+
+        return;
+    }
+
+    /* Item selected. */
+    switch ( resp.menuItem() ) {
+        case SetupCall_Confirmed:
+        case SetupCall_If_Not_Busy:
+        case SetupCall_Rejected:
+        {
+            cmd.setType( QSimCommand::SetupCall );
+            cmd.setDestinationDevice( QSimCommand::Network );
+            cmd.setText( "Not busy" );
+            cmd.setNumber( "+012340123456p1p2" );
+            cmd.setDisposition( QSimCommand::IfNoOtherCalls );
+            command( cmd, this, SLOT(sendSetupCallMenu()) );
+        }
+        break;
+
+        case SetupCall_Long_AID:
+        {
+            cmd.setType( QSimCommand::SetupCall );
+            cmd.setDestinationDevice( QSimCommand::Network );
+            cmd.setText( "Three types are defined: - set up a call, but only "
+                      "if not currently busy on another call; - set up a call"
+                      ", putting all other calls (if any) on hold; - set up a"
+                      " call, disconnecting all other calls (if any) first."
+                      " For each of these types," );
+            cmd.setNumber( "+01" );
+            cmd.setDisposition( QSimCommand::IfNoOtherCalls );
+            command( cmd, this, SLOT(sendSetupCallMenu()) );
+        }
+        break;
+
+        case SetupCall_Subaddress_Not_Supported:
+        {
+            cmd.setType( QSimCommand::SetupCall );
+            cmd.setDestinationDevice( QSimCommand::Network );
+            cmd.setText( "Called party" );
+            cmd.setNumber( "+012340123456p1p2" );
+            cmd.setSubAddress ("9595959595");
+            cmd.setDisposition( QSimCommand::IfNoOtherCalls );
+            command( cmd, this, SLOT(sendSetupCallMenu()) );
+        }
+        break;
+
+        case SetupCall_Putting_On_Hold:
+        {
+            cmd.setType( QSimCommand::SetupCall );
+            cmd.setDestinationDevice( QSimCommand::Network );
+            cmd.setText( "On hold" );
+            cmd.setNumber( "+012340123456p1p2" );
+            cmd.setDisposition( QSimCommand::PutOnHold );
+            command( cmd, this, SLOT(sendSetupCallMenu()) );
+        }
+        break;
+
+        case SetupCall_On_Hold_Not_allowed:
+        {
+            cmd.setType( QSimCommand::SetupCall );
+            cmd.setDestinationDevice( QSimCommand::Network );
+            cmd.setText( "On hold" );
+            cmd.setNumber( "+0123401234" );
+            cmd.setDisposition( QSimCommand::PutOnHold );
+            command( cmd, this, SLOT(sendSetupCallMenu()) );
+        }
+        break;
+
+        case SetupCall_Disconnect_Others:
+        {
+            cmd.setType( QSimCommand::SetupCall );
+            cmd.setDestinationDevice( QSimCommand::Network );
+            cmd.setText( "Disconnect" );
+            cmd.setNumber( "+012340123456p1p2" );
+            cmd.setDisposition( QSimCommand::Disconnect );
+            command( cmd, this, SLOT(sendSetupCallMenu()) );
+        }
+        break;
+
+        case SetupCall_Max_Dialing_Number:
+        {
+            cmd.setType( QSimCommand::SetupCall );
+            cmd.setDestinationDevice( QSimCommand::Network );
+            cmd.setNumber( "+01234567890123456789012345678901" );
+            cmd.setDisposition( QSimCommand::Disconnect );
+            command( cmd, this, SLOT(sendSetupCallMenu()) );
+        }
+        break;
+
+        case SetupCall_Two_AID:
+        {
+            cmd.setType( QSimCommand::SetupCall );
+            cmd.setDestinationDevice( QSimCommand::Network );
+            cmd.setText( "CONFIRMATION" );
+            cmd.setOtherText( "CALL" );
+            cmd.setNumber( "+012340123456p1p2" );
+            cmd.setDisposition( QSimCommand::Disconnect );
+            command( cmd, this, SLOT(sendSetupCallMenu()) );
+        }
+        break;
+
+        case SetupCall_Basic_icon:
+        {
+            cmd.setType( QSimCommand::SetupCall );
+            cmd.setDestinationDevice( QSimCommand::Network );
+            cmd.setText( "Set up call Icon 3.1.1" );
+            cmd.setNumber( "+012340123456p1p2" );
+            cmd.setIconId( 1 );
+            cmd.setIconSelfExplanatory( false );
+            cmd.setDisposition( QSimCommand::IfNoOtherCalls );
+            command( cmd, this, SLOT(sendSetupCallMenu()) );
+        }
+        break;
+
+        case SetupCall_Self_basic_icon:
+        {
+            cmd.setType( QSimCommand::SetupCall );
+            cmd.setDestinationDevice( QSimCommand::Network );
+            cmd.setText( "Set up call Icon 3.2.1" );
+            cmd.setNumber( "+012340123456p1p2" );
+            cmd.setIconId( 1 );
+            cmd.setIconSelfExplanatory( true );
+            cmd.setDisposition( QSimCommand::IfNoOtherCalls );
+            command( cmd, this, SLOT(sendSetupCallMenu()) );
+        }
+        break;
+
+        case SetupCall_Basic_icon_during_call:
+        {
+            cmd.setType( QSimCommand::SetupCall );
+            cmd.setDestinationDevice( QSimCommand::Network );
+            cmd.setText( "Set up call Icon 3.4.1" );
+            cmd.setNumber( "+012340123456p1p2" );
+            cmd.setIconId( 1 );
+            cmd.setIconSelfExplanatory( true );
+            cmd.setOtherText( "Set up call Icon 3.4.2" );
+            cmd.setOtherIconId( 1 );
+            cmd.setOtherIconSelfExplanatory( true );
+            cmd.setDisposition( QSimCommand::IfNoOtherCalls );
+            command( cmd, this, SLOT(sendSetupCallMenu()) );
         }
         break;
 

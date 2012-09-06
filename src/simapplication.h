@@ -174,6 +174,8 @@ protected slots:
     void sendGetInputNormalMenu();
     void sendGetInputIconMenu();
     void GetInputIconMenu( const QSimTerminalResponse& resp );
+    void sendSetupCallMenu();
+    void SetupCallMenu( const QSimTerminalResponse& resp );
 };
 
 #endif
