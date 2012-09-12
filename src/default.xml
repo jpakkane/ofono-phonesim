@@ -2445,9 +2445,9 @@
 </chat>
 
 <chat>
-    <!-- Indicator control (ignored in this version) -->
-    <command>AT+CIND*</command>
-    <response>OK</response>
+    <!-- Query supported indicators -->
+    <command>AT+CIND=?</command>
+    <response>+CIND: ("signal",(0-5)),("service",(0-1))\n\nOK</response>
 </chat>
 
 <chat>
