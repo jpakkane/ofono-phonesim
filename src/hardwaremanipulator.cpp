@@ -327,6 +327,7 @@ bool HardwareManipulator::getSimPresent()
 void HardwareManipulator::setSimPresent( bool present )
 {
     simPresent = present;
+    rules->setVariable( "SIMSTATE", QString::number( present ) );
 }
 
 QStringList HardwareManipulator::getSimAppsNameList()

@@ -308,6 +308,9 @@
     <!-- Positioning reporting state -->
     <set name="CPOSR" value="0" />
 
+    <!-- SIM insertion state -->
+    <set name="SIMSTATE" value="1" />
+
 <!-- Time -->
 <!-- Enable for testing
 <unsolicited delay="3000" once="true">*TTZ: 2, "11/25/2007, 12:12:12+40", 0</unsolicited>
@@ -3059,6 +3062,17 @@
         <switch name="default"/>
     </chat>
 </state>
+
+<chat>
+    <command>AT+SIMSTATE?</command>
+    <response>+SIMSTATE: ${SIMSTATE}\n\nOK</response>
+</chat>
+
+<chat>
+    <!-- Query if SIMSTATE supported -->
+    <command>AT+SIMSTATE=?</command>
+    <response>OK</response>
+</chat>
 
 <!-- Modem compatibility commands for phones that support data services -->
 

@@ -612,7 +612,9 @@ void ControlWidget::cancelUSSD()
 
 void ControlWidget::simInsertRemove()
 {
-    p->setSimPresent( ui->cbSimInserted->isChecked() );
+    bool isChecked = ui->cbSimInserted->isChecked();
+    p->setSimPresent( isChecked );
+    emit unsolicitedCommand( "+USIMSTATE: "+QString::number( isChecked ) );
 }
 
 void ControlWidget::handleNewApp()
