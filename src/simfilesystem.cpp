@@ -202,7 +202,8 @@ void SimFileSystem::crsm( const QString& args )
     uint p1 = QAtUtils::parseNumber( args, posn );
     uint p2 = QAtUtils::parseNumber( args, posn );
     uint p3 = QAtUtils::parseNumber( args, posn );
-    QByteArray data = QAtUtils::fromHex( args.mid( (int)posn ) );
+    QString hexdata = QAtUtils::nextString( args, posn );
+    QByteArray data = QAtUtils::fromHex( hexdata );
 
     // Determine how to execute the command.
     bool ok = true;
