@@ -383,6 +383,7 @@ const QString DemoSimApplication::getName()
 #define BIPMenu_GetChannelStatus       7
 
 #define Handled_SendSMS	1
+#define Handled_InitNAA 2
 
 enum SendSMSMenuItems {
 	SendSMS_Unpacked = 1,
@@ -2649,6 +2650,10 @@ void DemoSimApplication::sendHandledMenu()
     item.setLabel( "Send Modem-Handled SMS" );
     items += item;
 
+    item.setIdentifier( Handled_InitNAA );
+    item.setLabel( "NAA Initialization+Full File Change Notification" );
+    items += item;
+
     cmd.setMenuItems( items );
 
     command( cmd, this, SLOT(handledMenuResp(QSimTerminalResponse)) );
@@ -2684,6 +2689,17 @@ void DemoSimApplication::handledMenuResp( const QSimTerminalResponse& resp )
         cmd.setNumber( "123" );
         cmd.addExtensionField( 0x8b, sms.toPdu().mid( 1 ) );
         cmd.setDestinationDevice( QSimCommand::Network );
+
+        modemHandledCommand(cmd, 6000);
+        break;
+    }
+
+    case Handled_InitNAA:
+    {
+        cmd.setType( QSimCommand::Refresh );
+        cmd.setQualifier( 3 );
+        cmd.setDestinationDevice( QSimCommand::ME );
+        cmd.setText( "" );
 
         modemHandledCommand(cmd, 6000);
         break;
