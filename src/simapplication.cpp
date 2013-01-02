@@ -281,6 +281,11 @@ void SimApplication::endSession()
     d->rules->respond( "+CUSATEND", 1);
 }
 
+void SimApplication::reinitSim()
+{
+    d->rules->unsolicited( "+USIMSTATE: 1" );
+}
+
 DemoSimApplication::DemoSimApplication( SimRules *rules, QObject *parent )
     : SimApplication( rules, parent ), smsDestNumber( "12345" ),
     smsText( "Hello" )
@@ -2359,6 +2364,9 @@ void DemoSimApplication::refreshMenuResp( const QSimTerminalResponse& resp )
     }
 
     command( cmd, this, SLOT(endSession()) );
+
+    if (cmd.refreshType() != QSimCommand::FileChange)
+        QTimer::singleShot( 1000, this, SLOT(reinitSim()) );
 }
 
 void DemoSimApplication::sendLocalInfoMenu()
@@ -2701,7 +2709,8 @@ void DemoSimApplication::handledMenuResp( const QSimTerminalResponse& resp )
         cmd.setDestinationDevice( QSimCommand::ME );
         cmd.setText( "" );
 
-        modemHandledCommand(cmd, 6000);
+        modemHandledCommand(cmd, 1000);
+        QTimer::singleShot( 1100, this, SLOT(reinitSim()) );
         break;
     }
 
