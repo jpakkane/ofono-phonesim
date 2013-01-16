@@ -58,14 +58,14 @@ $(src_phonesim_OBJECTS): src/ui_controlbase.h
 
 QT_V_MOC   = $(QT_V_MOC_$(V))
 QT_V_MOC_  = $(QT_V_MOC_$(AM_DEFAULT_VERBOSITY))
-QT_V_MOC_0 = @echo "  MOC   " $@;
+QT_V_MOC_0 = @echo "  MOC     " $@;
 
 src/moc_%.cpp: src/%.h
 	$(QT_V_MOC)$(MOC) $< -o $@
 
 QT_V_UIC   = $(QT_V_UIC_$(V))
 QT_V_UIC_  = $(QT_V_UIC_$(AM_DEFAULT_VERBOSITY))
-QT_V_UIC_0 = @echo "  UIC   " $@;
+QT_V_UIC_0 = @echo "  UIC     " $@;
 
 src/ui_%.h: src/%.ui
 	$(QT_V_UIC)$(UIC) $< -o $@
