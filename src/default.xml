@@ -232,6 +232,9 @@
     <!-- Value of the PIN that is required -->
     <set name="PINVALUE" value="2468"/>
 
+    <!-- How many times can PIN unlocking be attempted -->
+    <set name="PINRETRYCOUNT" value="3"/>
+
     <!-- pin protection status -->
     <set name="SC" value="0"/>
 
@@ -2280,6 +2283,19 @@
 </chat>
 
 <chat>
+    <!-- Do we support CPINR? -->
+    <command>AT+CPINR=?</command>
+    <response>OK\n</response>
+</chat>
+
+<chat>
+    <!-- How many pin unlock attempts remain -->
+    <command>AT+CPINR</command>
+    <response>+CPINR: SIM PIN,${PINRETRYCOUNT},3\nOK\n</response>
+</chat>
+
+
+<chat>
     <!-- Check for which PIN is required -->
     <command>AT+CPIN?</command>
     <response delay="2000">+CPIN: ${PINNAME}\n\nOK</response>
@@ -2290,6 +2306,7 @@
     <command>AT+CPIN="${PINVALUE}"</command>
     <response>+CPIN: READY\n\nOK</response>
     <set name="PINNAME" value="READY"/>
+    <set name="PINRETRYCOUNT" value="3"/>
 </chat>
 
 <chat>
@@ -2305,6 +2322,7 @@
     <response>+CPIN: READY\n\nOK</response>
     <set name="PINVALUE" value="${*}"/>
     <set name="PINNAME" value="READY"/>
+    <set name="PINRETRYCOUNT" value="3"/>
 </chat>
 
 <chat>
@@ -2320,6 +2338,7 @@
     <command>AT+CPIN="*","*"</command>
     <response>+CPIN: SIM PUK\n\nERROR</response>
     <set name="PINNAME" value="SIM PUK"/>
+    <set name="PINRETRYCOUNT" value="0"/>
 </chat>
 
 <chat>
@@ -2327,6 +2346,7 @@
     <command>AT+CPIN=*</command>
     <response>+CPIN: SIM PIN\n\nERROR</response>
     <set name="PINNAME" value="SIM PIN"/>
+    <set name="PINRETRYCOUNT" value="2"/>
     <switch name="pinretry1"/>
 </chat>
 
@@ -2337,6 +2357,7 @@
         <command>AT+CPIN="${PINVALUE}"</command>
         <response>+CPIN: READY\n\nOK</response>
         <set name="PINNAME" value="READY"/>
+        <set name="PINRETRYCOUNT" value="3"/>
         <switch name="default"/>
     </chat>
 
@@ -2346,6 +2367,7 @@
         <response>+CPIN: READY\n\nOK</response>
         <set name="PINVALUE" value="${*}"/>
         <set name="PINNAME" value="READY"/>
+        <set name="PINRETRYCOUNT" value="3"/>
         <switch name="default"/>
     </chat>
 
@@ -2354,6 +2376,7 @@
         <command>AT+CPIN=*</command>
         <response>+CPIN: SIM PIN\n\nERROR</response>
         <set name="PINNAME" value="SIM PIN"/>
+        <set name="PINRETRYCOUNT" value="1"/>
         <switch name="pinretry2"/>
     </chat>
 
@@ -2366,6 +2389,7 @@
         <command>AT+CPIN="${PINVALUE}"</command>
         <response>+CPIN: READY\n\nOK</response>
         <set name="PINNAME" value="READY"/>
+        <set name="PINRETRYCOUNT" value="3"/>
         <switch name="default"/>
     </chat>
 
@@ -2375,6 +2399,7 @@
         <response>+CPIN: READY\n\nOK</response>
         <set name="PINVALUE" value="${*}"/>
         <set name="PINNAME" value="READY"/>
+        <set name="PINRETRYCOUNT" value="3"/>
         <switch name="default"/>
     </chat>
 
@@ -2383,6 +2408,7 @@
         <command>AT+CPIN=*</command>
         <response>+CPIN: SIM PUK\n\nERROR</response>
         <set name="PINNAME" value="SIM PUK"/>
+        <set name="PINRETRYCOUNT" value="0"/>
     </chat>
 
 </state>
